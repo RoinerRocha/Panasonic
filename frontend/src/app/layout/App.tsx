@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import React, { useEffect, useState } from 'react';
-import api from './app/api/api';
+import api from '../api/api';
 
 /*function App() {
   return (
