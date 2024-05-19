@@ -1,5 +1,4 @@
 import logo from './logo.svg';
-import './App.css';
 import React, { useEffect, useState } from 'react';
 import api from '../api/api';
 
@@ -43,7 +42,7 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <p>{message}</p>
+        <p>Hola Mundo</p>
       </header>
     </div>
   );
