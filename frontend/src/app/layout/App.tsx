@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../api/api';
 import Header from './header';
 import { Container, CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import { Outlet } from 'react-router-dom';
 
 function App(){
   const [darkMode, setDarkMode] = useState(false);
@@ -25,7 +26,7 @@ function App(){
       <CssBaseline />
       <Header darkMode={darkMode} handleThemeChange={handleThemeChange}/>
       <Container>
-        <p>Hola Mundo</p>
+        <Outlet />
       </Container>
     </ThemeProvider>
   );
