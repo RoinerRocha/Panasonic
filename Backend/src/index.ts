@@ -1,16 +1,41 @@
 import express from "express";
-import { connection } from "./Services/Postgresql";
+import morgan  from "morgan";
+import dotenv from "dotenv";
+import cors from "cors";
+import sequelize from "./Services/Postgresql";
+//import {connection} from "./Services/Postgresql";
+import routerLogin from './routes/login.router';
+
+dotenv.config();
 
 const app = express();
 
-const PORT = 3000;
+//Middleware
+app.use(cors());
+app.use(morgan('dev'));
+app.use(express.json())
 
-connection();
+//const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, ()=> {
-  console.log(`Servidor escuchando en el puerto ${PORT}`);
-});
+//connection();
+sequelize.sync({ force: false })
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+     sequelize.authenticate();
+    console.log("Connection DataBase has been established successfully. ;)");
+  })
+  .catch((err) => {
+    console.error("Unable to connect to the database:", err);
+  });
 
+/*app.listen(PORT, ()=> {
+  console.log(`Servidor escuchando en el puerto: ${PORT}`);
+});*/
+
+app.use('/api', routerLogin);
 
 // import cors from "cors";
 // import bodyParser from "body-parser";
