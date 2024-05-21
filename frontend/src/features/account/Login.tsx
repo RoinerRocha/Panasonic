@@ -7,23 +7,26 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Paper } from '@mui/material';
 import { Link } from 'react-router-dom';
-
-
-// TODO remove, this demo shouldn't need to reset the theme.
-const defaultTheme = createTheme();
+import { useState } from 'react';
+import api from '../../app/api/api';
 
 export default function Login() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [values, setValues] = useState({
+    email: '',
+    password: ''
+  })
+
+  const handleSubmit = (event: any) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    api.Account.login(values);
   };
+
+  function handleInputChange(event: any) {
+    const {name, value} = event.target;
+    setValues({...values, [name]: value});
+  }
 
   return (
       <Container component={Paper} maxWidth="sm" 
@@ -42,8 +45,9 @@ export default function Login() {
               id="email"
               label="Correo"
               name="email"
-              autoComplete="email"
               autoFocus
+              onChange={handleInputChange}
+              value={values.email}
             />
             <TextField
               margin="normal"
@@ -52,8 +56,8 @@ export default function Login() {
               name="password"
               label="Contraseña"
               type="password"
-              id="password"
-              autoComplete="current-password"
+              onChange={handleInputChange}
+              value={values.password}
             />
             <Button
               type="submit"
