@@ -12,7 +12,9 @@ dotenv.config();
     {
       host: process.env.DB_HOST as string,
       dialect: "postgres",
+      logging: console.log,
     }
+  
   
   )
 
