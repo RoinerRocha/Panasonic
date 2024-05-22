@@ -5,6 +5,9 @@ import cors from "cors";
 import sequelize from "./Services/Postgresql";
 //import {connection} from "./Services/Postgresql";
 import routerLogin from './routes/login.router';
+import routerBuggy from './routes/buggy.router';
+import { exceptionMiddleware } from "./Middleware/exceptionMiddleware";
+
 
 dotenv.config();
 
@@ -14,6 +17,7 @@ const app = express();
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json())
+app.use(exceptionMiddleware);
 
 //const PORT = 3000;
 const PORT = process.env.PORT || 5000;
@@ -36,6 +40,7 @@ sequelize.sync({ force: false })
 });*/
 
 app.use('/api', routerLogin);
+app.use('/api/buggy', routerBuggy);
 
 // import cors from "cors";
 // import bodyParser from "body-parser";

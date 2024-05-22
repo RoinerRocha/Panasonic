@@ -7,15 +7,15 @@ export class BuggyController extends BaseApiController {
     }
 
     public getNotFound(req: Request, res: Response): void {
-        res.status(404).send();
+        res.status(404).json({ message: "Resource not found" });
     }
 
     public getBadRequest(req: Request, res: Response): void {
-        res.status(400).json({ title: "This is a bad request" });
+        res.status(400).json({ message: "Bad request" });
     }
 
     public getUnauthorised(req: Request, res: Response): void {
-        res.status(401).send();
+        res.status(401).json({ message: "Unauthorized" });
     }
 
     public getValidationError(req: Request, res: Response): void {
@@ -28,6 +28,6 @@ export class BuggyController extends BaseApiController {
     }
 
     public getServerError(req: Request, res: Response): void {
-        res.status(500).json({ message: "This is a server error" });
+        res.status(500).json({ message: "Server error" });
     }
 }
