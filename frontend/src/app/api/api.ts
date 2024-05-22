@@ -18,7 +18,7 @@ axios.interceptors.response.use(async response => {
     case 400:
       if (data.errors) {
         const modelStateErrors: string[] = [];
-        for (const key in data.erors) {
+        for (const key in data.errors) {
           if (data.errors[key]){
             modelStateErrors.push(data.errors[key])
           }
@@ -46,15 +46,24 @@ const requests = {
   delete: (url: string) => axios.delete(url).then(responseBody),
 }
 
+const TestErrors = {
+  getNotFound: () => requests.get('buggy/not-found'), 
+  getBadRequest: () => requests.get('buggy/bad-request'), 
+  getUnauthorised: () => requests.get('buggy/unauthorised'), 
+  getValidationError: () => requests.get('buggy/validation-error'), 
+  getServerError: () => requests.get('buggy/server-error'), 
+}
+
 const Account = {
   login: (values: any) => requests.post('login', values), 
   register: (values: any) => requests.post('register', values), 
   currentUser: () => requests.get('currentUser'), 
 }
 
-const agent = {
-  Account 
+const api = {
+  Account,
+  TestErrors
 }
 
-export default agent;
+export default api;
 
