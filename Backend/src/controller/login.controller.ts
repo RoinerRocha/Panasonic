@@ -59,13 +59,13 @@ export const login = async (req: Request, res: Response) => {
     const user = await User.findOne({ where: { nombre_usuario } });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
     const isPasswordValid = await bcrypt.compare(contrasena, user.contrasena);
 
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid password" });
+      return res.status(401).json({ message: "Contraseña Invalida" });
     }
 
     const token = jwt.sign(

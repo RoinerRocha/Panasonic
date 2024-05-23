@@ -7,7 +7,7 @@ export class BuggyController extends BaseApiController {
     }
 
     public getNotFound(req: Request, res: Response): void {
-        res.status(404).json({ message: "Resource not found" });
+        res.status(404).json({ message: "Usuario no encontrado" });
     }
 
     public getBadRequest(req: Request, res: Response): void {
@@ -15,7 +15,7 @@ export class BuggyController extends BaseApiController {
     }
 
     public getUnauthorised(req: Request, res: Response): void {
-        res.status(401).json({ message: "Unauthorized" });
+        res.status(401).json({ message: "Contraseña Invalida" });
     }
 
     public getValidationError(req: Request, res: Response): void {
