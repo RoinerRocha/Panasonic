@@ -13,13 +13,12 @@ axios.interceptors.response.use(async response => {
   return response 
 }, (error: AxiosError) => {
   const {data, status} = error.response as AxiosResponse;
-  console.log("Error object:", error);
   switch (status) {
     case 400:
-      if (data.errors) {
+      if(data.errors) {
         const modelStateErrors: string[] = [];
         for (const key in data.errors) {
-          if (data.errors[key]){
+          if (data.errors[key]) {
             modelStateErrors.push(data.errors[key])
           }
         }

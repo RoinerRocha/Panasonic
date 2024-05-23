@@ -1,5 +1,5 @@
 import { Button, ButtonGroup, Container, Typography } from "@mui/material";
-import api from "../api/api";
+import api from "../../app/api/api";
 
 export default function AboutPage() {
     return (

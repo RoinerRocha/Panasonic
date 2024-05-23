@@ -14,8 +14,8 @@ import api from '../../app/api/api';
 
 export default function Login() {
   const [values, setValues] = useState({
-    email: '',
-    password: ''
+    nombre_usuario: '',
+    contrasena: ''
   })
 
   const handleSubmit = (event: any) => {
@@ -42,22 +42,21 @@ export default function Login() {
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Correo"
-              name="email"
+              label="Nombre de Usuario"
+              name="nombre_usuario"
               autoFocus
               onChange={handleInputChange}
-              value={values.email}
+              value={values.nombre_usuario}
             />
             <TextField
               margin="normal"
               required
               fullWidth
-              name="password"
+              name="contrasena"
               label="Contraseña"
               type="password"
               onChange={handleInputChange}
-              value={values.password}
+              value={values.contrasena}
             />
             <Button
               type="submit"
