@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
+import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -10,23 +10,26 @@ import Container from '@mui/material/Container';
 import { Paper } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import api from '../../app/api/api';
+import { FieldValues, useForm } from 'react-hook-form';
 
 export default function Login() {
-  const [values, setValues] = useState({
-    nombre_usuario: '',
-    contrasena: ''
+  const {register, handleSubmit, formState: {isSubmitting, errors, isValid}} = useForm({
+    mode: 'onTouched'
   })
 
-  const handleSubmit = (event: any) => {
-    event.preventDefault();
-    api.Account.login(values);
+  // async function submitForm(data: FieldValues) {
+  //   await api.Account.login(data);
+  // }
+  const onSubmit = async (data: FieldValues) => {
+    try {
+      await api.Account.login(data);
+      toast.success('¡Inicio de sesión exitoso!');
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
-
-  function handleInputChange(event: any) {
-    const {name, value} = event.target;
-    setValues({...values, [name]: value});
-  }
 
   return (
       <Container component={Paper} maxWidth="sm" 
@@ -37,35 +40,34 @@ export default function Login() {
           <Typography component="h1" variant="h5">
             Inicio de sesión
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
-              required
               fullWidth
               label="Nombre de Usuario"
-              name="nombre_usuario"
               autoFocus
-              onChange={handleInputChange}
-              value={values.nombre_usuario}
+              {...register('nombre_usuario', {required: 'Se necesita el usuario'})}
+              error={!!errors.nombre_usuario}
+              helperText={errors?.nombre_usuario?.message as string}
             />
             <TextField
               margin="normal"
-              required
               fullWidth
-              name="contrasena"
               label="Contraseña"
               type="password"
-              onChange={handleInputChange}
-              value={values.contrasena}
+              {...register('contrasena', {required: 'Se necesita la contraseña'})}
+              error={!!errors.contrasena}
+              helperText={errors?.contrasena?.message as string}
             />
-            <Button
+            <LoadingButton loading={isSubmitting}
+              disabled={!isValid}
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
               Sign In
-            </Button>
+            </LoadingButton>
             <Grid container>
               <Grid item xs>
                 <Link to="/">

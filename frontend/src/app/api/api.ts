@@ -29,6 +29,9 @@ axios.interceptors.response.use(async response => {
     case 401:
       toast.error(data.message);
       break;
+    case 404:
+      toast.error(data.message);
+      break;
     case 500:
       toast.error(data.message);
       break;
