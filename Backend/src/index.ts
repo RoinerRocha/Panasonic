@@ -1,13 +1,15 @@
 import express from "express";
-import morgan  from "morgan";
+import morgan from "morgan";
 import dotenv from "dotenv";
 import cors from "cors";
 import sequelize from "./Services/Postgresql";
 //import {connection} from "./Services/Postgresql";
-import routerLogin from './routes/login.router';
-import routerBuggy from './routes/buggy.router';
-import { exceptionMiddleware } from "./Middleware/exceptionMiddleware";
 
+//routes
+import routerLogin from "./routes/login.router";
+import routerBuggy from "./routes/buggy.router";
+import { exceptionMiddleware } from "./Middleware/exceptionMiddleware";
+import routerZona from "./routes/zona.router";
 
 dotenv.config();
 
@@ -15,20 +17,21 @@ const app = express();
 
 //Middleware
 app.use(cors());
-app.use(morgan('dev'));
-app.use(express.json())
+app.use(morgan("dev"));
+app.use(express.json());
 app.use(exceptionMiddleware);
 
 //const PORT = 3000;
 const PORT = process.env.PORT || 5000;
 
 //connection();
-sequelize.sync({ force: false })
+sequelize
+  .sync({ force: false })
   .then(() => {
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
-     sequelize.authenticate();
+    sequelize.authenticate();
     console.log("Connection DataBase has been established successfully. ;)");
   })
   .catch((err) => {
@@ -39,15 +42,15 @@ sequelize.sync({ force: false })
   console.log(`Servidor escuchando en el puerto: ${PORT}`);
 });*/
 
-app.use('/api', routerLogin);
-app.use('/api/buggy', routerBuggy);
+app.use("/api", routerLogin);
+app.use("/api/buggy", routerBuggy);
+app.use("/api", routerZona);
 
 // import cors from "cors";
 // import bodyParser from "body-parser";
 // import { Pool } from "pg";
 // import "dotenv/config";
 // import { Client } from 'pg';
-
 
 // //import pool from './models/model.login';
 // import router from './routes/route.login';
@@ -75,7 +78,7 @@ app.use('/api/buggy', routerBuggy);
 // const client = new Client({
 //     connectionString: process.env.DATABASE_URL,
 //   });
-  
+
 //   client.connect()
 //     .then(() => console.log('Connected to the database...'))
-//     .catch((err: { stack: any; }) => console.error('Connection error, más detalles: ', err.stack)); 
+//     .catch((err: { stack: any; }) => console.error('Connection error, más detalles: ', err.stack));

@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
 import dotenv from "dotenv";
-import { Connection } from "pg";
+//import { Connection } from "pg";
 
 dotenv.config();
 
