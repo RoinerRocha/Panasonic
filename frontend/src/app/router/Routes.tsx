@@ -3,6 +3,7 @@ import App from "../layout/App";
 import HomePage from "../../features/home/HomePage";
 import Login from "../../features/account/Login";
 import Register from "../../features/account/Register";
+import AboutPage from "../../features/about/About";
 
 export const router = createBrowserRouter([
     {
@@ -11,7 +12,8 @@ export const router = createBrowserRouter([
         children: [
             {path: '', element: <HomePage />},
             {path: 'login', element: <Login />},
-            {path: 'register', element: <Register />}
+            {path: 'register', element: <Register />},
+            {path: 'about', element: <AboutPage />}
         ]
     }
 ])
