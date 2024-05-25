@@ -94,8 +94,15 @@ export const getCurrentUser = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    // Devolver el usuario encontrado
-    return res.status(200).json(user);
+    // Crear un nuevo token con la misma información del usuario
+    const userToken = jwt.sign(
+      { id: user.id, nombre_usuario: user.nombre_usuario },
+      process.env.JWT_SECRET as string,
+      { expiresIn: "1h" }
+    );
+
+    // Devolver el token
+    return res.status(200).json({ token: userToken });
   } catch (error) {
     // Manejar cualquier error
     return res.status(500).json({ message: "Error al obtener el usuario actual" });
