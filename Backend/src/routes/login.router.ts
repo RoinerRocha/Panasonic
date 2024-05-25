@@ -6,6 +6,7 @@ import {
   getUserById,
   deleteUser,
   updateUser,
+  getCurrentUser,
 } from "../controller/login.controller";
 
 const router = Router();
@@ -19,6 +20,7 @@ router.post("/register", register);
 router.post("/login", login);
 
 router.get("/getUser", getAllUser);
+router.get("/currentUser", getCurrentUser);
 
 router.get("/getUserById/:id", getUserById);
 router.put("/updateUser/:id", updateUser);

@@ -77,6 +77,32 @@ export const getAllUser = async (req: Request, res: Response) => {
   }
 };
 
+export const getCurrentUser = async (req: Request, res: Response) => {
+  try {
+    // Obtener el token del encabezado de la solicitud
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Token de autorización no encontrado" });
+    }
+
+    // Verificar el token
+    const decodedToken: any = jwt.verify(token, process.env.JWT_SECRET as string);
+
+    // Buscar al usuario en la base de datos
+    const user = await User.findOne({ where: { nombre_usuario: decodedToken.nombre_usuario } });
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    // Devolver el usuario encontrado
+    return res.status(200).json(user);
+  } catch (error) {
+    // Manejar cualquier error
+    return res.status(500).json({ message: "Error al obtener el usuario actual" });
+  }
+};
+
+
 //Metodo para buscar usuario por id
 export const getUserById = async (req: Request, res: Response) => {
   const userId = req.params.id;
