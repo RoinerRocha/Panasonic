@@ -7,5 +7,5 @@ export interface User {
     contrasena: string;
     imagen_firma: Blob;
     perfil_asignado: string;
-
+    token: string;
 }

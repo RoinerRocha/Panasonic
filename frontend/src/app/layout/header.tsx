@@ -1,10 +1,12 @@
 import { Lock, Login } from "@mui/icons-material";
 import { AppBar, Badge, Box, IconButton, List, ListItem, Switch, Toolbar, Typography } from "@mui/material";
 import { NavLink } from "react-router-dom";
+import { useAppSelector } from "../../store/configureStore";
+import SignInMenu from "./SigninMenu";
 
 const midLinks = [
     {title: 'Activos', path: '/'},
-    {title: 'historial', path: '/'},
+    {title: 'historial', path: '/register'},
     {title: 'Formularios', path: '/'},
 ]
 const rightLinks = [
@@ -30,6 +32,8 @@ interface Props {
 }
 
 export default function Header({darkMode, handleThemeChange}: Props) {
+    const {user} = useAppSelector(state => state.account);
+
     return (
         <AppBar position='static' sx={{mb: 4}}>
             <Toolbar sx={{display: 'flex', justifyContent:'space-between', alignItems: 'center'}}>
@@ -63,20 +67,23 @@ export default function Header({darkMode, handleThemeChange}: Props) {
 
                     </IconButton>
 
-                    <List sx={{display: 'flex'}}>
-                        {rightLinks.map(({title, path}) => 
-                            <ListItem 
-                                component={NavLink}
-                                to={path}
-                                key={path}
-                                sx={navStyles}
-                            >
-                                {title.toUpperCase()}
-                            </ListItem>
-                        )}
-                    </List>
+                    {user ? (
+                        <SignInMenu />
+                    ) : (
+                        <List sx={{display: 'flex'}}>
+                            {rightLinks.map(({title, path}) => 
+                                <ListItem 
+                                    component={NavLink}
+                                    to={path}
+                                    key={path}
+                                    sx={navStyles}
+                                >
+                                    {title.toUpperCase()}
+                                </ListItem>
+                            )}
+                        </List>
+                    )}
                 </Box>
-                
             </Toolbar>
         </AppBar>
     )
