@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Op } from 'sequelize';
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
@@ -16,9 +17,20 @@ export const register = async (req: Request, res: Response) => {
   } = req.body;
 
   try {
-    const hashedPassword = await bcrypt.hash(contrasena, 10);
+    // Verificar si el nombre_usuario ya está registrado
+    const existingUsername = await User.findOne({ where: { nombre_usuario } });
+    if (existingUsername) {
+      return res.status(400).json({ message: "El nombre de usuario ya está registrado" });
+    }
 
-    
+    // Verificar si el correo_electronico ya está registrado
+    const existingEmail = await User.findOne({ where: { correo_electronico } });
+    if (existingEmail) {
+      return res.status(400).json({ message: "El correo electrónico ya está registrado" });
+    }
+
+    // Si el nombre_usuario y el correo_electronico no están registrados, crear un nuevo usuario
+    const hashedPassword = await bcrypt.hash(contrasena, 10);
     const user = await User.create({
       nombre,
       primer_apellido,
@@ -27,12 +39,12 @@ export const register = async (req: Request, res: Response) => {
       correo_electronico,
       contrasena: hashedPassword,
       perfil_asignado,
-      imagen_firma, //: null, // Assuming null for now
+      imagen_firma,
     });
 
-    res.status(201).json({ message: "User created successfully", user });
+    res.status(201).json({ message: "Usuario creado exitosamente", user });
   } catch (error: any) {
-    // Aquí especificamos el tipo de 'error' como 'any'
+    // Manejar otros errores
     res.status(500).json({ error: error.message });
   }
 };
