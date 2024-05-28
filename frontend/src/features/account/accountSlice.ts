@@ -86,6 +86,7 @@ export const accountSlice = createSlice({
             state.user = null;
             localStorage.removeItem('user');
             router.navigate('/');
+            toast.success('Se ha cerrado sesion');
         },
         setUser: (state, action) => {
             state.user = action.payload;

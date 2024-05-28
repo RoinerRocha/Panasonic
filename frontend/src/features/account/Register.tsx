@@ -1,4 +1,4 @@
-import * as React from 'react';
+import {useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
@@ -14,13 +14,28 @@ import { Paper } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { FieldValues, useForm } from 'react-hook-form';
 import api from '../../app/api/api';
+import { toast } from 'react-toastify';
 
 export default function Register() {
   const navigate = useNavigate();
-  const [image, setImage] = React.useState<File | null>(null); // Estado para almacenar la imagen seleccionada
-  const { register, handleSubmit, formState: { isSubmitting, errors, isValid, isSubmitSuccessful } } = useForm({
+
+  const [image, setImage] = useState<File | null>(null); // Estado para almacenar la imagen seleccionada 
+
+  const { register, handleSubmit, setError, formState: { isSubmitting, errors, isValid, isSubmitSuccessful } } = useForm({
     mode: 'onTouched'
   });
+
+  function handleApiErrors(errors: any) {
+    if (Array.isArray(errors)) { // Verifica si errors es un array
+      errors.forEach((error: string) => { // Ahora puedes llamar al método forEach()
+        if(error.includes('nombre_usuario')) {
+          setError('nombre_usuario', { message: error });
+        } else if (error.includes('correo_electronico')) {
+          setError('correo_electronico', { message: error });
+        }
+      });
+    }
+  }
   
 
   const onSubmit = async (data: FieldValues) => {
@@ -28,8 +43,10 @@ export default function Register() {
       // Llama a la API para registrar al usuario
       const response = await api.Account.register(data);
       console.log(response.data); // Manejar la respuesta del backend según sea necesario
-      navigate('/login'); // Redirigir al usuario a la página de inicio de sesión después de registrarse
+      navigate('/login');
+      toast.success('puedes iniciar sesion'); // Redirigir al usuario a la página de inicio de sesión después de registrarse
     } catch (error) {
+      handleApiErrors(errors);
       console.error('Error:', error);
       // Manejar errores de registro aquí
     }

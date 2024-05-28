@@ -38,6 +38,7 @@ export default function Login() {
     if (isAuthenticated) {
       // Si el usuario está autenticado, redirige a la página '/'
       navigate('/');
+      toast.success('Bienvenido');
     } else if (isSubmitSuccessful) {
       // Si el formulario ha sido enviado pero el usuario no está autenticado, muestra la alerta de credenciales incorrectas
       toast.error('Credenciales incorrectas');
