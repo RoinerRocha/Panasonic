@@ -67,7 +67,15 @@ const TestErrors = {
 const Account = {
   login: (values: any) => requests.post('login', values), 
   register: (values: any) => requests.post('register', values), 
-  currentUser: () => requests.get('currentUser'), 
+  currentUser: () => requests.get('currentUser'),
+  getAllUser: () => requests.get('getUser'),
+}
+
+const Zones = {
+  saveZona: (values: any) => requests.post('saveZona', values),
+  getZona: () => requests.get('getZona'),
+  updateZona: (values: any) => requests.put('updateZona', values),
+  deleteZona: (values: any) => requests.delete('deleteZona')
 }
 
 const api = {
