@@ -54,10 +54,14 @@ export const fetchCurrentUser = createAsyncThunk<User>(
         thunkAPI.dispatch(setUser(storedUser));
         thunkAPI.dispatch(setAuthenticated(true));
         try {
-            const user = await api.Account.currentUser(); // Llama a la API para obtener el usuario actual
+            const user = await api.Account.currentUser();
+            const token = user.token;
+            const decodedToken: any = jwtDecode(token);
+            const username = decodedToken.nombre_usuario; // Llama a la API para obtener el usuario actual
             localStorage.setItem('user', JSON.stringify(user)); // Guarda el usuario en el almacenamiento local
             //  thunkAPI.dispatch(setAuthenticated(true)); // Establece isAuthenticated en true
-            return user; // Devuelve el usuario obtenido
+            console.log('nombre de usuario:', username);
+            return { ...user, nombre_usuario: username }; // Devuelve el usuario obtenido
         } catch (error: any) { // Maneja los errores
             return thunkAPI.rejectWithValue({error: error.data}); // Rechaza la promesa con el valor del error
         }
@@ -82,6 +86,7 @@ export const accountSlice = createSlice({
             state.user = null;
             localStorage.removeItem('user');
             router.navigate('/');
+            toast.success('Se ha cerrado sesion');
         },
         setUser: (state, action) => {
             state.user = action.payload;

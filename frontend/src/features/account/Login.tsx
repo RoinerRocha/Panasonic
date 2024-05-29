@@ -14,7 +14,7 @@ import { FieldValues, useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../store/configureStore';
 import { signInUser } from './accountSlice';
 
-const Login: React.FC = () => {
+export default function Login() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector(state => state.account.isAuthenticated);
@@ -38,6 +38,7 @@ const Login: React.FC = () => {
     if (isAuthenticated) {
       // Si el usuario está autenticado, redirige a la página '/'
       navigate('/');
+      toast.success('Bienvenido');
     } else if (isSubmitSuccessful) {
       // Si el formulario ha sido enviado pero el usuario no está autenticado, muestra la alerta de credenciales incorrectas
       toast.error('Credenciales incorrectas');
@@ -79,7 +80,7 @@ const Login: React.FC = () => {
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
         >
-          Sign In
+          Iniciar Sesion
         </LoadingButton>
         <Grid container>
           <Grid item xs>
@@ -98,6 +99,6 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+
 
 
