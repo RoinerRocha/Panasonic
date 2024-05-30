@@ -7,7 +7,8 @@ import SignInMenu from "./SigninMenu";
 const midLinks = [
     {title: 'Activos', path: '/'},
     {title: 'historial', path: '/register'},
-    {title: 'Formularios', path: '/'},
+    {title: 'Zonas', path: '/zonas'},
+
 ]
 const rightLinks = [
     {title: 'Inicio', path: '/login'},

@@ -74,8 +74,9 @@ const Account = {
 const Zones = {
   saveZona: (values: any) => requests.post('saveZona', values),
   getZona: () => requests.get('/getZona'),
-  updateZona: (values: any) => requests.put('updateZona', values),
+  updateZona: (zonaId : any, zonaData:any) => requests.put(`/zonas/${zonaId}`, zonaData),
   deleteZona: (id: number) => requests.delete(`deleteZona/${id}`)
+  
 }
 
 const api = {
