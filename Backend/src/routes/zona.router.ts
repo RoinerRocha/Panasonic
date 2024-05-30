@@ -15,7 +15,7 @@ router.get("/", (req, res) => {
 router.post("/saveZona", saveZona);
 router.get("/getZona", getZona);
 
-router.put("/updateZona/:id", updateZona);
+router.put("/zonas/:id", updateZona);
 
 router.delete("/deleteZona/:id", deleteZona);
 export default router;
