@@ -78,7 +78,7 @@ export default function Register() {
         <LockOutlinedIcon />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Registro
+        Registrar usuario
       </Typography>
       <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
         <TextField

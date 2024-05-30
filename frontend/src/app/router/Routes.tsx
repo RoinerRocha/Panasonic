@@ -6,6 +6,7 @@ import Register from "../../features/account/Register";
 import AboutPage from "../../features/about/About";
 import Zone from "../../features/Zone/Zone";
 import NewZone from "../../features/Zone/NewZone";
+import Users from "../../features/account/Users";
 
 export const router = createBrowserRouter([
     {
@@ -15,6 +16,7 @@ export const router = createBrowserRouter([
             {path: '', element: <HomePage />},
             {path: 'login', element: <Login />},
             {path: 'register', element: <Register />},
+            {path: 'users', element: <Users />},
             {path: 'zonas', element: <Zone />},
             {path: 'nuevaZona', element: <NewZone />},
             {path: 'about', element: <AboutPage />}

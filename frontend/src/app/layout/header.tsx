@@ -11,8 +11,7 @@ const midLinks = [
 
 ]
 const rightLinks = [
-    {title: 'Inicio', path: '/login'},
-    {title: 'Registro', path: '/register'},
+    {title: 'Iniciar sesión', path: '/login'},
 ]
 
 const navStyles = {

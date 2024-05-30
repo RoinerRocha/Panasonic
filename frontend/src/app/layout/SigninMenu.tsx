@@ -2,6 +2,7 @@ import { Button, Menu, Fade, MenuItem } from "@mui/material";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../store/configureStore";
 import { signOut } from "../../features/account/accountSlice";
+import { Link } from 'react-router-dom';
 
 export default function SignInMenu() {
   const dispatch = useAppDispatch();
@@ -32,6 +33,7 @@ export default function SignInMenu() {
       >
         <MenuItem onClick={handleClose}>Perfil</MenuItem>
         <MenuItem onClick={handleClose}>Editar</MenuItem>
+        <MenuItem component={Link} to="/users" onClick={handleClose}>Registro</MenuItem>
         <MenuItem onClick={() =>dispatch(signOut())}>Cerrar sesión</MenuItem>
       </Menu>
     </div>
