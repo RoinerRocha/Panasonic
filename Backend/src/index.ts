@@ -10,6 +10,7 @@ import routerLogin from "./routes/login.router";
 import routerBuggy from "./routes/buggy.router";
 import { exceptionMiddleware } from "./Middleware/exceptionMiddleware";
 import routerZona from "./routes/zona.router";
+import routerAccountingAccounts from "./routes/accountingAccounts.router"
 
 dotenv.config();
 
@@ -45,6 +46,7 @@ sequelize
 app.use("/api", routerLogin);
 app.use("/api/buggy", routerBuggy);
 app.use("/api", routerZona);
+app.use("/api", routerAccountingAccounts);
 
 // import cors from "cors";
 // import bodyParser from "body-parser";
