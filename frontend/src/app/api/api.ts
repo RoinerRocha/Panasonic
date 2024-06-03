@@ -79,10 +79,19 @@ const Zones = {
   
 }
 
+const AcountingAccounts = {
+  saveAccountingAccount: (values: any) => requests.post('saveAccountingAccount', values),
+  getAccountingAccounts: () => requests.get('/getAccountingAccounts'),
+  updateAccountingAccount: (AccountingAccountId : any, AccountingAccountData:any) => requests.put(`/accountingAccounts/${AccountingAccountId}`, AccountingAccountData),
+  deleteAccountingAccount: (id: number) => requests.delete(`deleteAccountingAccount/${id}`)
+  
+}
+
 const api = {
   Account,
   TestErrors,
-  Zones
+  Zones,
+  AcountingAccounts
 }
 
 export default api;

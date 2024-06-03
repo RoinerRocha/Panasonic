@@ -8,6 +8,8 @@ const midLinks = [
     {title: 'Activos', path: '/'},
     {title: 'historial', path: '/register'},
     {title: 'Zonas', path: '/zonas'},
+    {title: 'Usuarios', path: '/users'},
+    {title: 'Cuentas Contables', path: '/NewAccount'},
 
 ]
 const rightLinks = [
