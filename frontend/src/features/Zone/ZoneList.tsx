@@ -10,9 +10,10 @@ import { toast } from 'react-toastify';
 
 interface Props {
     zonas: Zona[];
+    setZonas: React.Dispatch<React.SetStateAction<Zona[]>>;
 }
 
-export default function ZoneList({ zonas }: Props) {
+export default function ZoneList({ zonas, setZonas }: Props) {
     const [selectedZona, setSelectedZona] = useState<Zona | null>(null);
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [openAddDialog, setOpenAddDialog] = useState(false);
@@ -26,9 +27,7 @@ export default function ZoneList({ zonas }: Props) {
         try {
             await api.Zones.deleteZona(id);
             toast.success('Zona Eliminada');
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000); // 1000ms = 1 segundo
+            setZonas(zonas.filter(zona => zona.id !== id));
         } catch (error) {
             console.error("Error al eliminar la zona:", error);
         }
@@ -51,9 +50,8 @@ export default function ZoneList({ zonas }: Props) {
             await api.Zones.updateZona(zonaId, updatedZona);
             toast.success('Zona Actualizada');
             setOpenEditDialog(false);
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000); // 1000ms = 1 segundo
+            const updatedZonas = zonas.map(zona => zona.id === zonaId ? selectedZona : zona);
+            setZonas(updatedZonas);
           } catch (error) {
             console.error("Error al actualizar la zona:", error);
           }
