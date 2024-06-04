@@ -16,12 +16,13 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { accountingAccount } from "../../app/models/accountingAccount";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "../../app/api/api";
 import { toast } from "react-toastify";
 
 interface Props {
   accountingAccounts: accountingAccount[];
+  setAccountingAccounts: React.Dispatch<React.SetStateAction<accountingAccount[]>>;
 }
 const handleKeyDown = (
   event: React.KeyboardEvent<HTMLDivElement>,
@@ -51,7 +52,7 @@ const handleChange = (
   }
 };
 
-export default function AccountingAccountList({ accountingAccounts }: Props) {
+export default function AccountingAccountList({ accountingAccounts, setAccountingAccounts }: Props) {
   const [selectedAccountingAccount, setSelectedAccountingAccount] =
     useState<accountingAccount | null>(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -66,13 +67,26 @@ export default function AccountingAccountList({ accountingAccounts }: Props) {
     depreciacion: 0,
     nombreCuentadDepreciacion: "",
   });
+
+  useEffect(() => {
+    // Cargar las zonas al montar el componente
+    loadAccoutingAccount();
+  }, []);
+
+  const loadAccoutingAccount = async () => {
+    try {
+        const response = await api.AcountingAccounts.getAccountingAccounts();
+        setAccountingAccounts(response.data);
+    } catch (error) {
+        console.error("Error al cargar las zonas:", error);
+    }
+  };
+
   const handleDelete = async (id: number) => {
     try {
       await api.AcountingAccounts.deleteAccountingAccount(id);
       toast.success("Cuenta Contable Eliminada");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000); // 1000ms = 1 segundo
+      loadAccoutingAccount();
     } catch (error) {
       console.error("Error al eliminar la Cuenta Contable:", error);
     }
@@ -101,9 +115,7 @@ export default function AccountingAccountList({ accountingAccounts }: Props) {
         );
         toast.success("Cuenta Contable Actualizada");
         setOpenEditDialog(false);
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000); // 1000ms = 1 segundo
+        loadAccoutingAccount();
       } catch (error) {
         console.error("Error al actualizar la Cuenta Contable:", error);
       }
@@ -116,9 +128,7 @@ export default function AccountingAccountList({ accountingAccounts }: Props) {
       );
       toast.success("Cuenta Contable Agregada");
       setOpenAddDialog(false);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000); // 1000ms = 1 segundo
+      loadAccoutingAccount();
     } catch (error) {
       console.error("Error al agregar la Cuenta Contable:", error);
     }
@@ -188,7 +198,7 @@ export default function AccountingAccountList({ accountingAccounts }: Props) {
             <Button
               variant="contained"
               color="info"
-              sx={{ margin: "0 8px" }}
+              sx={{ margin: "5px" }}
               onClick={() => handleEdit(accountingAccount)}
             >
               Editar
@@ -196,7 +206,7 @@ export default function AccountingAccountList({ accountingAccounts }: Props) {
             <Button
               variant="contained"
               color="error"
-              sx={{ margin: "0 8px" }}
+              sx={{ margin: "5px" }}
               onClick={() => handleDelete(accountingAccount.id)}
             >
               Eliminar

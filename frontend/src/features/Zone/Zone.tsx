@@ -19,6 +19,11 @@ export default function Zone() {
         })
         .catch(error => console.error("Error al obtener zonas:", error));
     }, []);
+    
+    if (!Array.isArray(zonas)) {
+        console.error("El valor de 'zonas' no es un array:", zonas);
+        return <div>Error: No se pudieron cargar las zonas.</div>;
+    }
 
     return (
         <>

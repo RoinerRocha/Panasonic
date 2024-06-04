@@ -4,16 +4,15 @@ import { accountingAccount } from "../../app/models/accountingAccount"
 import AccountingAccountList from "./AccountingAccountList";
 
 export default function Zone() {
-    const [accountingAccounts, setZonas] = useState<accountingAccount[]>([]);
+    const [accountingAccounts, setAccountingAccounts] = useState<accountingAccount[]>([]);
     
-
     useEffect(() => {
         api.AcountingAccounts.getAccountingAccounts()
         .then(response => {
             // Verificamos si la respuesta es un objeto con la propiedad 'data' que es un array
             if (response && Array.isArray(response.data)) {
                 // Asignamos el array de Cuentas Contables a setCuentasContables
-                setZonas(response.data);
+                setAccountingAccounts(response.data);
             } else {
                 console.error("La respuesta de la API no es un array de Cuentas Contables:", response);
             }
@@ -28,7 +27,7 @@ export default function Zone() {
 
     return (
         <>
-           <AccountingAccountList  accountingAccounts={accountingAccounts}/> 
+           <AccountingAccountList  accountingAccounts={accountingAccounts} setAccountingAccounts={setAccountingAccounts} /> 
         </>
     )
 }

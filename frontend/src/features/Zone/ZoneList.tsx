@@ -1,12 +1,8 @@
-import { 
-    Grid, TableContainer, Paper, Table, TableCell, TableHead, TableRow, TableBody, 
-    Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle 
-} from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Grid, TableContainer, Paper, Table, TableCell, TableHead, TableRow, TableBody, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { Zona } from "../../app/models/zone";
-import { useState } from "react";
 import api from "../../app/api/api";
 import { toast } from 'react-toastify';
-
 
 interface Props {
     zonas: Zona[];
@@ -23,11 +19,26 @@ export default function ZoneList({ zonas, setZonas }: Props) {
         responsableAreaNom_user: ''
     });
 
+    useEffect(() => {
+        // Cargar las zonas al montar el componente
+        loadZonas();
+    }, []);
+
+    const loadZonas = async () => {
+        try {
+            const response = await api.Zones.getZona();
+            setZonas(response.data);
+        } catch (error) {
+            console.error("Error al cargar las zonas:", error);
+        }
+    };
+
     const handleDelete = async (id: number) => {
         try {
             await api.Zones.deleteZona(id);
             toast.success('Zona Eliminada');
-            setZonas(zonas.filter(zona => zona.id !== id));
+            // Recargar las zonas después de eliminar
+            loadZonas();
         } catch (error) {
             console.error("Error al eliminar la zona:", error);
         }
@@ -40,31 +51,31 @@ export default function ZoneList({ zonas, setZonas }: Props) {
 
     const handleUpdate = async () => {
         if (selectedZona) {
-          try {
-            const zonaId = selectedZona.id;
-            const updatedZona = {
-              numeroZona: selectedZona.numeroZona,
-              nombreZona: selectedZona.nombreZona,
-              responsableAreaNom_user: selectedZona.responsableAreaNom_user,
-            };
-            await api.Zones.updateZona(zonaId, updatedZona);
-            toast.success('Zona Actualizada');
-            setOpenEditDialog(false);
-            const updatedZonas = zonas.map(zona => zona.id === zonaId ? selectedZona : zona);
-            setZonas(updatedZonas);
-          } catch (error) {
-            console.error("Error al actualizar la zona:", error);
-          }
+            try {
+                const zonaId = selectedZona.id;
+                const updatedZona = {
+                    numeroZona: selectedZona.numeroZona,
+                    nombreZona: selectedZona.nombreZona,
+                    responsableAreaNom_user: selectedZona.responsableAreaNom_user,
+                };
+                await api.Zones.updateZona(zonaId, updatedZona);
+                toast.success('Zona Actualizada');
+                setOpenEditDialog(false);
+                // Recargar las zonas después de actualizar
+                loadZonas();
+            } catch (error) {
+                console.error("Error al actualizar la zona:", error);
+            }
         }
-      };
+    };
+
     const handleAdd = async () => {
         try {
             const addedZona = await api.Zones.saveZona(newZona);
             toast.success('Zona Agregada');
             setOpenAddDialog(false);
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000); // 1000ms = 1 segundo
+            // Recargar las zonas después de agregar
+            loadZonas();
         } catch (error) {
             console.error("Error al agregar la zona:", error);
         }
@@ -86,8 +97,8 @@ export default function ZoneList({ zonas, setZonas }: Props) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {zonas.map((zona) => (
-                            <TableRow key={zona.id}>
+                        {zonas.map((zona, index) => (
+                            <TableRow key={`${zona.id}-${index}`}>
                                 <TableCell align="center">{zona.numeroZona}</TableCell>
                                 <TableCell align="center">{zona.nombreZona}</TableCell>
                                 <TableCell align="center">{zona.responsableAreaNom_user}</TableCell>
