@@ -87,11 +87,21 @@ const AcountingAccounts = {
   
 }
 
+const statusAssets = {
+  saveStatusAsset: (values: any) => requests.post('saveStatusAsset', values),
+  getStatusAssets: () => requests.get('/getStatusAssets'),
+  updateStatusAsset: (StatusAssetId : any, StatusAssetData:any) => requests.put
+  (`/statusAssets/${StatusAssetId}`, StatusAssetData),
+  deleteStatusAsset: (id: number) => requests.delete(`deleteStatusAsset/${id}`)
+
+}
+
 const api = {
   Account,
   TestErrors,
   Zones,
-  AcountingAccounts
+  AcountingAccounts,
+  statusAssets
 }
 
 export default api;

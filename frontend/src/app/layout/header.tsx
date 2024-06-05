@@ -73,6 +73,7 @@ const midLinks = [
     {title: 'Zonas', path: '/zonas'},
     {title: 'Usuarios', path: '/users'},
     {title: 'Cuentas Contables', path: '/NewAccount'},
+    {title: 'Estados De Activos', path: '/NewStatusAssets'},
 
 ]
 

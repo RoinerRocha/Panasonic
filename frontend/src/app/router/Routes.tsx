@@ -8,6 +8,8 @@ import Zone from "../../features/Zone/Zone";
 import NewZone from "../../features/Zone/NewZone";
 import Users from "../../features/account/Users";
 import AccountingAccounts from "../../features/accountingAccounts/NewAccount";
+import StatusAssets from "../../features/statusAssets/NewStatusAsset";
+
 
 export const router = createBrowserRouter([
     {
@@ -21,7 +23,8 @@ export const router = createBrowserRouter([
             {path: 'zonas', element: <Zone />},
             {path: 'nuevaZona', element: <NewZone />},
             {path: 'about', element: <AboutPage />},
-            {path: 'NewAccount', element: <AccountingAccounts />}
+            {path: 'NewAccount', element: <AccountingAccounts />},
+            {path: 'NewStatusAssets', element: <StatusAssets />}
         ]
     }
 ])
