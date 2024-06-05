@@ -11,6 +11,7 @@ import routerBuggy from "./routes/buggy.router";
 import { exceptionMiddleware } from "./Middleware/exceptionMiddleware";
 import routerZona from "./routes/zona.router";
 import routerAccountingAccounts from "./routes/accountingAccounts.router"
+import routerStatus from "./routes/statusAssets.router"
 
 dotenv.config();
 
@@ -47,6 +48,7 @@ app.use("/api", routerLogin);
 app.use("/api/buggy", routerBuggy);
 app.use("/api", routerZona);
 app.use("/api", routerAccountingAccounts);
+app.use("/api", routerStatus);
 
 // import cors from "cors";
 // import bodyParser from "body-parser";
