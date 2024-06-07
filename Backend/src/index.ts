@@ -16,6 +16,7 @@ import routerProfile from "./routes/profile.router"
 import routerServiceLife from "./routes/serviceLife.router"
 import routerNewAsset from "./routes/newAsset.router"
 import routerEditAsset from "./routes/editAsset.route"
+import routerAssetRetirement from "./routes/assetRetirement.route"
 
 dotenv.config();
 
@@ -57,6 +58,8 @@ app.use("/api", routerProfile);
 app.use("/api", routerServiceLife);
 app.use("/api", routerNewAsset);
 app.use("/api", routerEditAsset);
+app.use("/api", routerAssetRetirement);
+
 
 // import cors from "cors";
 // import bodyParser from "body-parser";
