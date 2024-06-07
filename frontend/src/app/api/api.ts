@@ -93,6 +93,14 @@ const statusAssets = {
   updateStatusAsset: (StatusAssetId : any, StatusAssetData:any) => requests.put
   (`/statusAssets/${StatusAssetId}`, StatusAssetData),
   deleteStatusAsset: (id: number) => requests.delete(`deleteStatusAsset/${id}`)
+}
+
+const profiles = {
+  saveProfile: (values: any) => requests.post('saveProfile', values),
+  getProfiles: () => requests.get('/getProfiles'),
+  updateProfile: (profileId : any, ProfileData:any) => requests.put
+  (`/profiles/${profileId}`, ProfileData),
+  deleteProfile: (id: number) => requests.delete(`deleteProfile/${id}`)
 
 }
 
@@ -101,7 +109,8 @@ const api = {
   TestErrors,
   Zones,
   AcountingAccounts,
-  statusAssets
+  statusAssets,
+  profiles
 }
 
 export default api;

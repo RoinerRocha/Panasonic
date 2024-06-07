@@ -9,22 +9,23 @@ import NewZone from "../../features/Zone/NewZone";
 import Users from "../../features/account/Users";
 import AccountingAccounts from "../../features/accountingAccounts/NewAccount";
 import StatusAssets from "../../features/statusAssets/NewStatusAsset";
-
+import Profiles from "../../features/profiles/NewProfile";
 
 export const router = createBrowserRouter([
-    {
-        path: '/',
-        element: <App/>,
-        children: [
-            {path: '', element: <HomePage />},
-            {path: 'login', element: <Login />},
-            {path: 'register', element: <Register />},
-            {path: 'users', element: <Users />},
-            {path: 'zonas', element: <Zone />},
-            {path: 'nuevaZona', element: <NewZone />},
-            {path: 'about', element: <AboutPage />},
-            {path: 'NewAccount', element: <AccountingAccounts />},
-            {path: 'NewStatusAssets', element: <StatusAssets />}
-        ]
-    }
-])
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      { path: "", element: <HomePage /> },
+      { path: "login", element: <Login /> },
+      { path: "register", element: <Register /> },
+      { path: "users", element: <Users /> },
+      { path: "zonas", element: <Zone /> },
+      { path: "nuevaZona", element: <NewZone /> },
+      { path: "about", element: <AboutPage /> },
+      { path: "NewAccount", element: <AccountingAccounts /> },
+      { path: "NewStatusAssets", element: <StatusAssets /> },
+      { path: "NewProfiles", element: <Profiles /> },
+    ],
+  },
+]);

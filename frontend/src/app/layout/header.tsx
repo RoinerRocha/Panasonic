@@ -68,12 +68,20 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 const midLinks = [
-    {title: 'Activos', path: '/'},
-    {title: 'historial', path: '/register'},
-    {title: 'Zonas', path: '/zonas'},
-    {title: 'Usuarios', path: '/users'},
-    {title: 'Cuentas Contables', path: '/NewAccount'},
-    {title: 'Estados De Activos', path: '/NewStatusAssets'},
+    {title: '- Dashboard', path: '/'},
+    {title: '- Historial', path: '/'},
+    {title: '- Zonas', path: '/zonas'},
+    {title: '- Usuarios', path: '/users'},
+    {title: '- Cuentas Contables', path: '/NewAccount'},
+    {title: '- Estados De Activos', path: '/NewStatusAssets'},
+    {title: '- Perfiles', path: '/NewProfiles'},
+    {title: '- Ingresos de Activos', path: '/'},
+    {title: '- Ventas de Activos', path: '/'},
+    {title: '- Reportes', path: '/'},
+    {title: '- Depreciación Mensual', path: '/'},
+    {title: '- Lista Depreciación de Activos (Mh)', path: '/'},
+    
+    {title: 'Ayuda', path: '/'},//Manual
 
 ]
 
