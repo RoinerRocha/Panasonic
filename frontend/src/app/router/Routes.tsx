@@ -9,22 +9,54 @@ import NewZone from "../../features/Zone/NewZone";
 import Users from "../../features/account/Users";
 import AccountingAccounts from "../../features/accountingAccounts/NewAccount";
 import StatusAssets from "../../features/statusAssets/NewStatusAsset";
-
+import Profiles from "../../features/profiles/NewProfile";
+import ServiceLife from "../../features/ServiceLife/NewServiceLife";//lista de Mh
 
 export const router = createBrowserRouter([
-    {
-        path: '/',
-        element: <App/>,
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      { path: "", element: <HomePage /> },
+      { path: "login", element: <Login /> },
+      { path: "register", element: <Register /> },
+      { path: "users", element: <Users /> },
+      { path: "zonas", element: <Zone /> },
+      { path: "nuevaZona", element: <NewZone /> },
+      { path: "about", element: <AboutPage /> },
+      { path: "NewAccount", element: <AccountingAccounts /> },
+      { path: "NewStatusAssets", element: <StatusAssets /> },
+      { path: "NewProfiles", element: <Profiles /> },
+      { path: "NewServiceLife", element: <ServiceLife /> },
+    ],
+  },
+]);
+/**
+ * export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "",
+        element: <Navigate to="login" replace />,
+      },
+      { path: "/", element: <Login /> },
+      { path: "register", element: <Register /> },
+      {
+        path: "app",
+        element: <HomePage />,
         children: [
-            {path: '', element: <HomePage />},
-            {path: 'login', element: <Login />},
-            {path: 'register', element: <Register />},
-            {path: 'users', element: <Users />},
-            {path: 'zonas', element: <Zone />},
-            {path: 'nuevaZona', element: <NewZone />},
-            {path: 'about', element: <AboutPage />},
-            {path: 'NewAccount', element: <AccountingAccounts />},
-            {path: 'NewStatusAssets', element: <StatusAssets />}
-        ]
-    }
-])
+          { path: "users", element: <Users /> },
+          { path: "zonas", element: <Zone /> },
+          { path: "nuevaZona", element: <NewZone /> },
+          { path: "about", element: <AboutPage /> },
+          { path: "NewAccount", element: <AccountingAccounts /> },
+          { path: "NewStatusAssets", element: <StatusAssets /> },
+          { path: "NewProfiles", element: <Profiles /> },
+        ],
+      },
+    ],
+  },
+]);
+ */
