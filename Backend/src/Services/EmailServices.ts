@@ -1,32 +1,39 @@
 import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
 
-export const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com', // Cambia esto con el host de tu proveedor de correo
-  port: 465,
-  secure: true, // true para port 465, false para otros puertos
+dotenv.config();
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER, // Tu correo electrónico
-    pass: process.env.EMAIL_PASSWORD, // Tu contraseña de correo
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   },
 });
 
-transporter.verify().then(() => {
-    console.log('ready for send emails');
+const sendPasswordResetLink = async (name: string, email: string, link: string) => {
+  try {
+    await transporter.sendMail({
+      from: "security@myapp.com",
+      to: email,
+      subject: "Password Reset",
+      html: `<p>Hi ${name},<br>You are receiving this email because you requested to reset your password. Please click on <a href="${link}">this link</a> to update your account.</p>`,
+    });
+  } catch (error) {
+    console.error("Error sending password reset link:", error);
+    throw new Error("Could not send email");
+  }
+};
+
+transporter.verify((error: Error | null, success: boolean) => {
+  if (error) {
+    console.error('Transport configuration error:', error);
+  } else {
+    console.log('Successful transport configuration:', success);
+  }
 });
 
-// export const sendEmail = async (to: string, subject: string, text: string, html: string) => {
-//   const mailOptions = {
-//     from: "yo",
-//     to,
-//     subject,
-//     text,
-//     html,
-//   };
+export default {
+  sendPasswordResetLink,
+};
 
-//   try {
-//     await transporter.sendMail(mailOptions);
-//     console.log('Email sent successfully');
-//   } catch (error) {
-//     console.error('Error sending email:', error);
-//   }
-// };
