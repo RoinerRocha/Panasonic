@@ -7,6 +7,7 @@ import {
   deleteUser,
   updateUser,
   getCurrentUser,
+  sendEmailToUserByEmail,
 } from "../controller/login.controller";
 
 const router = Router();
@@ -26,4 +27,8 @@ router.get("/getUserById/:id", getUserById);
 router.put("/updateUser/:id", updateUser);
 router.delete("/deleteUser/:id", deleteUser);
 
+router.post("/sendEmails", sendEmailToUserByEmail);
+
 export default router;
+
+// sxgh rkqy eyvq plsf

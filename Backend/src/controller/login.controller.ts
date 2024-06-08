@@ -3,6 +3,7 @@ import { Op } from 'sequelize';
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
+import {transporter} from "../Services/EmailServices"
 
 export const register = async (req: Request, res: Response) => {
   const {
@@ -202,5 +203,22 @@ export const updateUser = async (req: Request, res: Response) => {
     }
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const sendEmailToUserByEmail = async (req: Request, res: Response) => {
+  const { email } = req.body;
+
+  try {
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Forgot Password",
+      text: "Prueba",
+    });
+
+    res.status(200).json({ message: "Email enviado exitosamente" });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
 };
