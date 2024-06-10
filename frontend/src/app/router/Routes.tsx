@@ -10,7 +10,8 @@ import Users from "../../features/account/Users";
 import AccountingAccounts from "../../features/accountingAccounts/NewAccount";
 import StatusAssets from "../../features/statusAssets/NewStatusAsset";
 import Profiles from "../../features/profiles/NewProfile";
-import ServiceLife from "../../features/ServiceLife/NewServiceLife";//lista de Mh
+import ServiceLife from "../../features/ServiceLife/NewServiceLife"; //lista de Mh
+import NewAsset from "../../features/NewAsset/newAsset";
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +29,7 @@ export const router = createBrowserRouter([
       { path: "NewStatusAssets", element: <StatusAssets /> },
       { path: "NewProfiles", element: <Profiles /> },
       { path: "NewServiceLife", element: <ServiceLife /> },
+      { path: "NewAsset", element: <NewAsset /> },
     ],
   },
 ]);

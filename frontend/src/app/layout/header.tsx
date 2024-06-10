@@ -84,7 +84,7 @@ const midLinks = [
   { title: "- Cuentas Contables", path: "/NewAccount" },
   { title: "- Estados De Activos", path: "/NewStatusAssets" },
   { title: "- Perfiles", path: "/NewProfiles" },
-  { title: "- Ingresos de Activos", path: "/" },
+  { title: "- Ingresos de Activos", path: "/NewAsset" },
   { title: "- Ventas de Activos", path: "/" },
   { title: "- Reportes", path: "/" },
   { title: "- Depreciación Mensual", path: "/" },
