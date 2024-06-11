@@ -7,21 +7,42 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { Paper } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FieldValues, useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../store/configureStore';
 import { signInUser } from './accountSlice';
+import { Email } from '../../app/models/email';
+import api from "../../app/api/api";
+
 
 export default function Login() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const {user} = useAppSelector(state => state.account);
   const isAuthenticated = useAppSelector(state => state.account.isAuthenticated);
+
+  const [openAddDialog, setOpenAddDialog] = React.useState(false);
+  const [newEmail, setNewEmail] = React.useState<Partial<Email>>({
+    name: user?.nombre_usuario,
+    email: '',
+    link: 'google.com'
+  });
 
   const { register, handleSubmit, formState: { isSubmitting, errors, isValid, isSubmitSuccessful } } = useForm({
     mode: 'onTouched'
   });
+
+  const handdleAddEmail = async () => {
+    try {
+      const addEmail = await api.Account.sendEmail(newEmail);
+      toast.success('Email Enviado');
+      setOpenAddDialog(false);
+    } catch (error) {
+      console.error("Error al agregar la zona:", error);
+    }
+  }
 
   const onSubmit = async (data: FieldValues) => {
     try {
@@ -84,9 +105,9 @@ export default function Login() {
         </LoadingButton>
         <Grid container>
           <Grid item xs>
-            <Link to="/">
-              Recupera tu contraseña?
-            </Link>
+            <Button variant="contained" color="primary" onClick={() => setOpenAddDialog(true)}>
+                Recuperar Contraseña
+            </Button>
           </Grid>
           <Grid item>
             <Link to="/register">
@@ -95,6 +116,22 @@ export default function Login() {
           </Grid>
         </Grid>
       </Box>
+      <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
+        <DialogTitle>Enviar Email de Recuperacion</DialogTitle>
+          <DialogContent>
+            <TextField
+                label="Email de recuperacion"
+                value={newEmail.email}
+                onChange={(e) => setNewEmail({ ...newEmail, email: e.target.value })}
+                fullWidth
+                margin="dense"
+            />
+          </DialogContent>
+          <DialogActions>
+              <Button onClick={() => setOpenAddDialog(false)}>Cancelar</Button>
+              <Button onClick={handdleAddEmail}>Enviar</Button>
+          </DialogActions>
+      </Dialog>
     </Container>
   );
 };

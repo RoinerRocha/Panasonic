@@ -72,6 +72,7 @@ const Account = {
   register: (values: any) => requests.post("register", values),
   currentUser: () => requests.get("currentUser"),
   getAllUser: () => requests.get("getUser"),
+  sendEmail: (values: any) => requests.post("sendEmails", values),
 };
 
 const Zones = {

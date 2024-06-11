@@ -19,8 +19,6 @@ import { toast } from 'react-toastify';
 export default function Register() {
   const navigate = useNavigate();
 
-  const [image, setImage] = useState<File | null>(null); // Estado para almacenar la imagen seleccionada 
-
   const { register, handleSubmit, setError, formState: { isSubmitting, errors, isValid, isSubmitSuccessful } } = useForm({
     mode: 'onTouched'
   });
@@ -49,13 +47,6 @@ export default function Register() {
       handleApiErrors(errors);
       console.error('Error:', error);
       // Manejar errores de registro aquí
-    }
-  };
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      setImage(files[0]);
     }
   };
 
@@ -139,22 +130,6 @@ export default function Register() {
           error={!!errors.perfil_asignado}
           helperText={errors?.perfil_asignado?.message as string}
         />
-        <Button
-            component="label"
-            role={undefined}
-            variant="contained"
-            tabIndex={-1}
-            startIcon={<CloudUploadIcon />}
-          >
-            Imgen de firma
-            <VisuallyHiddenInput type="file" onChange={handleImageChange} />
-        </Button>
-        {image && (
-          <Box mt={2}>
-            <Typography variant="body1">Vista previa de la imagen:</Typography>
-            <img src={URL.createObjectURL(image)} alt="Preview" style={{ maxWidth: '100%', maxHeight: 200, marginTop: 8 }} />
-          </Box>
-        )}
         <LoadingButton
           loading={isSubmitting}
           disabled={!isValid}

@@ -148,7 +148,7 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
               <MenuIcon />
             </IconButton>
             <Typography variant="h4" component={NavLink} to="/" sx={navStyles}>
-              Panasonic
+              Panasonic-Sistema de activos fijos
             </Typography>
             <Switch checked={darkMode} onChange={handleThemeChange} />
           </Box>
