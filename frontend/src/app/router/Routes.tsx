@@ -12,6 +12,7 @@ import StatusAssets from "../../features/statusAssets/NewStatusAsset";
 import Profiles from "../../features/profiles/NewProfile";
 import ServiceLife from "../../features/ServiceLife/NewServiceLife"; //lista de Mh
 import NewAsset from "../../features/NewAsset/newAsset";
+import ResetPassword from "../../features/account/ResetPassword";
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
       { path: "NewProfiles", element: <Profiles /> },
       { path: "NewServiceLife", element: <ServiceLife /> },
       { path: "NewAsset", element: <NewAsset /> },
+      { path: "ResetPassword", element: <ResetPassword />}
     ],
   },
 ]);
