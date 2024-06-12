@@ -11,13 +11,13 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendPasswordResetLink = async (name: string, email: string, link: string) => {
+const sendPasswordResetLink = async ( email: string, link: string) => {
   try {
     await transporter.sendMail({
       from: "security@myapp.com",
       to: email,
       subject: "Password Reset",
-      html: `<p>Hi ${name},<br>You are receiving this email because you requested to reset your password. Please click on <a href="${link}">this link</a> to update your account.</p>`,
+      html: `<p>Hi <br>You are receiving this email because you requested to reset your password. Please click on <a href="${link}">this link</a> to update your account.</p>`,
     });
   } catch (error) {
     console.error("Error sending password reset link:", error);

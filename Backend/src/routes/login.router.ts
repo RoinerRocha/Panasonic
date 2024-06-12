@@ -8,6 +8,7 @@ import {
   updateUser,
   getCurrentUser,
   sendEmailToUserByEmail,
+  updatePasswordByEmail
 } from "../controller/login.controller";
 
 const router = Router();
@@ -28,6 +29,7 @@ router.put("/updateUser/:id", updateUser);
 router.delete("/deleteUser/:id", deleteUser);
 
 router.post("/sendEmails", sendEmailToUserByEmail);
+router.post("/updatePasswordByEmail", updatePasswordByEmail);
 
 export default router;
 

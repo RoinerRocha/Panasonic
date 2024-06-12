@@ -207,13 +207,37 @@ export const updateUser = async (req: Request, res: Response) => {
 };
 
 export const sendEmailToUserByEmail = async (req: Request, res: Response) => {
-  const { name, email, link } = req.body;
+  const { email, link } = req.body;
 
   try {
-    await EmailService.sendPasswordResetLink(name, email, link);
+    await EmailService.sendPasswordResetLink( email, link);
     res.status(200).json({ message: "Email sent successfully" });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const updatePasswordByEmail = async (req: Request, res: Response) => {
+  const { email, Password } = req.body;
+
+  try {
+    // Buscar al usuario por su email
+    const user = await User.findOne({ where: { correo_electronico: email } });
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    // Hashear la nueva contraseña
+    const hashedPassword = await bcrypt.hash(Password, 10);
+
+    // Actualizar la contraseña del usuario
+    user.contrasena = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: "Contraseña actualizada exitosamente" });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
 };
 
