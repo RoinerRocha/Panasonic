@@ -67,7 +67,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, nombre_usuario: user.nombre_usuario },
+      { id: user.id, nombre_usuario: user.nombre_usuario, perfil_asignado: user.perfil_asignado },
       process.env.JWT_SECRET as string,
       {
         expiresIn: "1h",
@@ -110,7 +110,7 @@ export const getCurrentUser = async (req: Request, res: Response) => {
 
     // Crear un nuevo token con la misma información del usuario
     const userToken = jwt.sign(
-      { id: user.id, nombre_usuario: user.nombre_usuario },
+      { id: user.id, nombre_usuario: user.nombre_usuario, perfil_asignado: user.perfil_asignado },
       process.env.JWT_SECRET as string,
       { expiresIn: "1h" }
     );
