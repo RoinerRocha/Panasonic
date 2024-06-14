@@ -207,10 +207,13 @@ export const updateUser = async (req: Request, res: Response) => {
 };
 
 export const sendEmailToUserByEmail = async (req: Request, res: Response) => {
-  const { email, link } = req.body;
+  const { email } = req.body;
 
   try {
-    await EmailService.sendPasswordResetLink( email, link);
+    const token = jwt.sign({ email }, process.env.JWT_SECRET as string, { expiresIn: '1m' });
+    const link = `http://localhost:3000/ResetPassword?token=${token}`;
+
+    await EmailService.sendPasswordResetLink(email, link);
     res.status(200).json({ message: "Email sent successfully" });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -218,9 +221,11 @@ export const sendEmailToUserByEmail = async (req: Request, res: Response) => {
 };
 
 export const updatePasswordByEmail = async (req: Request, res: Response) => {
-  const { email, Password } = req.body;
+  const { email, password, token } = req.body;
 
   try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET as string) as any;
+
     // Buscar al usuario por su email
     const user = await User.findOne({ where: { correo_electronico: email } });
 
@@ -229,7 +234,7 @@ export const updatePasswordByEmail = async (req: Request, res: Response) => {
     }
 
     // Hashear la nueva contraseña
-    const hashedPassword = await bcrypt.hash(Password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Actualizar la contraseña del usuario
     user.contrasena = hashedPassword;
@@ -237,7 +242,13 @@ export const updatePasswordByEmail = async (req: Request, res: Response) => {
 
     res.status(200).json({ message: "Contraseña actualizada exitosamente" });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    if (error.name === 'TokenExpiredError') {
+      res.status(400).json({ message: "El token ha expirado" });
+    } else if (error.name === 'JsonWebTokenError') {
+      res.status(400).json({ message: "Token inválido" });
+    } else {
+      res.status(500).json({ error: error.message });
+    }
   }
 };
 
