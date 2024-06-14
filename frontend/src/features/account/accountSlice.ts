@@ -28,12 +28,13 @@ export const signInUser = createAsyncThunk<User, FieldValues>(
             const token = user.token;
             const decodedToken: any = jwtDecode(token);
             const username = decodedToken.nombre_usuario;
+            const profile = decodedToken.perfil_asignado;
 
             localStorage.setItem('user', JSON.stringify(user)); // Guarda el usuario en el almacenamiento local
             thunkAPI.dispatch(setAuthenticated(true)); // Establece isAuthenticated en true
             console.log('User logged in:', user);
             console.log('nombre de usuario:', username);
-            return { ...user, nombre_usuario: username }; // Devuelve el usuario obtenido
+            return { ...user, nombre_usuario: username, perfil_asignado: profile }; // Devuelve el usuario obtenido
         } catch (error: any) { // Maneja los errores
             // Si las credenciales son incorrectas, maneja el error y rechaza la promesa con un mensaje de error
             if (error.response.status === 401 || error.response.status === 404) {
@@ -58,10 +59,11 @@ export const fetchCurrentUser = createAsyncThunk<User>(
             const token = user.token;
             const decodedToken: any = jwtDecode(token);
             const username = decodedToken.nombre_usuario; // Llama a la API para obtener el usuario actual
+            const profile = decodedToken.perfil_asignado;
             localStorage.setItem('user', JSON.stringify(user)); // Guarda el usuario en el almacenamiento local
             //  thunkAPI.dispatch(setAuthenticated(true)); // Establece isAuthenticated en true
             console.log('nombre de usuario:', username);
-            return { ...user, nombre_usuario: username }; // Devuelve el usuario obtenido
+            return { ...user, nombre_usuario: username, perfil_asignado: profile }; // Devuelve el usuario obtenido
         } catch (error: any) { // Maneja los errores
             return thunkAPI.rejectWithValue({error: error.data}); // Rechaza la promesa con el valor del error
         }

@@ -90,8 +90,7 @@ const midLinks = [
   { title: "- Reportes", path: "/" },
   { title: "- Depreciación Mensual", path: "/" },
   { title: "- Lista Depreciación de Activos (Mh)", path: "/NewServiceLife" },
-
-  { title: "Ayuda", path: "/" }, //Manual
+  { title: "Ayuda", path: "/" }, // Manual
 ];
 
 const rightLinks = [{ title: "Iniciar sesión", path: "/login" }];
@@ -128,6 +127,16 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
     setOpen(false);
   };
 
+  // Filtrar enlaces en función del perfil del usuario
+  const filteredMidLinks = user?.perfil_asignado === "Maestro"
+    ? midLinks
+    : midLinks.filter(link =>
+        link.title === "- Ingreso de Activos" || 
+        link.title === "- Ventas de Activos" ||
+        link.title === "- Reportes" ||
+        link.title === "- Lista de Activos"
+      );
+
   return (
     <Box>
       <AppBar position="static" sx={{ mb: 4 }} open={open}>
@@ -145,6 +154,7 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
               onClick={handleDrawerOpen}
               edge="start"
               sx={{ mr: 2, ...(open && { display: "none" }) }}
+              disabled={!user}
             >
               <MenuIcon />
             </IconButton>
@@ -209,7 +219,7 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
         </DrawerHeader>
         <Divider />
         <List>
-          {midLinks.map(({ title, path }) => (
+          {filteredMidLinks.map(({ title, path }) => (
             <ListItem key={path} disablePadding>
               <ListItemButton component={NavLink} to={path} sx={navStyles}>
                 <ListItemIcon>
