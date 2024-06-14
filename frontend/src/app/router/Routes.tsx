@@ -13,6 +13,15 @@ import Profiles from "../../features/profiles/NewProfile";
 import ServiceLife from "../../features/ServiceLife/NewServiceLife"; //lista de Mh
 import NewAsset from "../../features/NewAsset/newAsset";
 import ResetPassword from "../../features/account/ResetPassword";
+import RegisterAssets from "../../features/NewAsset/registerAsset";
+import { SetStateAction } from "react";
+import { accountingAccount } from "../models/accountingAccount";
+import { newAssetModels } from "../models/newAssetModels";
+import { serviceLifeModels } from "../models/serviceLifeModels";
+import { statusAssets } from "../models/statusAsset";
+import { Zona } from "../models/zone";
+//import RegisterAssetsContainer from "../../components/RegisterAssetsContainer"; // Importar el contenedor
+
 
 export const router = createBrowserRouter([
   {
@@ -31,7 +40,19 @@ export const router = createBrowserRouter([
       { path: "NewProfiles", element: <Profiles /> },
       { path: "NewServiceLife", element: <ServiceLife /> },
       { path: "NewAsset", element: <NewAsset /> },
-      { path: "ResetPassword", element: <ResetPassword />}
+      { path: "ResetPassword", element: <ResetPassword />},
+      //{ path: "RegisterAsset", element: <RegisterAssetsContainer  />}
+      { path: "RegisterAsset", element: <RegisterAssets newAssets={[]} setNewAssets={function (value: SetStateAction<newAssetModels[]>): void {
+        throw new Error("Function not implemented.");
+      } } zonas={[]} setZonas={function (value: SetStateAction<Zona[]>): void {
+        throw new Error("Function not implemented.");
+      } } accountingAccounts={[]} setAccountingAccounts={function (value: SetStateAction<accountingAccount[]>): void {
+        throw new Error("Function not implemented.");
+      } } serviceLifes={[]} setServiceLifes={function (value: SetStateAction<serviceLifeModels[]>): void {
+        throw new Error("Function not implemented.");
+      } } statusAssets={[]} setStatusAssets={function (value: SetStateAction<statusAssets[]>): void {
+        throw new Error("Function not implemented.");
+      } } />}
     ],
   },
 ]);

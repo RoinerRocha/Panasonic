@@ -1,8 +1,8 @@
 export interface newAssetModels {
   id: number;
-  Zona: string;
-  Tipo: string;
-  Estado: string;
+  Zona: number;
+  Tipo: number;
+  Estado: number;
   Descripcion: string;
   NumeroPlaca: number;
   ValorCompra: string;

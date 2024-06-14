@@ -15,11 +15,17 @@ import {
   DialogContentText,
   DialogTitle,
   TablePagination,
+  Card,
+  Select,
+  FormControl,
+  FormHelperText,
+  InputLabel,
 } from "@mui/material";
 import { newAssetModels } from "../../app/models/newAssetModels";
 import { useState, useEffect } from "react";
 import api from "../../app/api/api";
 import { toast } from "react-toastify";
+//import registerAsset from "./registerAsset";
 //import { format } from 'date-fns';
 //import Component from "./Component";
 interface Props {
@@ -37,9 +43,9 @@ export default function NewAssetsList({
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [newAsset, setNewAsset] = useState<Partial<newAssetModels>>({
     // id: 0,
-    Zona: "",
-    Tipo: "",
-    Estado: "",
+    Zona: 0,
+    Tipo: 0,
+    Estado: 0,
     Descripcion: "",
     NumeroPlaca: 0,
     ValorCompra: "",
@@ -236,7 +242,11 @@ export default function NewAssetsList({
               >
                 Usuario
               </TableCell>
-              <TableCell>Acciones</TableCell>
+              <TableCell  align="center"
+                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                >
+                  Acciones
+                  </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -287,7 +297,8 @@ export default function NewAssetsList({
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
         <DialogTitle>Agregar Activo</DialogTitle>
         <DialogContent>
-          {/* Aquí va el formulario de agregar un nuevo activo */}
+          {/* Aquí va el formulario de agregar un nuevo activo/ registerAsset */}
+          
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handleAdd()}>Agregar</Button>
