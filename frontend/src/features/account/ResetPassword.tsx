@@ -1,13 +1,10 @@
 import * as React from 'react';
 import { Avatar, Box, Button, Container, Paper, TextField, Typography } from "@mui/material";
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { LoadingButton } from "@mui/lab";
-import { Link, useNavigate } from 'react-router-dom';
-import { resetPassword } from "../../app/models/resetPassword";
 import { toast } from 'react-toastify';
-import { Controller,  useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import api from "../../app/api/api";
-
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function ResetPassword() {
     const { handleSubmit, control, formState: { errors, isValid } } = useForm({
@@ -15,15 +12,28 @@ export default function ResetPassword() {
     });
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const token = queryParams.get('token');
 
     const handdleNewPassword = async (data: any) => {
+        if (!token) {
+            toast.error('Token no encontrado');
+            return;
+        }
+
         try {
-            const passwordReset = await api.Account.newPasword(data);
-            toast.success('contraseña restablecida');
+            const passwordReset = await api.Account.newPasword({ ...data, token });
+            toast.success('Contraseña restablecida');
             navigate('/login');  // Navegar a la página de login después de cambiar la contraseña
-        } catch (error) {
-            console.error("Error al restablecer contraseña:", error);
-            toast.error('Error al restablecer la contraseña');
+        } catch (error: any) {
+            if (error.response && error.response.data.message === "El token ha expirado") {
+                toast.error('El token ha expirado. Por favor, solicita un nuevo enlace de restablecimiento de contraseña.');
+            } else if (error.response && error.response.data.message === "Token inválido") {
+                toast.error('Token inválido. Por favor, solicita un nuevo enlace de restablecimiento de contraseña.');
+            } else {
+                toast.error('Error al restablecer la contraseña');
+            }
         }
     }
 
@@ -55,7 +65,7 @@ export default function ResetPassword() {
                     )}
                 />
                 <Controller
-                    name="Password"
+                    name="password"
                     control={control}
                     defaultValue=""
                     rules={{ required: 'Este campo es requerido' }}
@@ -67,8 +77,8 @@ export default function ResetPassword() {
                             fullWidth
                             margin="dense"
                             required
-                            error={!!errors.Password}
-                            helperText={errors.Password ? String(errors.Password.message) : ''}
+                            error={!!errors.password}
+                            helperText={errors.password ? String(errors.password.message) : ''}
                         />
                     )}
                 />

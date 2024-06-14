@@ -25,8 +25,7 @@ export default function Login() {
 
   const [openAddDialog, setOpenAddDialog] = React.useState(false);
   const [newEmail, setNewEmail] = React.useState<Partial<Email>>({
-    email: '',
-    link: 'http://localhost:3000/ResetPassword'
+    email: ''
   });
 
   const { register, handleSubmit, formState: { isSubmitting, errors, isValid, isSubmitSuccessful } } = useForm({
