@@ -20,7 +20,6 @@ import { newAssetModels } from "../models/newAssetModels";
 import { serviceLifeModels } from "../models/serviceLifeModels";
 import { statusAssets } from "../models/statusAsset";
 import { Zona } from "../models/zone";
-//import RegisterAssetsContainer from "../../components/RegisterAssetsContainer"; // Importar el contenedor
 
 
 export const router = createBrowserRouter([
@@ -41,18 +40,7 @@ export const router = createBrowserRouter([
       { path: "NewServiceLife", element: <ServiceLife /> },
       { path: "NewAsset", element: <NewAsset /> },
       { path: "ResetPassword", element: <ResetPassword />},
-      //{ path: "RegisterAsset", element: <RegisterAssetsContainer  />}
-      { path: "RegisterAsset", element: <RegisterAssets newAssets={[]} setNewAssets={function (value: SetStateAction<newAssetModels[]>): void {
-        throw new Error("Function not implemented.");
-      } } zonas={[]} setZonas={function (value: SetStateAction<Zona[]>): void {
-        throw new Error("Function not implemented.");
-      } } accountingAccounts={[]} setAccountingAccounts={function (value: SetStateAction<accountingAccount[]>): void {
-        throw new Error("Function not implemented.");
-      } } serviceLifes={[]} setServiceLifes={function (value: SetStateAction<serviceLifeModels[]>): void {
-        throw new Error("Function not implemented.");
-      } } statusAssets={[]} setStatusAssets={function (value: SetStateAction<statusAssets[]>): void {
-        throw new Error("Function not implemented.");
-      } } />}
+      { path: "RegisterAsset", element: <RegisterAssets/>}
     ],
   },
 ]);

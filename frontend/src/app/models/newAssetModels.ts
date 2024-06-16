@@ -1,11 +1,13 @@
 export interface newAssetModels {
   id: number;
+  CodigoCuenta: number
   Zona: number;
   Tipo: number;
   Estado: number;
   Descripcion: string;
   NumeroPlaca: number;
-  ValorCompra: string;
+  ValorCompraCRC: string;
+  ValorCompraUSD: string;
   Fotografia: Buffer | null;
   NombreProveedor: string;
   FechaCompra: Date;

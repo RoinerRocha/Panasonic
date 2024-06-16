@@ -43,12 +43,14 @@ export default function NewAssetsList({
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [newAsset, setNewAsset] = useState<Partial<newAssetModels>>({
     // id: 0,
+    CodigoCuenta: 0,
     Zona: 0,
     Tipo: 0,
     Estado: 0,
     Descripcion: "",
     NumeroPlaca: 0,
-    ValorCompra: "",
+    ValorCompraCRC: "",
+    ValorCompraUSD: "",
     Fotografia: null,
     NombreProveedor: "",
     FechaCompra: new Date(), // Convert to ISO string,
@@ -95,12 +97,14 @@ export default function NewAssetsList({
       try {
         const newAssetId = selectedNewAsset.id;
         const updatedNewAsset = {
+          CodigoCCuenta: selectedNewAsset.CodigoCuenta,
           Zona: selectedNewAsset.Zona,
           Tipo: selectedNewAsset.Tipo,
           Estado: selectedNewAsset.Estado,
           Descripcion: selectedNewAsset.Descripcion,
           NumeroPlaca: selectedNewAsset.NumeroPlaca,
-          ValorCompra: selectedNewAsset.ValorCompra,
+          ValorCompraCRC: selectedNewAsset.ValorCompraCRC,
+          ValorCompraUSD: selectedNewAsset.ValorCompraUSD,
           Fotografia: selectedNewAsset.Fotografia,
           NombreProveedor: selectedNewAsset.NombreProveedor,
           FechaCompra: selectedNewAsset.FechaCompra,
@@ -150,6 +154,12 @@ export default function NewAssetsList({
                 align="center"
                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
               >
+                Codigo Cuenta
+              </TableCell>
+              <TableCell
+                align="center"
+                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+              >
                 Zona
               </TableCell>
               <TableCell
@@ -180,7 +190,13 @@ export default function NewAssetsList({
                 align="center"
                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
               >
-                Valor Compra
+                Valor Compra CRC
+              </TableCell>
+              <TableCell
+                align="center"
+                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+              >
+                Valor Compra USD
               </TableCell>
               <TableCell
                 align="center"
@@ -242,22 +258,25 @@ export default function NewAssetsList({
               >
                 Usuario
               </TableCell>
-              <TableCell  align="center"
+              <TableCell
+                align="center"
                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-                >
-                  Acciones
-                  </TableCell>
+              >
+                Acciones
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {paginatedProfiles.map((newAsset) => (
               <TableRow key={newAsset.id}>
+                <TableCell>{newAsset.CodigoCuenta}</TableCell>
                 <TableCell>{newAsset.Zona}</TableCell>
                 <TableCell>{newAsset.Tipo}</TableCell>
                 <TableCell>{newAsset.Estado}</TableCell>
                 <TableCell>{newAsset.Descripcion}</TableCell>
                 <TableCell>{newAsset.NumeroPlaca}</TableCell>
-                <TableCell>{newAsset.ValorCompra}</TableCell>
+                <TableCell>{"₡"+newAsset.ValorCompraCRC}</TableCell>
+                <TableCell>{"$"+newAsset.ValorCompraUSD}</TableCell>
                 <TableCell>{newAsset.Fotografia}</TableCell>
                 <TableCell>{newAsset.NombreProveedor}</TableCell>
                 <TableCell>
@@ -298,7 +317,6 @@ export default function NewAssetsList({
         <DialogTitle>Agregar Activo</DialogTitle>
         <DialogContent>
           {/* Aquí va el formulario de agregar un nuevo activo/ registerAsset */}
-          
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handleAdd()}>Agregar</Button>
