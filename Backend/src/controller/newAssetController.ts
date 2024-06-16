@@ -4,12 +4,14 @@ import NewAssetModel from "../models/newAssetModel";
 // Método para guardar un nuevo activo
 export const saveNewAsset = async (req: Request, res: Response) => {
   const {
+    CodigoCuenta,
     Zona,
     Tipo,
     Estado,
     Descripcion,
     NumeroPlaca,
-    ValorCompra,
+    ValorCompraCRC,
+    ValorCompraUSD,
     Fotografia,
     NombreProveedor,
     FechaCompra,
@@ -24,12 +26,14 @@ export const saveNewAsset = async (req: Request, res: Response) => {
 
   try {
     const newAsset = await NewAssetModel.create({
+      CodigoCuenta,
       Zona,
       Tipo,
       Estado,
       Descripcion,
       NumeroPlaca,
-      ValorCompra,
+      ValorCompraCRC,
+      ValorCompraUSD,
       Fotografia,
       NombreProveedor,
       FechaCompra,
@@ -59,34 +63,36 @@ export const getNewAssets = async (req: Request, res: Response) => {
 };
 
 // Método para eliminar un nuevo activo por ID por si acaso
-// export const deleteNewAsset = async (req: Request, res: Response) => {
-//   const newAssetId = req.params.id;
+ export const deleteNewAsset = async (req: Request, res: Response) => {
+   const newAssetId = req.params.id;
 
-//   try {
-//     const deleted = await NewAssetModel.destroy({
-//       where: { id: newAssetId },
-//     });
+   try {
+     const deleted = await NewAssetModel.destroy({
+       where: { id: newAssetId },
+     });
 
-//     if (deleted === 0) {
-//       return res.status(404).json({ message: "New asset not found" });
-//     }
+     if (deleted === 0) {
+       return res.status(404).json({ message: "New asset not found" });
+     }
 
-//     res.status(200).json({ message: "Delete new asset successful" });
-//   } catch (error: any) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+     res.status(200).json({ message: "Delete new asset successful" });
+   } catch (error: any) {
+     res.status(500).json({ message: error.message });
+   }
+ };
 
 // Método para actualizar un nuevo activo
 export const updateNewAsset = async (req: Request, res: Response) => {
   const newAssetId = req.params.id;
   const {
+    CodigoCuenta,
     Zona,
     Tipo,
     Estado,
     Descripcion,
     NumeroPlaca,
-    ValorCompra,
+    ValorCompraCRC,
+    ValorCompraUSD,
     Fotografia,
     NombreProveedor,
     FechaCompra,
@@ -102,12 +108,14 @@ export const updateNewAsset = async (req: Request, res: Response) => {
   try {
     const [updated] = await NewAssetModel.update(
       {
+        CodigoCuenta,
         Zona,
         Tipo,
         Estado,
         Descripcion,
         NumeroPlaca,
-        ValorCompra,
+        ValorCompraCRC,
+        ValorCompraUSD,
         Fotografia,
         NombreProveedor,
         FechaCompra,

@@ -3,12 +3,14 @@ import sequelize from "../Services/Postgresql";
 
 class NewAssetModel extends Model {
     public id!: number;
+    public CodigoCuenta!: number;
     public Zona!: string;
     public Tipo!: string;
     public Estado!: string;
     public Descripcion!: string;
     public NumeroPlaca!: number;
-    public ValorCompra!: string;
+    public ValorCompraCRC!: string;
+    public ValorCompraUSD!: string;
     public Fotografia!: Buffer | null;
     public NombreProveedor!: string;
     public FechaCompra!: Date;
@@ -32,6 +34,10 @@ try {
           autoIncrement: true,
           primaryKey: true,
         },
+        CodigoCuenta: {
+          type: DataTypes.INTEGER,
+          allowNull:false,
+        },
         Zona: {
           type: DataTypes.STRING(100),
           allowNull: false,
@@ -53,7 +59,11 @@ try {
           type: DataTypes.INTEGER,
           allowNull: false,
         },
-        ValorCompra: {
+        ValorCompraCRC: {
+          type: DataTypes.STRING(100),
+          allowNull: false,
+        },
+        ValorCompraUSD: {
           type: DataTypes.STRING(100),
           allowNull: false,
         },
