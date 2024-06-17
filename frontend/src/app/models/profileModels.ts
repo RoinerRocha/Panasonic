@@ -1,6 +1,5 @@
-    export interface profileModels {
-        id: number;
-        nombre: string;
-        permisoAcceso: string;
-
+export interface profileModels {
+    id: number;
+    nombre: string;
+    permisoAcceso: string;
 }

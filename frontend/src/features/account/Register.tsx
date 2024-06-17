@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
@@ -10,23 +10,45 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
-import { Paper } from '@mui/material';
+import { Paper, FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { FieldValues, useForm } from 'react-hook-form';
 import api from '../../app/api/api';
 import { toast } from 'react-toastify';
+import { profileModels } from '../../app/models/profileModels'; // Importar el modelo de perfil
 
 export default function Register() {
   const navigate = useNavigate();
+  const [profiles, setProfiles] = useState<profileModels[]>([]);
 
-  const { register, handleSubmit, setError, formState: { isSubmitting, errors, isValid, isSubmitSuccessful } } = useForm({
+  const { register, handleSubmit, setError, formState: { isSubmitting, errors, isValid } } = useForm({
     mode: 'onTouched'
   });
 
+  useEffect(() => {
+    // Fetch profiles from the API
+    const fetchProfiles = async () => {
+      try {
+        const profilesData = await api.profiles.getProfiles();
+        console.log("Profiles data:", profilesData); // Verificar la respuesta de la API
+        if (profilesData && Array.isArray(profilesData.data)) {
+          setProfiles(profilesData.data);
+        } else {
+          console.error("Profiles data is not an array", profilesData);
+        }
+      } catch (error) {
+        console.error("Error fetching profiles:", error);
+        toast.error("Error al cargar perfiles");
+      }
+    };
+
+    fetchProfiles();
+  }, []);
+
   function handleApiErrors(errors: any) {
-    if (Array.isArray(errors)) { // Verifica si errors es un array
-      errors.forEach((error: string) => { // Ahora puedes llamar al método forEach()
-        if(error.includes('nombre_usuario')) {
+    if (Array.isArray(errors)) {
+      errors.forEach((error: string) => {
+        if (error.includes('nombre_usuario')) {
           setError('nombre_usuario', { message: error });
         } else if (error.includes('correo_electronico')) {
           setError('correo_electronico', { message: error });
@@ -34,10 +56,19 @@ export default function Register() {
       });
     }
   }
-  
 
   const onSubmit = async (data: FieldValues) => {
     try {
+      // Encuentra el nombre del perfil asignado usando el ID seleccionado
+      const selectedProfile = profiles.find(profile => profile.id === data.perfil_asignado);
+      if (selectedProfile) {
+        data.perfil_asignado = selectedProfile.nombre; // Reemplaza el ID con el nombre del perfil
+      } else {
+        console.error('Perfil no encontrado');
+        toast.error('Perfil no encontrado');
+        return;
+      }
+
       // Llama a la API para registrar al usuario
       const response = await api.Account.register(data);
       console.log(response.data); // Manejar la respuesta del backend según sea necesario
@@ -61,7 +92,6 @@ export default function Register() {
     whiteSpace: 'nowrap',
     width: 1,
   });
-
 
   return (
     <Container component={Paper} maxWidth="sm" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 4 }}>
@@ -105,7 +135,7 @@ export default function Register() {
           error={!!errors.nombre_usuario}
           helperText={errors?.nombre_usuario?.message as string}
         />
-         <TextField
+        <TextField
           margin="normal"
           fullWidth
           label="correo Electronico"
@@ -122,14 +152,22 @@ export default function Register() {
           error={!!errors.contrasena}
           helperText={errors?.contrasena?.message as string}
         />
-        <TextField
-          margin="normal"
-          fullWidth
-          label="perfil Asignado"
-          {...register('perfil_asignado', { required: 'Se necesita el perfil asignado' })}
-          error={!!errors.perfil_asignado}
-          helperText={errors?.perfil_asignado?.message as string}
-        />
+        <FormControl fullWidth margin="normal" error={!!errors.perfil_asignado}>
+          <InputLabel id="perfil-asignado-label">Perfil Asignado</InputLabel>
+          <Select
+            labelId="perfil-asignado-label"
+            id="perfil_asignado"
+            label="Perfil Asignado"
+            {...register('perfil_asignado', { required: 'Se necesita el perfil asignado' })}
+          >
+            {profiles.map((profile) => (
+              <MenuItem key={profile.id} value={profile.id}>
+                {profile.nombre}
+              </MenuItem>
+            ))}
+          </Select>
+          <FormHelperText>{errors?.perfil_asignado?.message as string}</FormHelperText>
+        </FormControl>
         <LoadingButton
           loading={isSubmitting}
           disabled={!isValid}
@@ -150,4 +188,4 @@ export default function Register() {
       </Box>
     </Container>
   );
-};
+}
