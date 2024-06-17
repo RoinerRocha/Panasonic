@@ -15,7 +15,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FieldValues, useForm } from 'react-hook-form';
 import api from '../../app/api/api';
 import { toast } from 'react-toastify';
-import { profileModels } from '../../app/models/profileModels'; // Importar el modelo de perfil
+import { profileModels } from '../../app/models/profileModels'; 
 
 export default function Register() {
   const navigate = useNavigate();
@@ -26,7 +26,6 @@ export default function Register() {
   });
 
   useEffect(() => {
-    // Fetch profiles from the API
     const fetchProfiles = async () => {
       try {
         const profilesData = await api.profiles.getProfiles();
