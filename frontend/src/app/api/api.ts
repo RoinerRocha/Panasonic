@@ -132,6 +132,14 @@ const newAsset = {
   deleteNewAsset: (id: number) => requests.delete(`deleteNewAsset/${id}`), //reviar x si da algun problema ya que en el back esta comentado esta funcion
 };
 
+const assetRetirement = {
+  saveAssetRetirement: (values: any) => requests.post(" saveAssetRetirement", values),
+  getAssetRetirements: () => requests.get("/getAssetRetirements"),
+  updateAssetRetirement: (assetRetirementId: any, assetRetirementData: any) =>
+    requests.put(`/assetRetirements/${assetRetirementId}`, assetRetirementData),
+  ddeleteAssetRetirement: (id: number) => requests.delete(`deleteAssetRetirement/${id}`),
+};
+
 const api = {
   Account,
   TestErrors,
@@ -141,6 +149,7 @@ const api = {
   profiles,
   serviceLife,
   newAsset,
+  assetRetirement,
 };
 
 export default api;

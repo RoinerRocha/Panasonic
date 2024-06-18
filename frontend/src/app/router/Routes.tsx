@@ -14,12 +14,7 @@ import ServiceLife from "../../features/ServiceLife/NewServiceLife"; //lista de 
 import NewAsset from "../../features/NewAsset/newAsset";
 import ResetPassword from "../../features/account/ResetPassword";
 import RegisterAssets from "../../features/NewAsset/registerAsset";
-import { SetStateAction } from "react";
-import { accountingAccount } from "../models/accountingAccount";
-import { newAssetModels } from "../models/newAssetModels";
-import { serviceLifeModels } from "../models/serviceLifeModels";
-import { statusAssets } from "../models/statusAsset";
-import { Zona } from "../models/zone";
+import AssetRetirement from "../../features/assetRetirement/assetRetirementFrm"; 
 
 
 export const router = createBrowserRouter([
@@ -40,7 +35,8 @@ export const router = createBrowserRouter([
       { path: "NewServiceLife", element: <ServiceLife /> },
       { path: "NewAsset", element: <NewAsset /> },
       { path: "ResetPassword", element: <ResetPassword />},
-      { path: "RegisterAsset", element: <RegisterAssets/>}
+      { path: "RegisterAsset", element: <RegisterAssets/>},
+      { path: "AssetRetirement", element: <AssetRetirement/>},//frm
     ],
   },
 ]);
