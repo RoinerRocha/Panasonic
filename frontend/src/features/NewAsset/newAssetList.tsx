@@ -25,24 +25,37 @@ import { newAssetModels } from "../../app/models/newAssetModels";
 import { useState, useEffect } from "react";
 import api from "../../app/api/api";
 import { toast } from "react-toastify";
-//import registerAsset from "./registerAsset";
-//import { format } from 'date-fns';
-//import Component from "./Component";
+import { Buffer } from 'buffer';
+
 interface Props {
   newAssets: newAssetModels[];
   setNewAssets: React.Dispatch<React.SetStateAction<newAssetModels[]>>;
 }
 
+function bufferToDataUrl(buffer: ArrayBuffer | Uint8Array, mimeType: string): string {
+  let uint8Array: Uint8Array;
+  if (buffer instanceof ArrayBuffer) {
+    uint8Array = new Uint8Array(buffer);
+  } else {
+    uint8Array = buffer;
+  }
+
+  const binaryString = Array.prototype.map.call(uint8Array, (x) => String.fromCharCode(x)).join('');
+  const base64String = btoa(binaryString);
+  return `data:${mimeType};base64,${base64String}`;
+}
+
+
+
 export default function NewAssetsList({
-  newAssets: newAssets,
-  setNewAssets: setNewAssets,
+  newAssets,
+  setNewAssets,
 }: Props) {
   const [selectedNewAsset, setSelectedNewAsset] =
     useState<newAssetModels | null>(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [newAsset, setNewAsset] = useState<Partial<newAssetModels>>({
-    // id: 0,
     CodigoCuenta: 0,
     Zona: 0,
     Tipo: 0,
@@ -53,7 +66,7 @@ export default function NewAssetsList({
     ValorCompraUSD: "",
     Fotografia: null,
     NombreProveedor: "",
-    FechaCompra: new Date(), // Convert to ISO string,
+    FechaCompra: new Date(),
     FacturaNum: 0,
     FacturaImagen: null,
     OrdenCompraNum: 0,
@@ -64,7 +77,6 @@ export default function NewAssetsList({
   });
 
   useEffect(() => {
-    // Cargar los Estado Activos al montar el componente
     loadNewAsset();
   }, []);
 
@@ -150,142 +162,83 @@ export default function NewAssetsList({
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Codigo Cuenta
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Zona
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Tipo
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Estado
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Descripción
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Numero Placa
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Valor Compra CRC
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Valor Compra USD
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Fotografia
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Nombre Proveedor
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Fecha Compra
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Numero Factura
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Factura Imagen
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Orden Compra Numero
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Orden Compra Imagen
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Numero Asiento
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Numero Boleta
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Usuario
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-              >
-                Acciones
-              </TableCell>
+              {/* Column Headers */}
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Codigo Cuenta</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Zona</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Tipo</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Estado</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Descripción</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Numero Placa</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Valor Compra CRC</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Valor Compra USD</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Fotografia</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Nombre Proveedor</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Fecha Compra</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Numero Factura</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Factura Imagen</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Orden Compra Numero</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Orden Compra Imagen</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Numero Asiento</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Numero Boleta</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Usuario</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Acciones</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {paginatedProfiles.map((newAsset) => (
               <TableRow key={newAsset.id}>
+                {/* Data Rows */}
                 <TableCell>{newAsset.CodigoCuenta}</TableCell>
                 <TableCell>{newAsset.Zona}</TableCell>
                 <TableCell>{newAsset.Tipo}</TableCell>
                 <TableCell>{newAsset.Estado}</TableCell>
                 <TableCell>{newAsset.Descripcion}</TableCell>
                 <TableCell>{newAsset.NumeroPlaca}</TableCell>
-                <TableCell>{"₡"+newAsset.ValorCompraCRC}</TableCell>
+                <TableCell>{'₡'+newAsset.ValorCompraCRC}</TableCell>
                 <TableCell>{"$"+newAsset.ValorCompraUSD}</TableCell>
-                <TableCell>{newAsset.Fotografia}</TableCell>
+                <TableCell>
+                {newAsset.Fotografia ? (
+                  
+                    <>
+                      {console.log('Tipo de Fotografia:', typeof newAsset.Fotografia)}
+                      <img 
+                        src={typeof newAsset.Fotografia === 'string' ? newAsset.Fotografia: bufferToDataUrl(newAsset.Fotografia,'image/png')} 
+                        alt="Fotografia" 
+                        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                      />
+                    </>
+                 ) : 'No Image'}
+                </TableCell>
                 <TableCell>{newAsset.NombreProveedor}</TableCell>
                 <TableCell>
                   {new Date(newAsset.FechaCompra).toLocaleDateString()}
                 </TableCell>
                 <TableCell>{newAsset.FacturaNum}</TableCell>
-                <TableCell>{newAsset.FacturaImagen}</TableCell>
+                <TableCell>
+                {newAsset.FacturaImagen ? (
+    <>
+      {console.log('Tipo de FacturaImagen:', typeof newAsset.FacturaImagen)}
+      <img 
+        src={typeof newAsset.FacturaImagen === 'string' ? newAsset.FacturaImagen : bufferToDataUrl(newAsset.FacturaImagen,'image/png')} 
+        alt="Factura Imagen" 
+        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+      />
+    </>
+  ) : 'No Image'}
+                </TableCell>
                 <TableCell>{newAsset.OrdenCompraNum}</TableCell>
-                <TableCell>{newAsset.OrdenCompraImagen}</TableCell>
+                <TableCell>
+                {newAsset.OrdenCompraImagen ? (
+    <>
+      {console.log('Tipo de OrdenCompraImagen:', typeof newAsset.OrdenCompraImagen)}
+      <img 
+        src={typeof newAsset.OrdenCompraImagen === 'string' ? newAsset.OrdenCompraImagen : bufferToDataUrl(newAsset.OrdenCompraImagen,'image/png')} 
+        alt="Orden Compra Imagen" 
+        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+      />
+    </>
+  ) : 'No Image'}
+                </TableCell>
                 <TableCell>{newAsset.NumeroAsiento}</TableCell>
                 <TableCell>{newAsset.NumeroBoleta}</TableCell>
                 <TableCell>{newAsset.Usuario}</TableCell>
@@ -316,7 +269,7 @@ export default function NewAssetsList({
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
         <DialogTitle>Agregar Activo</DialogTitle>
         <DialogContent>
-          {/* Aquí va el formulario de agregar un nuevo activo/ registerAsset */}
+          {/* Aquí va el formulario de agregar un nuevo activo */}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handleAdd()}>Agregar</Button>
