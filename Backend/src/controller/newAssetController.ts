@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import NewAssetModel from "../models/newAssetModel";
-
+import axios from 'axios';
 // Método para guardar un nuevo activo
 export const saveNewAsset = async (req: Request, res: Response) => {
   const {

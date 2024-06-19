@@ -11,13 +11,13 @@ class NewAssetModel extends Model {
     public NumeroPlaca!: number;
     public ValorCompraCRC!: string;
     public ValorCompraUSD!: string;
-    public Fotografia!: Buffer | null;
+    public Fotografia!: string | null;
     public NombreProveedor!: string;
     public FechaCompra!: Date;
     public FacturaNum!: number;
-    public FacturaImagen!: Buffer | null;
+    public FacturaImagen!: string | null;
     public OrdenCompraNum!: number;
-    public OrdenCompraImagen!: Buffer | null;
+    public OrdenCompraImagen!: string | null;
     public NumeroAsiento!: number;
     public NumeroBoleta!: string;
     public Usuario!: string;
@@ -68,7 +68,7 @@ try {
           allowNull: false,
         },
         Fotografia: {
-          type: DataTypes.BLOB,
+          type: DataTypes.STRING(250),
           allowNull: true,
         },
         NombreProveedor: {
@@ -84,7 +84,7 @@ try {
             allowNull: false,
         },
         FacturaImagen: {
-            type: DataTypes.BLOB,
+            type: DataTypes.STRING(250),
             allowNull: true,
         },
         OrdenCompraNum: {
@@ -92,7 +92,7 @@ try {
             allowNull: false,
         },
         OrdenCompraImagen: {
-            type: DataTypes.BLOB,
+            type: DataTypes.STRING(250),
             allowNull: true,
         },
         NumeroAsiento: {
