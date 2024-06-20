@@ -2,8 +2,9 @@ import { Router } from "express";
 import {
   saveNewAsset,
   getNewAssets,
-//   deleteNewAsset,
+ deleteNewAsset,
   updateNewAsset,
+  searchIdNewAsset,
 } from "../controller/newAssetController";
 
 const router = Router();
@@ -18,6 +19,9 @@ router.get("/getNewAssets", getNewAssets);
 
 router.put("/newAssets/:id", updateNewAsset);
 
-// router.delete("/deleteNewAsset/:id", deleteNewAsset);
+router.delete("/deleteNewAsset/:id", deleteNewAsset);
+router.get("/searchIdNewAsset/:id", searchIdNewAsset);
+
+
 
 export default router;

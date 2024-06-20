@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import NewAssetModel from "../models/newAssetModel";
-import axios from 'axios';
+//import axios from 'axios';
 // Método para guardar un nuevo activo
 export const saveNewAsset = async (req: Request, res: Response) => {
   const {
@@ -80,6 +80,23 @@ export const getNewAssets = async (req: Request, res: Response) => {
      res.status(500).json({ message: error.message });
    }
  };
+
+ // Método para buscar un nuevo activo por ID por si acaso
+ export const searchIdNewAsset = async (req: Request, res: Response) => {
+  const newAssetId = req.params.id;
+ 
+  try {
+    const newAsset = await NewAssetModel.findByPk(newAssetId);
+
+    if (!newAsset) {
+      return res.status(404).json({ message: "Search New asset not found..." });
+    }
+
+    res.status(200).json({ message: "Search ID new asset successful", data: newAsset });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}; 
 
 // Método para actualizar un nuevo activo
 export const updateNewAsset = async (req: Request, res: Response) => {
