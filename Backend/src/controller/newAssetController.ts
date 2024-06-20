@@ -1,6 +1,22 @@
 import { Request, Response } from "express";
 import NewAssetModel from "../models/newAssetModel";
 import axios from 'axios';
+import FormData from 'form-data';
+import fs from 'fs';
+
+const uploadImage = async (imagePath: string) => {
+  const form = new FormData();
+  form.append('image', fs.createReadStream(imagePath));
+
+  const response = await axios.post('http://localhost:4000/upload', form, {
+    headers: {
+      ...form.getHeaders(),
+    },
+  });
+
+  return response.data.filePath;
+};
+
 // Método para guardar un nuevo activo
 export const saveNewAsset = async (req: Request, res: Response) => {
   const {
@@ -25,6 +41,21 @@ export const saveNewAsset = async (req: Request, res: Response) => {
   } = req.body;
 
   try {
+
+    let fotografiaPath = null;
+    let facturaImagenPath = null;
+    let ordenCompraImagenPath = null;
+
+    if (Fotografia) {
+      fotografiaPath = await uploadImage(Fotografia);
+    }
+    if (FacturaImagen) {
+      facturaImagenPath = await uploadImage(FacturaImagen);
+    }
+    if (OrdenCompraImagen) {
+      ordenCompraImagenPath = await uploadImage(OrdenCompraImagen);
+    }
+
     const newAsset = await NewAssetModel.create({
       CodigoCuenta,
       Zona,
@@ -34,13 +65,13 @@ export const saveNewAsset = async (req: Request, res: Response) => {
       NumeroPlaca,
       ValorCompraCRC,
       ValorCompraUSD,
-      Fotografia,
+      Fotografia: fotografiaPath,
       NombreProveedor,
       FechaCompra,
       FacturaNum,
-      FacturaImagen,
+      FacturaImagen: facturaImagenPath,
       OrdenCompraNum,
-      OrdenCompraImagen,
+      OrdenCompraImagen: ordenCompraImagenPath,
       NumeroAsiento,
       NumeroBoleta,
       Usuario
