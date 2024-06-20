@@ -130,6 +130,7 @@ const newAsset = {
   updateNewAsset: (NewAssetId: any, NewAssetData: any) =>
     requests.put(`/newAssets/${NewAssetId}`, NewAssetData),
   deleteNewAsset: (id: number) => requests.delete(`deleteNewAsset/${id}`), //reviar x si da algun problema ya que en el back esta comentado esta funcion
+  getNewAssetById:(id: number) => requests.get(`/searchIdNewAsset/${id}`),
 };
 
 const assetRetirement = {
