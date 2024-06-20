@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { uploadImage } from '../controllers/uploadController';
+import { invoiceImage } from '../controllers/invoiceController';
 import multer from 'multer';
 import path from 'path';
 
@@ -8,15 +8,15 @@ const router = Router();
 // Configuración de multer
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'fotografias'); // Aquí se especifica la carpeta 'uploads'
+        cb(null, 'facturas'); // Aquí se especifica la carpeta 'uploads'
     },
     filename: (req, file, cb) => {
         cb(null, `${Date.now()}-${file.originalname}`);
     }
 });
 
-const upload = multer({ storage });
+const invoice = multer({ storage });
 
-router.post('/', upload.single('image'), uploadImage);
+router.post('/', invoice.single('image'), invoiceImage);
 
 export default router;
