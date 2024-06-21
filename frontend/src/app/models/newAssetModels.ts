@@ -8,13 +8,13 @@ export interface newAssetModels {
   NumeroPlaca: number;
   ValorCompraCRC: string;
   ValorCompraUSD: string;
-  Fotografia: Buffer | null;
+  Fotografia: File | null;
   NombreProveedor: string;
   FechaCompra: Date;
   FacturaNum: number;
-  FacturaImagen: Buffer | null;
+  FacturaImagen: File | null;
   OrdenCompraNum: number;
-  OrdenCompraImagen: Buffer | null;
+  OrdenCompraImagen: File | null;
   NumeroAsiento: number;
   NumeroBoleta: string;
   Usuario: string;
