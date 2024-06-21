@@ -5,6 +5,7 @@ import {
  deleteNewAsset,
   updateNewAsset,
   searchIdNewAsset,
+  upload,
 } from "../controller/newAssetController";
 
 const router = Router();
@@ -14,7 +15,9 @@ router.get("/", (req, res) => {
   res.send("Hello, new assets");
 });
 
-router.post("/saveNewAsset", saveNewAsset);
+router.post("/saveNewAsset", upload.fields([
+  { name: 'Fotografia', maxCount: 1 }
+]), saveNewAsset);
 router.get("/getNewAssets", getNewAssets);
 
 router.put("/newAssets/:id", updateNewAsset);

@@ -3,22 +3,43 @@ import NewAssetModel from "../models/newAssetModel";
 import axios from 'axios';
 import FormData from 'form-data';
 import fs from 'fs';
+import multer from 'multer';
+
+// Configuración de multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+
+const upload = multer({ storage });
+
+const uploadImage = async (filePath: string) => {
+  const form = new FormData();
+  form.append('image', fs.createReadStream(filePath));
+
+  const response = await axios.post('http://localhost:4000/upload', form, {
+    headers: {
+      ...form.getHeaders(),
+    },
+  });
+
+  return response.data.filePath;
+};
+
+// Define un tipo para req.files
+interface MulterRequest extends Request {
+  files: {
+    [fieldname: string]: Express.Multer.File[];
+  };
+}
+
 
 // Método para guardar un nuevo activo
 export const saveNewAsset = async (req: Request, res: Response) => {
-  const uploadImage = async (imagePath: string) => {
-    const form = new FormData();
-    form.append('image', fs.createReadStream(imagePath));
-  
-    const response = await axios.post('http://localhost:4000/upload', form, {
-      headers: {
-        ...form.getHeaders(),
-      },
-    });
-  
-    return response.data.filePath;
-  };
-
   const {
     CodigoCuenta,
     Zona,
@@ -41,11 +62,6 @@ export const saveNewAsset = async (req: Request, res: Response) => {
   } = req.body;
 
   try {
-    let fotografiaPath = null;
-
-    if (Fotografia) {
-      fotografiaPath = await uploadImage(Fotografia);
-    }
     const newAsset = await NewAssetModel.create({
       CodigoCuenta,
       Zona,
@@ -55,7 +71,7 @@ export const saveNewAsset = async (req: Request, res: Response) => {
       NumeroPlaca,
       ValorCompraCRC,
       ValorCompraUSD,
-      Fotografia: fotografiaPath,
+      Fotografia,
       NombreProveedor,
       FechaCompra,
       FacturaNum,
@@ -183,3 +199,5 @@ export const updateNewAsset = async (req: Request, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export { upload };
