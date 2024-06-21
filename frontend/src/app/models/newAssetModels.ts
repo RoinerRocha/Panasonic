@@ -1,6 +1,6 @@
 export interface newAssetModels {
   id: number;
-  CodigoCuenta: number
+  CodigoCuenta: number;
   Zona: number;
   Tipo: number;
   Estado: number;
@@ -19,3 +19,4 @@ export interface newAssetModels {
   NumeroBoleta: string;
   Usuario: string;
 }
+
