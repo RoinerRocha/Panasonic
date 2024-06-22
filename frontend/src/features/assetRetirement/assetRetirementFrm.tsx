@@ -14,6 +14,8 @@ import api from "../../app/api/api";
 import { newAssetModels } from "../../app/models/newAssetModels";
 import { SelectChangeEvent } from "@mui/material/Select";
 import ReactToPrint from "react-to-print";
+//ruta para obtener el usuario
+import { useAppDispatch, useAppSelector } from "../../store/configureStore";
 
 /*type Asset = {
   id: number;
@@ -34,7 +36,8 @@ export default function AssetRetirementFrm() {
   const [razonBaja, setRazonBaja] = useState<string>("");
   const [destinoFinal, setDestinoFinal] = useState<string>("");
   const [numeroBoleta, setNumeroBoleta] = useState<string>("");
-  const [usuario, setUsuario] = useState<string>("user123"); // Simulando usuario automático
+  const [usuario, setUsuario] = useState<string>(""); // Simulando usuario automático
+  const {user} = useAppSelector(state => state.account);// se obtiene al usuario que esta logueado
 
   // Referencia para el contenedor a imprimir
   const componentRef = useRef<HTMLDivElement>(null);
@@ -223,7 +226,7 @@ export default function AssetRetirementFrm() {
                 fullWidth
                 id="usuario"
                 name="usuario"
-                label="Usuario"
+                label={user?.nombre_usuario} // asi se obtiene el usuario logueado
                 value={usuario}
                 disabled
               />
