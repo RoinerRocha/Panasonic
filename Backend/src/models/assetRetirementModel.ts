@@ -60,7 +60,7 @@ try {
       }
     );
   } catch (error: any) {
-    console.log("error en model zonas: " + error.message);
+    console.log("error en model baja activos: " + error.message);
   }
   sequelize
     .sync()

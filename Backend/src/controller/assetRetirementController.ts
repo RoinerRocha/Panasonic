@@ -116,3 +116,25 @@ export const updateAssetRetirement = async (req: Request, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Método para obtener bajas de activos por el número de boleta
+export const getAssetRetirementByNumeroBoleta = async (req: Request, res: Response) => {
+  const { NumeroBoleta } = req.params;
+
+  try {
+    const assetRetirement = await AssetRetirementModel.findOne({
+      where: { NumeroBoleta },
+    });
+
+    if (assetRetirement) {
+      res.status(200).json({
+        message: "Asset retirement fetched successfully",
+        data: assetRetirement,
+      });
+    } else {
+      res.status(404).json({ message: "Asset retirement not found" });
+    }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};

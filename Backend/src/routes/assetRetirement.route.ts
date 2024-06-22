@@ -4,6 +4,7 @@ import {
    getAssetRetirements,
    deleteAssetRetirement,
    updateAssetRetirement,
+   getAssetRetirementByNumeroBoleta, 
 } from "../controller/assetRetirementController";
 
 const router = Router();
@@ -14,10 +15,12 @@ router.get("/", (req, res) => {
 });
 
 router.post("/saveAssetRetirement", saveAssetRetirement);
- router.get("/getAssetRetirements", getAssetRetirements);
+router.get("/getAssetRetirements", getAssetRetirements);
 
 router.put("/assetRetirements/:id", updateAssetRetirement);
 
- router.delete("/deleteAssetRetirement/:id", deleteAssetRetirement);
+router.delete("/deleteAssetRetirement/:id", deleteAssetRetirement);
+
+router.get("/assetRetirements/boleta/:NumeroBoleta", getAssetRetirementByNumeroBoleta);
 
 export default router;
