@@ -26,6 +26,7 @@ import { useState, useEffect } from "react";
 import api from "../../app/api/api";
 import { toast } from "react-toastify";
 import { Buffer } from 'buffer';
+import RegisterAsset from "./registerAsset";
 
 interface Props {
   newAssets: newAssetModels[];
@@ -270,6 +271,7 @@ export default function NewAssetsList({
         <DialogTitle>Agregar Activo</DialogTitle>
         <DialogContent>
           {/* Aquí va el formulario de agregar un nuevo activo */}
+          <RegisterAsset></RegisterAsset>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handleAdd()}>Agregar</Button>

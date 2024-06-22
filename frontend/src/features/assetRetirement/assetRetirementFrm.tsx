@@ -85,7 +85,7 @@ export default function AssetRetirementFrm() {
 
   const generarNumeroBoleta = () => {
     // Generar consecutivo automático (B1, B2, etc.)
-    const consecutivo = "B" + (Math.floor(Math.random() * 100) + 1); //hay que corregir esto
+    const consecutivo = "B" + (Math.floor(Math.random() * 100) + 1); //hay que corregir esto//crear metodo penel back
     setNumeroBoleta(consecutivo);
   };
 
