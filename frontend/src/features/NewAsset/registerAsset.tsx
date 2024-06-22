@@ -1,14 +1,5 @@
-import {
-  Grid,
-  Button,
-  TextField,
-  Card,
-  Select,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  MenuItem,
-  styled,
+import {Grid,Button,TextField,Card,Select,FormControl,FormHelperText,
+  InputLabel,MenuItem,styled,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
@@ -283,8 +274,8 @@ export default function RegisterAsset() {
               fullWidth
               type="number"
               id="valor-compra"
-              name="ValorCompra"
-              label="Valor de Compra CRC"
+              name="ValorCompraCRC"
+              label="Valor de Compra (CRC)"
               value={newAsset.ValorCompraCRC || ""}
               onChange={handleInputChange}
             />
@@ -294,25 +285,22 @@ export default function RegisterAsset() {
               fullWidth
               type="number"
               id="valor-compra"
-              name="ValorCompra"
-              label="Valor de Compra USD"
+              name="ValorCompraUSD"
+              label="Valor de Compra (USD)"
               value={newAsset.ValorCompraUSD || ""}
               onChange={handleInputChange}
             />
           </Grid>
           <Grid item xs={12}>
-            <VisuallyHiddenInput
-              accept="image/*"
-              id="fotografia"
-              name="Fotografia"
-              type="file"
-              onChange={handleFileInputChange}
-            />
-            <label htmlFor="fotografia">
-              <Button variant="contained" component="span">
-                Adjuntar Fotografía
-              </Button>
-            </label>
+            <Button variant="contained" component="label" fullWidth>
+              Subir Imagen de Factura
+              <VisuallyHiddenInput
+                type="file"
+                name="FacturaImagen"
+                onChange={handleFileInputChange}
+              />
+            </Button>
+            {newAsset.FacturaImagen && <FormHelperText>Archivo cargado: {newAsset.FacturaImagen.name}</FormHelperText>}
           </Grid>
           <Grid item xs={12}>
             <TextField
