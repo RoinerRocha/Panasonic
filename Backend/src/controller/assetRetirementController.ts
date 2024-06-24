@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import AssetRetirementModel from "../models/assetRetirementModel";
+import { Op } from "sequelize";
 
 // Método para guardar la baja de un activo
 export const saveAssetRetirement = async (req: Request, res: Response) => {
@@ -117,22 +118,25 @@ export const updateAssetRetirement = async (req: Request, res: Response) => {
   }
 };
 
-// Método para obtener bajas de activos por el número de boleta
+// Método para obtener bajas de activos por el número de boleta que empiecen con una letra específica
 export const getAssetRetirementByNumeroBoleta = async (req: Request, res: Response) => {
-  const { NumeroBoleta } = req.params;
-
+  const {letraNumBoleta} =  req.params;
   try {
-    const assetRetirement = await AssetRetirementModel.findOne({
-      where: { NumeroBoleta },
+    const assetRetirement = await AssetRetirementModel.findAll({
+      where: {
+        NumeroBoleta: {
+          [Op.like]: `${letraNumBoleta}%`,
+        },
+      },
     });
 
-    if (assetRetirement) {
+    if (assetRetirement.length > 0) {
       res.status(200).json({
-        message: "Asset retirement fetched successfully",
+        message: "Asset retirements fetched successfully",
         data: assetRetirement,
       });
     } else {
-      res.status(404).json({ message: "Asset retirement not found" });
+      res.status(404).json({ message: "Asset retirements not found" });
     }
   } catch (error: any) {
     res.status(500).json({ message: error.message });

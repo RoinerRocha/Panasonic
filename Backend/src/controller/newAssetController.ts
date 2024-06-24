@@ -4,6 +4,7 @@ import axios from 'axios';
 import FormData from 'form-data';
 import fs from 'fs';
 import multer from 'multer';
+import { Op } from "sequelize";
 
 // Configuración de multer
 const storage = multer.diskStorage({
@@ -201,3 +202,28 @@ export const updateNewAsset = async (req: Request, res: Response) => {
 };
 
 export { upload };
+
+// Método para obtener bajas de activos por el número de boleta que empiecen con una letra específica
+export const getAssetRetirementByNumeroBoleta = async (req: Request, res: Response) => {
+  const {NumeroBoleta} =  req.params;
+  try {
+    const assetRetirement = await NewAssetModel.findAll({
+      where: {
+        NumeroBoleta: {
+          [Op.like]: `${NumeroBoleta}%`,
+        },
+      },
+    });
+
+    if (assetRetirement.length > 0) {
+      res.status(200).json({
+        message: "Asset retirements fetched successfully",
+        data: assetRetirement,
+      });
+    } else {
+      res.status(404).json({ message: "Asset retirements not found"});
+    }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};

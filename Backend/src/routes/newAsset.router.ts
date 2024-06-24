@@ -6,6 +6,7 @@ import {
   updateNewAsset,
   searchIdNewAsset,
   upload,
+  getAssetRetirementByNumeroBoleta,
 } from "../controller/newAssetController";
 
 const router = Router();
@@ -25,6 +26,6 @@ router.put("/newAssets/:id", updateNewAsset);
 router.delete("/deleteNewAsset/:id", deleteNewAsset);
 router.get("/searchIdNewAsset/:id", searchIdNewAsset);
 
-
+router.get("/assetByNumBolet/boleta/:NumeroBoleta", getAssetRetirementByNumeroBoleta);
 
 export default router;
