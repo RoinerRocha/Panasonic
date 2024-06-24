@@ -55,7 +55,7 @@ export default function AssetRetirementFrm() {
     }
 
     fetchAssets();
-    generarNumeroBoleta();
+    generarNumeroBoleta("B");
   }, []);
 
   const handleSelectChange = async (event: SelectChangeEvent<string>) => {
@@ -85,13 +85,24 @@ export default function AssetRetirementFrm() {
       setFotografia(event.target.files[0]);
     }
   };
+   /**
+    * Meotodo para Generar consecutivo automático (B1, B2, etc.)
+   */
+    async function generarNumeroBoleta(letra: string): Promise<void> {
+    try {
+      const response = await api.newAsset.getAssetByNumBoleta(letra);
+      if (response && response.data && Array.isArray(response.data) && response.data.length >= 0) {
+        const consecutivo = letra + (response.data.length + 1);
+        setNumeroBoleta(consecutivo);
+      } else {
+        console.error("Invalid response from API");
 
-  const generarNumeroBoleta = () => {
-    // Generar consecutivo automático (B1, B2, etc.)
-    const consecutivo = "B" + (Math.floor(Math.random() * 100) + 1); //hay que corregir esto//crear metodo penel back
-    setNumeroBoleta(consecutivo);
-  };
+      }
+    } catch (error) {
+      console.error("Error generating boleta number:", error);
 
+    }
+  }
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Validaciones y envío de datos

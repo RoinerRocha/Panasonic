@@ -12,6 +12,10 @@ import { statusAssets } from "../../app/models/statusAsset"; // Estados
 import { SelectChangeEvent } from "@mui/material/Select";
 import { useNavigate } from "react-router-dom";
 import { FieldValues, useForm } from "react-hook-form";
+import AssetRetirementFrm from "../assetRetirement/assetRetirementFrm";
+
+import { useAppDispatch, useAppSelector } from "../../store/configureStore";//ruta para obtener el usuario
+
 
 export default function RegisterAsset() {
   const navigate = useNavigate();
@@ -44,6 +48,10 @@ export default function RegisterAsset() {
   const [serviceLives, setServiceLives] = useState<serviceLifeModels[]>([]);
   const [statuses, setStatuses] = useState<statusAssets[]>([]);
 
+  const [Usuario, setUsuario] = useState<string>(""); // Simulando usuario automático
+  const {user} = useAppSelector(state => state.account);// se obtiene al usuario que esta logueado
+  const [numeroBoleta, setNumeroBoleta] = useState<string>("");
+
   
   const {
     register,
@@ -56,6 +64,8 @@ export default function RegisterAsset() {
 
   useEffect(() => {
     // Fetch the data for the dropdowns
+    generarNumeroBoleta("C");
+
     const fetchData = async () => {
       try {
         const [zonesData, accountsData, serviceLifeData, statusData] = await Promise.all([
@@ -98,6 +108,25 @@ export default function RegisterAsset() {
        
     fetchData();
   }, []);
+
+   /**
+    * Meotodo para Generar consecutivo automático (C1, C2, etc.)
+   */
+   async function generarNumeroBoleta(letra: string): Promise<void> {
+    try {
+      const response = await api.newAsset.getAssetByNumBoleta(letra);
+      if (response && response.data && Array.isArray(response.data) && response.data.length >= 0) {
+        const consecutivo = letra + (response.data.length + 1);
+        setNumeroBoleta(consecutivo);
+      } else {
+        console.error("Invalid response from API");
+
+      }
+    } catch (error) {
+      console.error("Error generating boleta number:", error);
+
+    }
+  }
 
   const handleApiErrors = (errors: any) => {
     if (Array.isArray(errors)) {
@@ -394,7 +423,7 @@ export default function RegisterAsset() {
               id="numero-boleta"
               name="NumeroBoleta"
               label="Numero de Boleta"
-              value={`C${newAsset.NumeroBoleta.length + 1}`}
+              value={numeroBoleta}
               onChange={handleInputChange}
             />
           </Grid>
@@ -404,8 +433,8 @@ export default function RegisterAsset() {
               disabled
               id="usuario"
               name="Usuario"
-              label="Usuario"
-              value={newAsset.Usuario}
+              label={user?.nombre_usuario}
+              value={Usuario}
               onChange={handleInputChange}
             />
           </Grid>
