@@ -322,14 +322,14 @@ export default function RegisterAsset() {
           </Grid>
           <Grid item xs={12}>
             <Button variant="contained" component="label" fullWidth>
-              Subir Imagen de Factura
+              Subir Imagen de Fotografia
               <VisuallyHiddenInput
                 type="file"
-                name="FacturaImagen"
+                name="Fotografia"
                 onChange={handleFileInputChange}
               />
             </Button>
-            {newAsset.FacturaImagen && <FormHelperText>Archivo cargado: {newAsset.FacturaImagen.name}</FormHelperText>}
+            {newAsset.Fotografia && <FormHelperText>Archivo cargado: {newAsset.Fotografia.name}</FormHelperText>}
           </Grid>
           <Grid item xs={12}>
             <TextField
@@ -366,19 +366,16 @@ export default function RegisterAsset() {
               onChange={handleInputChange}
             />
           </Grid>
-          <Grid item xs={12}>
-            <VisuallyHiddenInput
-              accept="application/pdf"
-              id="factura-imagen"
-              name="FacturaImagen"
-              type="file"
-              onChange={handleFileInputChange}
-            />
-            <label htmlFor="factura-imagen">
-              <Button variant="contained" component="span">
-                Adjuntar Factura
-              </Button>
-            </label>
+          <Grid item xs={6}>
+            <Button variant="contained" component="label" fullWidth>
+              Subir Imagen de Factura
+              <VisuallyHiddenInput
+                type="file"
+                name="FacturaImagen"
+                onChange={handleFileInputChange}
+              />
+            </Button>
+            {newAsset.FacturaImagen && <FormHelperText>Archivo cargado: {newAsset.FacturaImagen.name}</FormHelperText>}
           </Grid>
           <Grid item xs={6}>
             <TextField
@@ -392,18 +389,15 @@ export default function RegisterAsset() {
             />
           </Grid>
           <Grid item xs={12}>
-            <VisuallyHiddenInput
-              accept="application/pdf"
-              id="orden-compra-imagen"
-              name="OrdenCompraImagen"
-              type="file"
-              onChange={handleFileInputChange}
-            />
-            <label htmlFor="orden-compra-imagen">
-              <Button variant="contained" component="span">
-                Adjuntar Orden de Compra
-              </Button>
-            </label>
+            <Button variant="contained" component="label" fullWidth>
+              Subir Imagen de Factura
+              <VisuallyHiddenInput
+                type="file"
+                name="OrdenCompraImagen"
+                onChange={handleFileInputChange}
+              />
+            </Button>
+            {newAsset.OrdenCompraImagen && <FormHelperText>Archivo cargado: {newAsset.OrdenCompraImagen.name}</FormHelperText>}
           </Grid>
           <Grid item xs={6}>
             <TextField

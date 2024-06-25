@@ -125,22 +125,7 @@ const serviceLife = {
 };
 
 const newAsset = {
-  // saveNewAsset: (values: any) => requests.post("saveNewAsset", values),
-  saveNewAsset: (values: any) => {
-    const formData = new FormData();
-    for (const key in values) {
-      if (values[key]) {
-        if (values[key] instanceof File) {
-          formData.append(key, values[key]);
-        } else {
-          formData.append(key, JSON.stringify(values[key]));
-        }
-      }
-    }
-    return axios.post("saveNewAsset", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    }).then(responseBody);
-  },
+  saveNewAsset: (values: any) => requests.post("saveNewAsset", values),
   getNewAssets: () => requests.get("/getNewAssets"),
   updateNewAsset: (NewAssetId: any, NewAssetData: any) =>
     requests.put(`/newAssets/${NewAssetId}`, NewAssetData),
