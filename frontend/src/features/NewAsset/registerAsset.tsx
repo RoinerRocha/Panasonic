@@ -49,16 +49,16 @@ export default function RegisterAsset() {
   const [accountingAccounts, setAccountingAccounts] = useState<accountingAccount[]>([]);
   const [serviceLives, setServiceLives] = useState<serviceLifeModels[]>([]);
   const [statuses, setStatuses] = useState<statusAssets[]>([]);
-
-  const [Usuario, setUsuario] = useState<string>(""); // Simulando usuario automático
+  const dispatch = useAppDispatch(); 
   const {user} = useAppSelector(state => state.account);// se obtiene al usuario que esta logueado
 
   
   const {
     register,
     handleSubmit,
+    watch,
     setError,
-    formState: { isSubmitting, errors, isValid, isSubmitSuccessful },
+    formState: { isDirty, isSubmitting, errors, isValid, isSubmitSuccessful },
   } = useForm({
     mode: "onTouched",
   });
@@ -168,18 +168,64 @@ export default function RegisterAsset() {
     }
   };
 
-  const handleAdd = async () => {
+  // const handleAdd = async () => {
+  //   try {
+  //     const addedAsset = await api.newAsset.saveNewAsset(newAsset);
+  //     toast.success("Activo agregado");
+  //     navigate("/RegisterAsset"); // Redirigir a la lista de zonas después de agregar el activo
+  //     //register(addedAsset);
+  //   } catch (error) {
+  //     handleApiErrors(errors);
+  //     console.error("Error al agregar el nuevo activo:", error);
+  //     toast.error("Error al agregar el nuevo activo");
+  //   }
+  // };
+
+  //esto tambien es nuevo
+  const onSubmit = async (data: FieldValues) => {
     try {
-      const addedAsset = await api.newAsset.saveNewAsset(newAsset);
-      toast.success("Activo agregado");
-      navigate("/RegisterAsset"); // Redirigir a la lista de zonas después de agregar el activo
-      //register(addedAsset);
+      await api.newAsset.saveNewAsset(data);
+      toast.success("Activo registrado exitosamente");
+      navigate("/");
     } catch (error) {
-      handleApiErrors(errors);
-      console.error("Error al agregar el nuevo activo:", error);
-      toast.error("Error al agregar el nuevo activo");
+      console.error(error);
+      toast.error("Error registrando el activo");
     }
   };
+
+
+  // esto tambien es nuevo
+  const handleFormSubmit = (data: FieldValues) => {
+    // Ajustar datos antes de enviar al backend
+    const formData = new FormData();
+    formData.append("CodigoCuenta", newAsset.CodigoCuenta.toString());
+    formData.append("Zona", newAsset.Zona.toString());
+    formData.append("Tipo", newAsset.Tipo.toString());
+    formData.append("Estado", newAsset.Estado.toString());
+    formData.append("Descripcion", newAsset.Descripcion);
+    formData.append("NumeroPlaca", newAsset.NumeroPlaca.toString());
+    formData.append("ValorCompraCRC", newAsset.ValorCompraCRC);
+    formData.append("ValorCompraUSD", newAsset.ValorCompraUSD);
+    if (newAsset.Fotografia) {
+      formData.append("Fotografia", newAsset.Fotografia);
+    }
+    formData.append("NombreProveedor", newAsset.NombreProveedor);
+    formData.append("FechaCompra", newAsset.FechaCompra.toString());
+    formData.append("FacturaNum", newAsset.FacturaNum.toString());
+    if (newAsset.FacturaImagen) {
+      formData.append("FacturaImagen", newAsset.FacturaImagen);
+    }
+    formData.append("OrdenCompraNum", newAsset.OrdenCompraNum.toString());
+    if (newAsset.OrdenCompraImagen) {
+      formData.append("OrdenCompraImagen", newAsset.OrdenCompraImagen);
+    }
+    formData.append("NumeroAsiento", newAsset.NumeroAsiento.toString());
+    formData.append("NumeroBoleta", newAsset.NumeroBoleta);
+    formData.append("Usuario", user?.nombre_usuario || ""); 
+
+    onSubmit(formData);
+  };
+
 
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -195,293 +241,291 @@ export default function RegisterAsset() {
 
   return (
     <Card>
-      <form onSubmit={handleSubmit(handleAdd)}>
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
         <Grid container spacing={2}>
-        <Grid item xs={12}>
-  <FormControl fullWidth>
-    <InputLabel id="codigo-cuenta-label">
-      Seleccionar Código de Cuenta
-    </InputLabel>
-    <Select
-      labelId="codigo-cuenta-label"
-      id="codigo-cuenta"
-      name="CodigoCuenta"
-      value={newAsset.CodigoCuenta.toString() || ""}
-      onChange={handleSelectChange}
-      label="Seleccionar Código de Cuenta"
-     
-    >
-      {Array.isArray(accountingAccounts) && accountingAccounts.map((account) => (
-        <MenuItem key={account.id} value={account.id}>
-          {account.codigoCuenta}
-        </MenuItem>
-      ))}
-    </Select>
-    {newAsset.CodigoCuenta > 0 && (
-      <FormHelperText>
-        <Card>
-          <p>
-            <strong>NomCuentaPrincipal:</strong> {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.nombreCuentaPrincipal || ""}
-          </p>
-          <p>
-            <strong>Gastos(D):</strong>{" "}
-            {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.gastos || ""}
-          </p>
-          <p>
-            <strong>NomCuenta:</strong> {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.nombreCuentaGastos || ""}
-          </p>
-          <p>
-            <strong>Depreciación(H):</strong> {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.depreciacion || ""}
-          </p>
-          <p>
-            <strong>NomCuenta:</strong> {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.nombreCuentadDepreciacion || ""}
-          </p>
-        </Card>
-      </FormHelperText>
-    )}
-  </FormControl>
-</Grid>
-
-            <Grid item xs={12}>
-  <FormControl fullWidth>
-    <InputLabel id="zona-label">Seleccionar Zona</InputLabel>
-    <Select
-      labelId="zona-label"
-      id="zona"
-      name="Zona"
-      value={newAsset.Zona.toString() || ""}
-      onChange={handleSelectChange}
-      label="Seleccionar Zona"
-    >
-      {Array.isArray(zones) && zones.map((zone) => (
-        <MenuItem key={zone.id} value={zone.id}>
-          {zone.nombreZona}
-        </MenuItem>
-      ))}
-    </Select>
-    {newAsset.Zona > 0 && (
-      <FormHelperText>
-        <Card>
-          <p>
-            <strong>Numero Zona:</strong> {zones.find((zone) => zone.id === newAsset.Zona)?.numeroZona || ""}
-          </p>
-          <p>
-            <strong>Responsable:</strong>{" "}
-            {zones.find((zone) => zone.id === newAsset.Zona)?.responsableAreaNom_user || ""}
-          </p>
-        </Card>
-      </FormHelperText>
-    )}
-  </FormControl>
-</Grid>
-            <Grid item xs={12}>
-  <FormControl fullWidth>
-    <InputLabel id="tipo-label">Seleccionar Tipo</InputLabel>
-    <Select
-      labelId="tipo-label"
-      id="tipo"
-      name="Tipo"
-      value={newAsset.Tipo.toString() || ""}
-      onChange={handleSelectChange}
-      label="Seleccionar Tipo"
-    >
-      {Array.isArray(serviceLives) && serviceLives.map((serviceLife) => (
-        <MenuItem key={serviceLife.id} value={serviceLife.id}>
-          {serviceLife.tipo}
-        </MenuItem>
-      ))}
-    </Select>
-    {newAsset.Tipo > 0 && (
-      <FormHelperText>
-        <Card>
-          <p>
-            <strong>Vida Util(Años):</strong> {serviceLives.find((serviceLife) => serviceLife.id === newAsset.Tipo)?.añoUtil || ""}
-          </p>
-        </Card>
-      </FormHelperText>
-    )}
-  </FormControl>
-</Grid>
           <Grid item xs={12}>
             <FormControl fullWidth>
-              <InputLabel id="estado-label">Seleccionar Estado</InputLabel>
+              <InputLabel id="codigo-cuenta-label">
+                Seleccionar Código de Cuenta
+              </InputLabel>
               <Select
-                labelId="estado-label"
-                id="estado"
-                name="Estado"
-                value={newAsset.Estado.toString() || ""}
+                labelId="codigo-cuenta-label"
+                id="codigo-cuenta"
+                name="CodigoCuenta"
+                value={newAsset.CodigoCuenta.toString() || ""}
                 onChange={handleSelectChange}
-                label="Seleccionar Estado"
+                label="Seleccionar Código de Cuenta"
+              
               >
-                {Array.isArray(statuses) && statuses.map((status) => (
-                  <MenuItem key={status.id} value={status.id.toString()}>
-                    {status.status}
+                {Array.isArray(accountingAccounts) && accountingAccounts.map((account) => (
+                  <MenuItem key={account.id} value={account.id}>
+                    {account.codigoCuenta}
                   </MenuItem>
                 ))}
               </Select>
-              <FormHelperText>Lista desplegable</FormHelperText>
+              {newAsset.CodigoCuenta > 0 && (
+                <FormHelperText>
+                  <Card>
+                    <p>
+                      <strong>NomCuentaPrincipal:</strong> {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.nombreCuentaPrincipal || ""}
+                    </p>
+                    <p>
+                      <strong>Gastos(D):</strong>{" "}
+                      {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.gastos || ""}
+                    </p>
+                    <p>
+                      <strong>NomCuenta:</strong> {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.nombreCuentaGastos || ""}
+                    </p>
+                    <p>
+                      <strong>Depreciación(H):</strong> {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.depreciacion || ""}
+                    </p>
+                    <p>
+                      <strong>NomCuenta:</strong> {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.nombreCuentadDepreciacion || ""}
+                    </p>
+                  </Card>
+                </FormHelperText>
+              )}
             </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              id="descripcion"
-              name="Descripcion"
-              label="Anotar Descripción"
-              value={newAsset.Descripcion || ""}
-              onChange={handleInputChange}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              type="text"
-              id="numero-placa"
-              name="NumeroPlaca"
-              label="Numero de Placa"
-              value={newAsset.NumeroPlaca || ""}
-              onChange={handleInputChange}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              type="number"
-              id="valor-compra"
-              name="ValorCompraCRC"
-              label="Valor de Compra (CRC)"
-              value={newAsset.ValorCompraCRC || ""}
-              onChange={handleInputChange}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              type="number"
-              id="valor-compra"
-              name="ValorCompraUSD"
-              label="Valor de Compra (USD)"
-              value={newAsset.ValorCompraUSD || ""}
-              onChange={handleInputChange}
-            />
+            <FormControl fullWidth>
+              <InputLabel id="zona-label">Seleccionar Zona</InputLabel>
+              <Select
+                labelId="zona-label"
+                id="zona"
+                name="Zona"
+                value={newAsset.Zona.toString() || ""}
+                onChange={handleSelectChange}
+                label="Seleccionar Zona"
+              >
+                {Array.isArray(zones) && zones.map((zone) => (
+                  <MenuItem key={zone.id} value={zone.id}>
+                    {zone.nombreZona}
+                  </MenuItem>
+                ))}
+              </Select>
+              {newAsset.Zona > 0 && (
+                <FormHelperText>
+                  <Card>
+                    <p>
+                      <strong>Numero Zona:</strong> {zones.find((zone) => zone.id === newAsset.Zona)?.numeroZona || ""}
+                    </p>
+                    <p>
+                      <strong>Responsable:</strong>{" "}
+                      {zones.find((zone) => zone.id === newAsset.Zona)?.responsableAreaNom_user || ""}
+                    </p>
+                  </Card>
+                </FormHelperText>
+              )}
+            </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <Button variant="contained" component="label" fullWidth>
-              Subir Imagen de Fotografia
-              <VisuallyHiddenInput
-                type="file"
-                name="Fotografia"
-                onChange={handleFileInputChange}
-              />
-            </Button>
-            {newAsset.Fotografia && <FormHelperText>Archivo cargado: {newAsset.Fotografia.name}</FormHelperText>}
+            <FormControl fullWidth>
+              <InputLabel id="tipo-label">Seleccionar Tipo</InputLabel>
+              <Select
+                labelId="tipo-label"
+                id="tipo"
+                name="Tipo"
+                value={newAsset.Tipo.toString() || ""}
+                onChange={handleSelectChange}
+                label="Seleccionar Tipo"
+              >
+                {Array.isArray(serviceLives) && serviceLives.map((serviceLife) => (
+                  <MenuItem key={serviceLife.id} value={serviceLife.id}>
+                    {serviceLife.tipo}
+                  </MenuItem>
+                ))}
+              </Select>
+              {newAsset.Tipo > 0 && (
+                <FormHelperText>
+                  <Card>
+                    <p>
+                      <strong>Vida Util(Años):</strong> {serviceLives.find((serviceLife) => serviceLife.id === newAsset.Tipo)?.añoUtil || ""}
+                    </p>
+                  </Card>
+                </FormHelperText>
+              )}
+            </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              id="nombre-proveedor"
-              name="NombreProveedor"
-              label="Nombre de Proveedor"
-              value={newAsset.NombreProveedor || ""}
-              onChange={handleInputChange}
-            />
+            <FormControl fullWidth>
+              <InputLabel id="estado-label">Seleccionar Estado</InputLabel>
+                <Select
+                  labelId="estado-label"
+                  id="estado"
+                  name="Estado"
+                  value={newAsset.Estado.toString() || ""}
+                  onChange={handleSelectChange}
+                  label="Seleccionar Estado"
+                >
+                  {Array.isArray(statuses) && statuses.map((status) => (
+                    <MenuItem key={status.id} value={status.id.toString()}>
+                      {status.status}
+                        </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>Lista desplegable</FormHelperText>
+            </FormControl>
           </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              type="date"
-              id="fecha-compra"
-              name="FechaCompra"
-              label="Fecha de Compra"
-              value={newAsset.FechaCompra}
-              onChange={handleInputChange}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              type="number"
-              id="factura-num"
-              name="FacturaNum"
-              label="Factura"
-              value={newAsset.FacturaNum || ""}
-              onChange={handleInputChange}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <Button variant="contained" component="label" fullWidth>
-              Subir Imagen de Factura
-              <VisuallyHiddenInput
-                type="file"
-                name="FacturaImagen"
-                onChange={handleFileInputChange}
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                id="descripcion"
+                name="Descripcion"
+                label="Anotar Descripción"
+                value={newAsset.Descripcion || ""}
+                onChange={handleInputChange}
               />
-            </Button>
-            {newAsset.FacturaImagen && <FormHelperText>Archivo cargado: {newAsset.FacturaImagen.name}</FormHelperText>}
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              type="number"
-              id="orden-compra-num"
-              name="OrdenCompraNum"
-              label="Orden de Compra"
-              value={newAsset.OrdenCompraNum || ""}
-              onChange={handleInputChange}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Button variant="contained" component="label" fullWidth>
-              Subir Imagen de Factura
-              <VisuallyHiddenInput
-                type="file"
-                name="OrdenCompraImagen"
-                onChange={handleFileInputChange}
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                type="text"
+                id="numero-placa"
+                name="NumeroPlaca"
+                label="Numero de Placa"
+                value={newAsset.NumeroPlaca || ""}
+                onChange={handleInputChange}
               />
-            </Button>
-            {newAsset.OrdenCompraImagen && <FormHelperText>Archivo cargado: {newAsset.OrdenCompraImagen.name}</FormHelperText>}
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              type="number"
-              id="numero-asiento"
-              name="NumeroAsiento"
-              label="Numero de Asiento"
-              value={newAsset.NumeroAsiento || ""}
-              onChange={handleInputChange}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              disabled
-              id="numero-boleta"
-              name="NumeroBoleta"
-              label="Numero de Boleta"
-              value={numeroBoleta} //revisar ya que no lo guarda en la base de datos
-              onChange={handleInputChange}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              disabled
-              id="usuario"
-              name="Usuario"
-              label={user?.nombre_usuario}
-              value={user?.nombre_usuario} //revisar ya que no lo guarda en  la base de datos
-
-              onChange={handleInputChange}
-            />
-          </Grid>
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                type="number"
+                id="valor-compra"
+                name="ValorCompraCRC"
+                label="Valor de Compra (CRC)"
+                value={newAsset.ValorCompraCRC || ""}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                type="number"
+                id="valor-compra"
+                name="ValorCompraUSD"
+                label="Valor de Compra (USD)"
+                value={newAsset.ValorCompraUSD || ""}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button variant="contained" component="label" fullWidth>
+                Subir Imagen de Fotografia
+                <VisuallyHiddenInput
+                  type="file"
+                  name="Fotografia"
+                  onChange={handleFileInputChange}
+                />
+              </Button>
+              {newAsset.Fotografia && <FormHelperText>Archivo cargado: {newAsset.Fotografia.name}</FormHelperText>}
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                id="nombre-proveedor"
+                name="NombreProveedor"
+                label="Nombre de Proveedor"
+                value={newAsset.NombreProveedor || ""}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                type="date"
+                id="fecha-compra"
+                name="FechaCompra"
+                label="Fecha de Compra"
+                value={newAsset.FechaCompra}
+                onChange={handleInputChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                type="number"
+                id="factura-num"
+                name="FacturaNum"
+                label="Factura"
+                value={newAsset.FacturaNum || ""}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <Button variant="contained" component="label" fullWidth>
+                Subir Imagen de Factura
+                <VisuallyHiddenInput
+                  type="file"
+                  name="FacturaImagen"
+                  onChange={handleFileInputChange}
+                />
+              </Button>
+              {newAsset.FacturaImagen && <FormHelperText>Archivo cargado: {newAsset.FacturaImagen.name}</FormHelperText>}
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                type="number"
+                id="orden-compra-num"
+                name="OrdenCompraNum"
+                label="Orden de Compra"
+                value={newAsset.OrdenCompraNum || ""}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button variant="contained" component="label" fullWidth>
+                Subir Imagen de Factura
+                <VisuallyHiddenInput
+                  type="file"
+                  name="OrdenCompraImagen"
+                  onChange={handleFileInputChange}
+                />
+              </Button>
+              {newAsset.OrdenCompraImagen && <FormHelperText>Archivo cargado: {newAsset.OrdenCompraImagen.name}</FormHelperText>}
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                type="number"
+                id="numero-asiento"
+                name="NumeroAsiento"
+                label="Numero de Asiento"
+                value={newAsset.NumeroAsiento || ""}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                disabled
+                id="numero-boleta"
+                name="NumeroBoleta"
+                label="Numero de Boleta"
+                value={numeroBoleta} //revisar ya que no lo guarda en la base de datos
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                disabled
+                id="usuario"
+                name="Usuario"
+                label={user?.nombre_usuario}
+                value={user?.nombre_usuario} //revisar ya que no lo guarda en  la base de datos
+                onChange={handleInputChange}
+              />
+            </Grid>
         </Grid>
-        <Button type="submit" disabled={isSubmitting}>
-          Agregar
-        </Button>
+          <Button type="submit" disabled={isSubmitting}>
+            Agregar
+          </Button>
       </form>
     </Card>
   );
