@@ -18,8 +18,10 @@ import { useAppDispatch, useAppSelector } from "../../store/configureStore";//ru
 
 
 export default function RegisterAsset() {
+
   const navigate = useNavigate();
-  
+  const [numeroBoleta, setNumeroBoleta] = useState<string>("");
+
   // Estados para el nuevo activo y las listas desplegables
   const [newAsset, setNewAsset] = useState<newAssetModels>({
     id:0,
@@ -39,7 +41,7 @@ export default function RegisterAsset() {
     OrdenCompraNum: 0,
     OrdenCompraImagen: null,
     NumeroAsiento: 0,
-    NumeroBoleta: "", // Consecutivo automático
+    NumeroBoleta: numeroBoleta, // Consecutivo automático
     Usuario: "" // Usuario automático
   });
 
@@ -50,7 +52,6 @@ export default function RegisterAsset() {
 
   const [Usuario, setUsuario] = useState<string>(""); // Simulando usuario automático
   const {user} = useAppSelector(state => state.account);// se obtiene al usuario que esta logueado
-  const [numeroBoleta, setNumeroBoleta] = useState<string>("");
 
   
   const {
@@ -172,6 +173,7 @@ export default function RegisterAsset() {
       const addedAsset = await api.newAsset.saveNewAsset(newAsset);
       toast.success("Activo agregado");
       navigate("/RegisterAsset"); // Redirigir a la lista de zonas después de agregar el activo
+      //register(addedAsset);
     } catch (error) {
       handleApiErrors(errors);
       console.error("Error al agregar el nuevo activo:", error);
@@ -195,68 +197,111 @@ export default function RegisterAsset() {
     <Card>
       <form onSubmit={handleSubmit(handleAdd)}>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <FormControl fullWidth>
-              <InputLabel id="codigo-cuenta-label">
-                Seleccionar Código de Cuenta
-              </InputLabel>
-              <Select
-                labelId="codigo-cuenta-label"
-                id="codigo-cuenta"
-                name="CodigoCuenta"
-                value={newAsset.CodigoCuenta.toString() || ""}
-                onChange={handleSelectChange}
-                label="Seleccionar Código de Cuenta"
-              >
-                {Array.isArray(accountingAccounts) && accountingAccounts.map((account) => (
-                  <MenuItem key={account.id} value={account.id}>
-                    {account.codigoCuenta}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>Lista desplegable y mostrar detalle</FormHelperText>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12}>
-            <FormControl fullWidth>
-              <InputLabel id="zona-label">Seleccionar Zona</InputLabel>
-              <Select
-                labelId="zona-label"
-                id="zona"
-                name="Zona"
-                value={newAsset.Zona.toString() || ""}
-                onChange={handleSelectChange}
-                label="Seleccionar Zona"
-              >
-                {Array.isArray(zones) && zones.map((zone) => (
-                  <MenuItem key={zone.id} value={zone.id}>
-                    {zone.nombreZona}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>Lista desplegable y mostrar detalle</FormHelperText>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12}>
-            <FormControl fullWidth>
-              <InputLabel id="tipo-label">Seleccionar Tipo</InputLabel>
-              <Select
-                labelId="tipo-label"
-                id="tipo"
-                name="Tipo"
-                value={newAsset.Tipo.toString() || ""}
-                onChange={handleSelectChange}
-                label="Seleccionar Tipo"
-              >
-                {Array.isArray(serviceLives) && serviceLives.map((serviceLife) => (
-                  <MenuItem key={serviceLife.id} value={serviceLife.id}>
-                    {serviceLife.tipo}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>Lista desplegable y mostrar vida útil</FormHelperText>
-            </FormControl>
-          </Grid>
+        <Grid item xs={12}>
+  <FormControl fullWidth>
+    <InputLabel id="codigo-cuenta-label">
+      Seleccionar Código de Cuenta
+    </InputLabel>
+    <Select
+      labelId="codigo-cuenta-label"
+      id="codigo-cuenta"
+      name="CodigoCuenta"
+      value={newAsset.CodigoCuenta.toString() || ""}
+      onChange={handleSelectChange}
+      label="Seleccionar Código de Cuenta"
+     
+    >
+      {Array.isArray(accountingAccounts) && accountingAccounts.map((account) => (
+        <MenuItem key={account.id} value={account.id}>
+          {account.codigoCuenta}
+        </MenuItem>
+      ))}
+    </Select>
+    {newAsset.CodigoCuenta > 0 && (
+      <FormHelperText>
+        <Card>
+          <p>
+            <strong>NomCuentaPrincipal:</strong> {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.nombreCuentaPrincipal || ""}
+          </p>
+          <p>
+            <strong>Gastos(D):</strong>{" "}
+            {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.gastos || ""}
+          </p>
+          <p>
+            <strong>NomCuenta:</strong> {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.nombreCuentaGastos || ""}
+          </p>
+          <p>
+            <strong>Depreciación(H):</strong> {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.depreciacion || ""}
+          </p>
+          <p>
+            <strong>NomCuenta:</strong> {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.nombreCuentadDepreciacion || ""}
+          </p>
+        </Card>
+      </FormHelperText>
+    )}
+  </FormControl>
+</Grid>
+
+            <Grid item xs={12}>
+  <FormControl fullWidth>
+    <InputLabel id="zona-label">Seleccionar Zona</InputLabel>
+    <Select
+      labelId="zona-label"
+      id="zona"
+      name="Zona"
+      value={newAsset.Zona.toString() || ""}
+      onChange={handleSelectChange}
+      label="Seleccionar Zona"
+    >
+      {Array.isArray(zones) && zones.map((zone) => (
+        <MenuItem key={zone.id} value={zone.id}>
+          {zone.nombreZona}
+        </MenuItem>
+      ))}
+    </Select>
+    {newAsset.Zona > 0 && (
+      <FormHelperText>
+        <Card>
+          <p>
+            <strong>Numero Zona:</strong> {zones.find((zone) => zone.id === newAsset.Zona)?.numeroZona || ""}
+          </p>
+          <p>
+            <strong>Responsable:</strong>{" "}
+            {zones.find((zone) => zone.id === newAsset.Zona)?.responsableAreaNom_user || ""}
+          </p>
+        </Card>
+      </FormHelperText>
+    )}
+  </FormControl>
+</Grid>
+            <Grid item xs={12}>
+  <FormControl fullWidth>
+    <InputLabel id="tipo-label">Seleccionar Tipo</InputLabel>
+    <Select
+      labelId="tipo-label"
+      id="tipo"
+      name="Tipo"
+      value={newAsset.Tipo.toString() || ""}
+      onChange={handleSelectChange}
+      label="Seleccionar Tipo"
+    >
+      {Array.isArray(serviceLives) && serviceLives.map((serviceLife) => (
+        <MenuItem key={serviceLife.id} value={serviceLife.id}>
+          {serviceLife.tipo}
+        </MenuItem>
+      ))}
+    </Select>
+    {newAsset.Tipo > 0 && (
+      <FormHelperText>
+        <Card>
+          <p>
+            <strong>Vida Util(Años):</strong> {serviceLives.find((serviceLife) => serviceLife.id === newAsset.Tipo)?.añoUtil || ""}
+          </p>
+        </Card>
+      </FormHelperText>
+    )}
+  </FormControl>
+</Grid>
           <Grid item xs={12}>
             <FormControl fullWidth>
               <InputLabel id="estado-label">Seleccionar Estado</InputLabel>
@@ -417,7 +462,7 @@ export default function RegisterAsset() {
               id="numero-boleta"
               name="NumeroBoleta"
               label="Numero de Boleta"
-              value={numeroBoleta}
+              value={numeroBoleta} //revisar ya que no lo guarda en la base de datos
               onChange={handleInputChange}
             />
           </Grid>
@@ -428,7 +473,8 @@ export default function RegisterAsset() {
               id="usuario"
               name="Usuario"
               label={user?.nombre_usuario}
-              value={Usuario}
+              value={user?.nombre_usuario} //revisar ya que no lo guarda en  la base de datos
+
               onChange={handleInputChange}
             />
           </Grid>
