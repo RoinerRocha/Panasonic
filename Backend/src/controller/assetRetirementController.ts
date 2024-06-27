@@ -2,26 +2,33 @@ import { Request, Response } from "express";
 import AssetRetirementModel from "../models/assetRetirementModel";
 import { Op } from "sequelize";
 
+
+interface MulterFiles {
+  DocumentoAprobado?: Express.Multer.File[];
+  Fotografia?: Express.Multer.File[];
+}
 // Método para guardar la baja de un activo
 export const saveAssetRetirement = async (req: Request, res: Response) => {
-  console.log("req.body:", req.body);
   const {
     PlacaActivo,
-    DocumentoAprobado,
     Descripcion,
     DestinoFinal,
-    Fotografia,
     NumeroBoleta,
     Usuario,
   } = req.body;
 
+  const files = req.files as MulterFiles;
+
+  const documentoAprobadoPath = files?.DocumentoAprobado?.[0]?.path || null;
+  const fotografiaPath = files?.Fotografia?.[0]?.path || null;
+
   try {
     const assetRetirement = await AssetRetirementModel.create({
       PlacaActivo,
-      DocumentoAprobado,
+      DocumentoAprobado: documentoAprobadoPath,
       Descripcion,
       DestinoFinal,
-      Fotografia,
+      Fotografia: fotografiaPath,
       NumeroBoleta,
       Usuario,
     });

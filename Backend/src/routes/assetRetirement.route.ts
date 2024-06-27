@@ -6,6 +6,7 @@ import {
    updateAssetRetirement,
    getAssetRetirementByNumeroBoleta, 
 } from "../controller/assetRetirementController";
+import { uploadAssetRetirement } from "../Middleware/multerConfigAssetRetirement";
 
 const router = Router();
 
@@ -13,6 +14,14 @@ const router = Router();
 router.get("/", (req, res) => {
   res.send("Hello, asset retirements");
 });
+
+router.post("/saveAssetRetirement",
+  uploadAssetRetirement.fields([
+    {name: 'DocumentoAprobado', maxCount: 1},
+    {name: 'Fotografia', maxCount:1}
+  ]),
+  saveAssetRetirement
+)
 
 router.post("/saveAssetRetirement", saveAssetRetirement);
 router.get("/getAssetRetirements", getAssetRetirements);

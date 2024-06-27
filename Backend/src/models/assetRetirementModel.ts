@@ -4,10 +4,10 @@ import sequelize from "../Services/Postgresql";
 class assetRetirementModel extends Model {
     public id!: number;
     public PlacaActivo!: string;
-    public DocumentoAprobado!: Buffer | null;
+    public DocumentoAprobado!: string | null;
     public Descripcion!: string;
     public DestinoFinal!: string;
-    public Fotografia!: Buffer | null;
+    public Fotografia!: string | null;
     public NumeroBoleta!: string;
     public Usuario!: string;
   
@@ -28,7 +28,7 @@ try {
           allowNull: false,
         },
         DocumentoAprobado: {
-          type: DataTypes.BLOB,
+          type: DataTypes.STRING(250),
           allowNull: false,
         },
         Descripcion: {
@@ -40,7 +40,7 @@ try {
             allowNull: false,
           },
         Fotografia: {
-          type: DataTypes.BLOB,
+          type: DataTypes.STRING(250),
           allowNull: true,
         },
         NumeroBoleta: {
