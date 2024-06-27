@@ -4,12 +4,12 @@ import sequelize from "../Services/Postgresql";
 class SalesAssetsModel extends Model {
     public id!: number;
     public PlacaActivo!: string;
-    public DocumentoAprobado!: Buffer | null;
+    public DocumentoAprobado!: string | null;
     public Descripcion!: string;
     public MontoVentas!: number;
-    public CotizacionVentas!: Buffer | null;
-    public Fotografia!: Buffer | null;
-    public Comprobante!: Buffer | null;
+    public CotizacionVentas!: string | null;
+    public Fotografia!: string | null;
+    public Comprobante!: string | null;
     public NumeroBoleta!: string;
     public Usuario!: string;
   
@@ -30,7 +30,7 @@ try {
           allowNull: false,
         },
         DocumentoAprobado: {
-            type: DataTypes.BLOB,
+            type: DataTypes.STRING(250),
             allowNull: true,
         },
         Descripcion: {
@@ -42,15 +42,15 @@ try {
             allowNull: false,
         },
         CotizacionVentas: {
-            type: DataTypes.BLOB,
+            type: DataTypes.STRING(250),
             allowNull: true,
         },
         Fotografia: {
-          type: DataTypes.BLOB,
+          type: DataTypes.STRING(250),
           allowNull: true,
         },
         Comprobante: {
-            type: DataTypes.BLOB,
+            type: DataTypes.STRING(250),
             allowNull: true,
         },
         NumeroBoleta: {
@@ -64,13 +64,12 @@ try {
       },
       {
         sequelize,
-  
-        tableName: "VentaActivo",
+        tableName: "VentaActivos",
         schema: "panasonic",
       }
     );
   } catch (error: any) {
-    console.log("error en model zonas: " + error.message);
+    console.log("error en model ventaActivos: " + error.message);
   }
   sequelize
     .sync()

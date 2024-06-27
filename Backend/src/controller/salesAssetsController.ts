@@ -1,19 +1,40 @@
 import { Request, Response } from "express";
 import SalesAssetsModel from "../models/salesAssetsModel";
 
+
+interface MulterFiles {
+  DocumentoAprobado?: Express.Multer.File[];
+  CotizacionVentas?: Express.Multer.File[];
+  Fotografia?: Express.Multer.File[];
+  Comprobante?: Express.Multer.File[];
+}
+
 // Método para guardar la venta de un activo
 export const saveSalesAsset = async (req: Request, res: Response) => {
-  const { PlacaActivo, DocumentoAprobado, Descripcion, MontoVentas, CotizacionVentas, Fotografia, Comprobante, NumeroBoleta, Usuario } = req.body;
+  const { 
+    PlacaActivo,  
+    Descripcion, 
+    MontoVentas,    
+    NumeroBoleta, 
+    Usuario
+  } = req.body;
+
+  const files = req.files as MulterFiles;
+
+  const documentoAprobadoPath = files?.DocumentoAprobado?.[0]?.path || null;
+  const cotizacionVentasPath = files?.CotizacionVentas?.[0]?.path || null;
+  const fotografiaPath = files?.Fotografia?.[0]?.path || null;
+  const comprobantePath = files?.Comprobante?.[0]?.path || null;
 
   try {
     const salesAsset = await SalesAssetsModel.create({
       PlacaActivo,
-      DocumentoAprobado,
+      DocumentoAprobado: documentoAprobadoPath,
       Descripcion,
       MontoVentas,
-      CotizacionVentas,
-      Fotografia,
-      Comprobante,
+      CotizacionVentas: cotizacionVentasPath,
+      Fotografia: fotografiaPath,
+      Comprobante: comprobantePath,
       NumeroBoleta,
       Usuario
     });
