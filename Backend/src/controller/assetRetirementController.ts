@@ -4,6 +4,7 @@ import { Op } from "sequelize";
 
 // Método para guardar la baja de un activo
 export const saveAssetRetirement = async (req: Request, res: Response) => {
+  console.log("req.body:", req.body);
   const {
     PlacaActivo,
     DocumentoAprobado,
@@ -32,7 +33,7 @@ export const saveAssetRetirement = async (req: Request, res: Response) => {
         data: assetRetirement,
       });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: { message: error.message, stack: error.stack } });
   }
 };
 
@@ -130,7 +131,7 @@ export const getAssetRetirementByNumeroBoleta = async (req: Request, res: Respon
       },
     });
 
-    if (assetRetirement.length > 0) {
+    if (assetRetirement.length >= 0) {
       res.status(200).json({
         message: "Asset retirements fetched successfully",
         data: assetRetirement,
