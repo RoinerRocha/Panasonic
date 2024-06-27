@@ -110,23 +110,31 @@ export default function RegisterAsset() {
     fetchData();
   }, []);
 
+  /**
+ * Método para obtener el último consecutivo para una letra dada
+ */
+async function getLastConsecutive(letra: string): Promise<number> {
+  try {
+    const response = await api.newAsset.getAssetByNumBoleta(letra);
+    if (response && response.data && Array.isArray(response.data)) {
+      return response.data.length;
+    } else {
+      throw new Error("Invalid response from API");
+    }
+   } catch (error) {
+    console.error("Error getting last consecutive:", error);
+    return 0;
+   }
+  }
    /**
     * Meotodo para Generar consecutivo automático (C1, C2, etc.)
    */
-   async function generarNumeroBoleta(letra: string): Promise<void> {
-    try {
-      const response = await api.newAsset.getAssetByNumBoleta(letra);
-      if (response && response.data && Array.isArray(response.data) && response.data.length >= 0) {
-        const consecutivo = letra + (response.data.length + 1);
-        setNumeroBoleta(consecutivo);
-      } else {
-        console.error("Invalid response from API");
-
-      }
-    } catch (error) {
-      console.error("Error generating boleta number:", error);
-
-    }
+   async function generarNumeroBoleta(letra: string): Promise<string> {
+    const lastConsecutive = await getLastConsecutive(letra);
+  const consecutivo = letra + (lastConsecutive + 1);
+  newAsset.NumeroBoleta = consecutivo; 
+  setNumeroBoleta(consecutivo);
+  return consecutivo;
   }
 
   const handleApiErrors = (errors: any) => {

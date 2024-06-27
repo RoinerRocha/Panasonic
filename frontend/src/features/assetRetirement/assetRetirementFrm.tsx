@@ -88,11 +88,13 @@ export default function AssetRetirementFrm() {
    /**
     * Meotodo para Generar consecutivo automático (B1, B2, etc.)
    */
+  var consecutivoBolet: string;
     async function generarNumeroBoleta(letra: string): Promise<void> {
     try {
       const response = await api.newAsset.getAssetByNumBoleta(letra);
       if (response && response.data && Array.isArray(response.data) && response.data.length >= 0) {
         const consecutivo = letra + (response.data.length + 1);
+        consecutivoBolet = consecutivo;
         setNumeroBoleta(consecutivo);
       } else {
         console.error("Invalid response from API");
@@ -113,8 +115,8 @@ export default function AssetRetirementFrm() {
     formData.append("RazonBaja", razonBaja);
     formData.append("DestinoFinal", destinoFinal);
     formData.append("Fotografia", fotografia as Blob);
-    formData.append("NumeroBoleta", numeroBoleta);
-    formData.append("Usuario", usuario);
+    formData.append("NumeroBoleta", consecutivoBolet);//revisar en la BD para saber si se esta guardando
+    formData.append("Usuario", usuario); 
 
     try {
       await api.assetRetirement.saveAssetRetirement(formData);

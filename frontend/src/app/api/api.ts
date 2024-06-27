@@ -135,7 +135,7 @@ const newAsset = {
 };
 
 const assetRetirement = {
-  saveAssetRetirement: (values: any) => requests.post(" saveAssetRetirement", values),
+  saveAssetRetirement: (values: any) => requests.post("saveAssetRetirement", values),
   getAssetRetirements: () => requests.get("/getAssetRetirements"),
   updateAssetRetirement: (assetRetirementId: any, assetRetirementData: any) =>
     requests.put(`/assetRetirements/${assetRetirementId}`, assetRetirementData),
