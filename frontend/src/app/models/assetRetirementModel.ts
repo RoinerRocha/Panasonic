@@ -1,10 +1,10 @@
 export interface assetRetirementModel {
   id: number;
   PlacaActivo: string;
-  DocumentoAprobado: Buffer | null;
+  DocumentoAprobado: File | null;
   Descripcion: string;
   DestinoFinal: string;
-  Fotografia: Buffer | null;
+  Fotografia: File | null;
   NumeroBoleta: string;
   Usuario: string;
 }

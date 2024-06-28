@@ -12,8 +12,11 @@ import { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import api from "../../app/api/api";
 import { newAssetModels } from "../../app/models/newAssetModels";
+import { assetRetirementModel } from "../../app/models/assetRetirementModel";
 import { SelectChangeEvent } from "@mui/material/Select";
 import ReactToPrint from "react-to-print";
+import { FieldValues, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 //ruta para obtener el usuario
 import { useAppDispatch, useAppSelector } from "../../store/configureStore";
 
@@ -27,6 +30,19 @@ import { useAppDispatch, useAppSelector } from "../../store/configureStore";
 };*/
 
 export default function AssetRetirementFrm() {
+  const navigate = useNavigate();
+
+  const [assetsRetirement, setAssetsRetirement] = useState<assetRetirementModel>({
+    id: 0,
+    PlacaActivo: "",
+    DocumentoAprobado: null,
+    Descripcion: "",
+    DestinoFinal: "",
+    Fotografia: null,
+    NumeroBoleta: "",
+    Usuario: "",
+  });
+
   const [assets, setAssets] = useState<newAssetModels[]>([]);
   const [selectedAsset, setSelectedAsset] = useState<newAssetModels | null>(null);
   const [documentoAprobacion, setDocumentoAprobacion] = useState<File | null>(
@@ -105,33 +121,63 @@ export default function AssetRetirementFrm() {
 
     }
   }
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // Validaciones y envío de datos
-    const formData = new FormData();
-    const id = selectedAsset?.id.toString() || "";
-    formData.append("PlacaActivo", selectedAsset?.id.toString() || "");
-    formData.append("DocumentoAprobado", documentoAprobacion as Blob);
-    formData.append("RazonBaja", razonBaja);
-    formData.append("DestinoFinal", destinoFinal);
-    formData.append("Fotografia", fotografia as Blob);
-    formData.append("NumeroBoleta", consecutivoBolet);//revisar en la BD para saber si se esta guardando
-    formData.append("Usuario", usuario); 
+  // const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  //   event.preventDefault();
+  //   // Validaciones y envío de datos
+  //   const formData = new FormData();
+  //   const id = selectedAsset?.id.toString() || "";
+  //   formData.append("PlacaActivo", selectedAsset?.id.toString() || "");
+  //   formData.append("DocumentoAprobado", documentoAprobacion as Blob);
+  //   formData.append("RazonBaja", razonBaja);
+  //   formData.append("DestinoFinal", destinoFinal);
+  //   formData.append("Fotografia", fotografia as Blob);
+  //   formData.append("NumeroBoleta", consecutivoBolet);//revisar en la BD para saber si se esta guardando
+  //   formData.append("Usuario", usuario); 
 
+  //   try {
+  //     await api.assetRetirement.saveAssetRetirement(formData);
+  //     await api.newAsset.deleteNewAsset(parseInt(id));
+  //     toast.success("Baja de activo registrada con éxito");
+  //   } catch (error) {
+  //     toast.error("Error al registrar la baja de activo");
+  //   }
+  // };
+
+  const onSubmit = async (data: FieldValues) => {
     try {
-      await api.assetRetirement.saveAssetRetirement(formData);
-      await api.newAsset.deleteNewAsset(parseInt(id));
-      toast.success("Baja de activo registrada con éxito");
+      await api.assetRetirement.saveAssetRetirement(data);
+      toast.success("Activo registrado exitosamente");
+      navigate("/");
     } catch (error) {
-      toast.error("Error al registrar la baja de activo");
+      console.error(error);
+      toast.error("Error registrando el activo");
     }
   };
+
+  const handleFormSubmit = (data: FieldValues) => {
+    // Ajustar datos antes de enviar al backend
+    const formData = new FormData();
+    formData.append("PlacaActivo", assetsRetirement.PlacaActivo.toString());
+    if (assetsRetirement.DocumentoAprobado) {
+      formData.append("DocumentoAprobado", assetsRetirement.DocumentoAprobado);
+    }
+    formData.append("Descripcion", assetsRetirement.Descripcion.toString());
+    formData.append("DestinoFinal", assetsRetirement.DestinoFinal.toString());
+    if (assetsRetirement.Fotografia) {
+      formData.append("Fotografia", assetsRetirement.Fotografia);
+    }
+    formData.append("NumeroBoleta", assetsRetirement.NumeroBoleta);
+    formData.append("Usuario", user?.nombre_usuario || ""); 
+
+    onSubmit(formData);
+  };
+
 
   return (
     // Dentro del div que tiene el ref (componentRef)
     <div>
       <div ref={componentRef}>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleFormSubmit}>
           <Grid container spacing={2}>
             <h1>BAJA DE ACTIVOS</h1>
             <Grid item xs={12}>
