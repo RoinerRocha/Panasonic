@@ -142,6 +142,15 @@ const assetRetirement = {
   ddeleteAssetRetirement: (id: number) => requests.delete(`deleteAssetRetirement/${id}`),
 };
 
+const salesAssest = {
+  saveSalesAsset: (values: any) => requests.post("saveSalesAsset", values),
+  getSalesAssets: () => requests.get("/getSalesAssets"),
+  updateSalesAsset: (assetSaleId: any, assetSaleData: any) =>
+    requests.put(`/salesAssets/${assetSaleId}`, assetSaleData),//metodo comentado en el backend
+  deleteSalesAsset: (id: number) => requests.delete(`deleteSalesAsset/${id}`),//metodo commentado en el backend
+
+};
+
 const api = {
   Account,
   TestErrors,
@@ -152,6 +161,7 @@ const api = {
   serviceLife,
   newAsset,
   assetRetirement,
+  salesAssest,
 };
 
 export default api;
