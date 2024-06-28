@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
   saveSalesAsset,
-//   getSalesAssets,
+   getSalesAssets,
 //   deleteSalesAsset,
 //   updateSalesAsset,
 } from "../controller/salesAssetsController";
@@ -26,7 +26,7 @@ router.post(
 )
 
 router.post("/saveSalesAsset", saveSalesAsset);
-// router.get("/getSalesAssets", getSalesAssets);
+router.get("/getSalesAssets", getSalesAssets);
 
 // router.put("/salesAssets/:id", updateSalesAsset);
 

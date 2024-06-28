@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import SalesAssetsModel from "../models/salesAssetsModel";
+import { Op } from "sequelize";
 
 
 interface MulterFiles {
@@ -46,14 +47,14 @@ export const saveSalesAsset = async (req: Request, res: Response) => {
 };
 
 // Método para obtener todas las ventas de activos
-// export const getSalesAssets = async (req: Request, res: Response) => {
-//   try {
-//     const salesAssets = await SalesAssetsModel.findAll();
-//     res.status(200).json({ message: "List of sales assets successful", data: salesAssets });
-//   } catch (error: any) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
+ export const getSalesAssets = async (req: Request, res: Response) => {
+   try {
+     const salesAssets = await SalesAssetsModel.findAll();
+      res.status(200).json({ message: "List of sales assets successful", data: salesAssets });
+   } catch (error: any) {
+     res.status(500).json({ error: error.message });
+   }
+ };
 
 // Método para eliminar una venta de activo por ID
 // export const deleteSalesAsset = async (req: Request, res: Response) => {
@@ -110,3 +111,28 @@ export const saveSalesAsset = async (req: Request, res: Response) => {
 //     res.status(500).json({ message: error.message });
 //   }
 // };
+
+// Método para obtener bajas de activos por el número de boleta que empiecen con una letra específica
+export const getAssetRetirementByNumeroBoleta = async (req: Request, res: Response) => {
+  const {letraNumBoleta} =  req.params;
+  try {
+    const assetSale = await SalesAssetsModel.findAll({
+      where: {
+        NumeroBoleta: {
+          [Op.like]: `${letraNumBoleta}%`,
+        },
+      },
+    });
+
+    if (assetSale.length >= 0) {
+      res.status(200).json({
+        message: "Asset Sales fetched successfully",
+        data: assetSale,
+      });
+    } else {
+      res.status(404).json({ message: "Asset Sales not found" });
+    }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
