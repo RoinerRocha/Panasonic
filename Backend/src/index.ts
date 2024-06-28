@@ -18,6 +18,7 @@ import routerNewAsset from "./routes/newAsset.router"
 import routerEditAsset from "./routes/editAsset.route"
 import routerAssetRetirement from "./routes/assetRetirement.route"
 import routerSalesAssets from "./routes/salesAssets.router"
+import routerDepreciation from "./routes/depreciation.router"
 
 dotenv.config();
 
@@ -61,6 +62,7 @@ app.use("/api", routerNewAsset);
 app.use("/api", routerEditAsset);
 app.use("/api", routerAssetRetirement);
 app.use("/api", routerSalesAssets);
+app.use("/api", routerDepreciation);
 
 
 // import cors from "cors";
