@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import AssetRetirementModel from "../models/assetRetirementModel";
 import { Op } from "sequelize";
+import Joi from 'joi';
 
 
 interface MulterFiles {
@@ -127,13 +128,22 @@ export const updateAssetRetirement = async (req: Request, res: Response) => {
 };
 
 // Método para obtener bajas de activos por el número de boleta que empiecen con una letra específica
+const numeroBoletaSchema = Joi.string().required().pattern(/^[A-Za-z]/);
+
 export const getAssetRetirementByNumeroBoleta = async (req: Request, res: Response) => {
-  const {letraNumBoleta} =  req.params;
+  const { NumeroBoleta } = req.params;
+
+  try {
+    await numeroBoletaSchema.validateAsync(NumeroBoleta);
+  } catch (error) {
+    return res.status(400).json({ message: 'Invalid NumeroBoleta' });
+  }
+
   try {
     const assetRetirement = await AssetRetirementModel.findAll({
       where: {
         NumeroBoleta: {
-          [Op.like]: `${letraNumBoleta}%`,
+          [Op.like]: `${NumeroBoleta}%`,
         },
       },
     });
@@ -143,10 +153,15 @@ export const getAssetRetirementByNumeroBoleta = async (req: Request, res: Respon
         message: "Asset retirements fetched successfully",
         data: assetRetirement,
       });
-    } else {
+    } 
+    else {
       res.status(404).json({ message: "Asset retirements not found" });
     }
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
   }
 };
