@@ -25,7 +25,7 @@ export default function Users(){
 
     return (
         <>
-            <UserList users={users} />
+            <UserList users={users} setUsers={setUsers} />
         </>
     )
 }

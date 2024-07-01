@@ -72,6 +72,9 @@ const Account = {
   register: (values: any) => requests.post("register", values),
   currentUser: () => requests.get("currentUser"),
   getAllUser: () => requests.get("getUser"),
+  updateUser: (accountId: any, accountData: any) => 
+    requests.put(`/updateUser/${accountId}`, accountData),
+  deleteUser: (id:number) =>requests.delete(`/deleteUser/${id}`),
   sendEmail: (values: any) => requests.post("sendEmails", values),
   newPasword: (values: any) => requests.post("updatePasswordByEmail", values)
 };

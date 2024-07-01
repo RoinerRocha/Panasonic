@@ -6,7 +6,6 @@ export interface User {
     nombre_usuario: string;
     correo_electronico: string;
     contrasena: string;
-    imagen_firma: Blob;
     perfil_asignado: string;
     token: string;
 }
