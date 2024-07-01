@@ -280,6 +280,16 @@ async function getLastConsecutive(letra: string): Promise<number> {
               />
             </Grid>
             <Grid item xs={12}>
+              <TextField
+                fullWidth
+                id="destinoFinal"
+                name="DestinoFinal"
+                label="Explicar la razon de la baja del activo"
+                value={newAssetRetirement.DestinoFinal || ""}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
               <Button variant="contained" component="label" fullWidth>
                 Subir Fotografia
                 <VisuallyHiddenInput
