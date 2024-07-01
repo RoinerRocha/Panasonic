@@ -139,7 +139,8 @@ const assetRetirement = {
   getAssetRetirements: () => requests.get("/getAssetRetirements"),
   updateAssetRetirement: (assetRetirementId: any, assetRetirementData: any) =>
     requests.put(`/assetRetirements/${assetRetirementId}`, assetRetirementData),
-  ddeleteAssetRetirement: (id: number) => requests.delete(`deleteAssetRetirement/${id}`),
+  deleteAssetRetirement: (id: number) => requests.delete(`deleteAssetRetirement/${id}`),
+  getAssetRetirementByNumeroBoleta: (id: string) => requests.get(`/assetRetirements/boleta/${id}`),
 };
 
 const salesAssest = {

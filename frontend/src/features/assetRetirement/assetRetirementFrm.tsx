@@ -1,152 +1,197 @@
-import {
-  Grid,
-  Button,
-  TextField,
-  Card,
-  Select,
-  FormControl,
-  InputLabel,
-  MenuItem,
+import {Grid,Button,TextField,Card,Select,FormControl,FormHelperText,
+  InputLabel,MenuItem,styled,
 } from "@mui/material";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import api from "../../app/api/api";
 import { newAssetModels } from "../../app/models/newAssetModels";
 import { assetRetirementModel } from "../../app/models/assetRetirementModel";
+import { Zona } from "../../app/models/zone"; // Zonas
+import { accountingAccount } from "../../app/models/accountingAccount"; // Cuentas
+import { serviceLifeModels } from "../../app/models/serviceLifeModels"; // Tipos
+import { statusAssets } from "../../app/models/statusAsset"; // Estados
 import { SelectChangeEvent } from "@mui/material/Select";
-import ReactToPrint from "react-to-print";
-import { FieldValues, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-//ruta para obtener el usuario
-import { useAppDispatch, useAppSelector } from "../../store/configureStore";
+import { FieldValues, useForm } from "react-hook-form";
+import AssetRetirementFrm from "../assetRetirement/assetRetirementFrm";
 
-/*type Asset = {
-  id: number;
-  placa: string;
-  descripcion: string;
-  cuentaPrincipal: string;
-  tipoActivo: string;
-  zonas: string;
-};*/
+import { useAppDispatch, useAppSelector } from "../../store/configureStore";//ruta para obtener el usuario
 
-export default function AssetRetirementFrm() {
+
+export default function RegisterAsset() {
+
   const navigate = useNavigate();
+  const [numeroBoleta, setNumeroBoleta] = useState<string>("");
 
-  const [assetsRetirement, setAssetsRetirement] = useState<assetRetirementModel>({
-    id: 0,
+  // Estados para el nuevo activo y las listas desplegables
+  const [newAssetRetirement, setNewAssetRetirement] = useState<assetRetirementModel>({
+    id:0,
     PlacaActivo: "",
     DocumentoAprobado: null,
     Descripcion: "",
     DestinoFinal: "",
     Fotografia: null,
-    NumeroBoleta: "",
-    Usuario: "",
+    NumeroBoleta: numeroBoleta, // Consecutivo automático
+    Usuario: "" // Usuario automático
   });
 
+  const [zones, setZones] = useState<Zona[]>([]);
+  const [accountingAccounts, setAccountingAccounts] = useState<accountingAccount[]>([]);
+  const [serviceLives, setServiceLives] = useState<serviceLifeModels[]>([]);
+  const [statuses, setStatuses] = useState<statusAssets[]>([]);
   const [assets, setAssets] = useState<newAssetModels[]>([]);
-  const [selectedAsset, setSelectedAsset] = useState<newAssetModels | null>(null);
-  const [documentoAprobacion, setDocumentoAprobacion] = useState<File | null>(
-    null
-  );
-  const [fotografia, setFotografia] = useState<File | null>(null);
-  const [razonBaja, setRazonBaja] = useState<string>("");
-  const [destinoFinal, setDestinoFinal] = useState<string>("");
-  const [numeroBoleta, setNumeroBoleta] = useState<string>("");
-  const [usuario, setUsuario] = useState<string>(""); // Simulando usuario automático
+  const dispatch = useAppDispatch(); 
   const {user} = useAppSelector(state => state.account);// se obtiene al usuario que esta logueado
 
-  // Referencia para el contenedor a imprimir
-  const componentRef = useRef<HTMLDivElement>(null);
+  
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setError,
+    formState: { isDirty, isSubmitting, errors, isValid, isSubmitSuccessful },
+  } = useForm({
+    mode: "onTouched",
+  });
 
   useEffect(() => {
-    // Cargar lista de activos al montar el componente
-    async function fetchAssets() {
-      try {
-        const response = await api.newAsset.getNewAssets();
-        setAssets(response.data);
-        console.log("Activos cargados:", response.data);
-      } catch (error) {
-        toast.error("Error al cargar la lista de activos");
-      }
-    }
-
-    fetchAssets();
+    // Fetch the data for the dropdowns
     generarNumeroBoleta("B");
+
+    const fetchData = async () => {
+      try {
+        const [zonesData, accountsData, serviceLifeData, statusData, assetsData] = await Promise.all([
+          api.Zones.getZona(),
+          api.AcountingAccounts.getAccountingAccounts(),
+          api.serviceLife.getServiceLifes(),
+          api.statusAssets.getStatusAssets(),
+          api.newAsset.getNewAssets()
+        ]);
+        
+               // Se verifica que las respuestas sean arrays antes de actualizar el estado
+               if (zonesData && Array.isArray(zonesData.data)) {
+                setZones(zonesData.data);
+              } else {
+                console.error("Zones data is not an array", zonesData);
+              }
+          
+              if (accountsData && Array.isArray(accountsData.data)) {
+                setAccountingAccounts(accountsData.data);
+              } else {
+                console.error("Accounting accounts data is not an array", accountsData);
+              }
+       
+               if (serviceLifeData && Array.isArray(serviceLifeData.data)) {
+                setServiceLives(serviceLifeData.data);
+              } else {
+                console.error("Service life data is not an array", serviceLifeData);
+              }
+       
+               if (statusData && Array.isArray(statusData.data)) {
+                setStatuses(statusData.data);
+              } else {
+                console.error("Status data is not an array", statusData);
+              }
+
+              if (assetsData && Array.isArray(assetsData.data)) {
+                setAssets(assetsData.data);
+              } else {
+                console.error("Assets data is not an array", assetsData);
+              }
+       
+             } catch (error) {
+               console.error("Error fetching data:", error);
+               toast.error("Error al cargar datos");
+             }
+           };
+       
+    fetchData();
   }, []);
 
-  const handleSelectChange = async (event: SelectChangeEvent<string>) => {
-    const assetId = event.target.value;
-    console.log("ID: " + assetId);
-    try {
-      const response = await api.newAsset.getNewAssetById(parseInt(assetId));
-      setSelectedAsset(response.data);
-      console.log("Activos cargados por el id: ", response.data);
-    } catch (error) {
-      toast.error("Error al cargar la información del activo");
+  /**
+ * Método para obtener el último consecutivo para una letra dada
+ */
+async function getLastConsecutive(letra: string): Promise<number> {
+  try {
+    const response = await api.assetRetirement.getAssetRetirementByNumeroBoleta(letra);
+    if (response && response.data && Array.isArray(response.data)) {
+      return response.data.length;
+    } else {
+      throw new Error("Invalid response from API");
     }
-  };
-
-  const handleDocumentoAprobacionChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (event.target.files) {
-      setDocumentoAprobacion(event.target.files[0]);
-    }
-  };
-
-  const handleFotografiaChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (event.target.files) {
-      setFotografia(event.target.files[0]);
-    }
-  };
+   } catch (error) {
+    console.error("Error getting last consecutive:", error);
+    return 0;
+   }
+  }
    /**
     * Meotodo para Generar consecutivo automático (B1, B2, etc.)
    */
-  var consecutivoBolet: string;
-    async function generarNumeroBoleta(letra: string): Promise<void> {
-    try {
-      const response = await api.newAsset.getAssetByNumBoleta(letra);
-      if (response && response.data && Array.isArray(response.data) && response.data.length >= 0) {
-        const consecutivo = letra + (response.data.length + 1);
-        consecutivoBolet = consecutivo;
-        setNumeroBoleta(consecutivo);
-      } else {
-        console.error("Invalid response from API");
-
-      }
-    } catch (error) {
-      console.error("Error generating boleta number:", error);
-
-    }
+   async function generarNumeroBoleta(letra: string): Promise<string> {
+    const lastConsecutive = await getLastConsecutive(letra);
+    const consecutivo = letra + (lastConsecutive + 1);
+  newAssetRetirement.NumeroBoleta = consecutivo; 
+  setNumeroBoleta(consecutivo);
+  return consecutivo;
   }
-  // const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-  //   event.preventDefault();
-  //   // Validaciones y envío de datos
-  //   const formData = new FormData();
-  //   const id = selectedAsset?.id.toString() || "";
-  //   formData.append("PlacaActivo", selectedAsset?.id.toString() || "");
-  //   formData.append("DocumentoAprobado", documentoAprobacion as Blob);
-  //   formData.append("RazonBaja", razonBaja);
-  //   formData.append("DestinoFinal", destinoFinal);
-  //   formData.append("Fotografia", fotografia as Blob);
-  //   formData.append("NumeroBoleta", consecutivoBolet);//revisar en la BD para saber si se esta guardando
-  //   formData.append("Usuario", usuario); 
 
+  const handleApiErrors = (errors: any) => {
+    if (Array.isArray(errors)) {
+      errors.forEach((error: string) => {
+        if (error.includes("numeroZona")) {
+          setError("numeroZona", { message: error });
+        } else if (error.includes("nombreZona")) {
+          setError("nombreZona", { message: error });
+        }
+      });
+    }
+  };
+
+  const handleSelectChange = (event: SelectChangeEvent<string>) => {
+    const name = event.target.name as keyof newAssetModels;
+    const value = event.target.value;
+    setNewAssetRetirement((prevAsset) => ({
+      ...prevAsset,
+      [name]: value,
+    }));
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = event.target;
+    setNewAssetRetirement((prevAsset) => ({
+      ...prevAsset,
+      [name]: value,
+    }));
+  };
+
+  const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, files } = event.target;
+    if (files && files.length > 0) {
+      setNewAssetRetirement((prevAsset) => ({
+        ...prevAsset,
+        [name]: files[0],
+      }));
+    }
+  };
+
+  // const handleAdd = async () => {
   //   try {
-  //     await api.assetRetirement.saveAssetRetirement(formData);
-  //     await api.newAsset.deleteNewAsset(parseInt(id));
-  //     toast.success("Baja de activo registrada con éxito");
+  //     const addedAsset = await api.newAsset.saveNewAsset(newAsset);
+  //     toast.success("Activo agregado");
+  //     navigate("/RegisterAsset"); // Redirigir a la lista de zonas después de agregar el activo
+  //     //register(addedAsset);
   //   } catch (error) {
-  //     toast.error("Error al registrar la baja de activo");
+  //     handleApiErrors(errors);
+  //     console.error("Error al agregar el nuevo activo:", error);
+  //     toast.error("Error al agregar el nuevo activo");
   //   }
   // };
 
+  //esto tambien es nuevo
   const onSubmit = async (data: FieldValues) => {
     try {
       await api.assetRetirement.saveAssetRetirement(data);
-      toast.success("Activo registrado exitosamente");
+      toast.success("Baja de Activo registrado exitosamente");
       navigate("/");
     } catch (error) {
       console.error(error);
@@ -154,219 +199,124 @@ export default function AssetRetirementFrm() {
     }
   };
 
+
+  // esto tambien es nuevo
   const handleFormSubmit = (data: FieldValues) => {
     // Ajustar datos antes de enviar al backend
     const formData = new FormData();
-    formData.append("PlacaActivo", assetsRetirement.PlacaActivo.toString());
-    if (assetsRetirement.DocumentoAprobado) {
-      formData.append("DocumentoAprobado", assetsRetirement.DocumentoAprobado);
+    formData.append("PlacaActivo", newAssetRetirement.PlacaActivo.toString());
+    if (newAssetRetirement.DocumentoAprobado) {
+      formData.append("DocumentoAprobado", newAssetRetirement.DocumentoAprobado);
     }
-    formData.append("Descripcion", assetsRetirement.Descripcion.toString());
-    formData.append("DestinoFinal", assetsRetirement.DestinoFinal.toString());
-    if (assetsRetirement.Fotografia) {
-      formData.append("Fotografia", assetsRetirement.Fotografia);
+    formData.append("Descripcion", newAssetRetirement.Descripcion);
+    formData.append("DestinoFinal", newAssetRetirement.DestinoFinal);
+    if (newAssetRetirement.Fotografia) {
+      formData.append("Fotografia", newAssetRetirement.Fotografia);
     }
-    formData.append("NumeroBoleta", assetsRetirement.NumeroBoleta);
+    formData.append("NumeroBoleta", newAssetRetirement.NumeroBoleta);
     formData.append("Usuario", user?.nombre_usuario || ""); 
 
     onSubmit(formData);
   };
 
 
+  const VisuallyHiddenInput = styled("input")({
+    clip: "rect(0 0 0 0)",
+    clipPath: "inset(50%)",
+    height: 1,
+    overflow: "hidden",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    whiteSpace: "nowrap",
+    width: 1,
+  });
+
   return (
-    // Dentro del div que tiene el ref (componentRef)
-    <div>
-      <div ref={componentRef}>
-        <form onSubmit={handleFormSubmit}>
-          <Grid container spacing={2}>
-            <h1>BAJA DE ACTIVOS</h1>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel id="Placa-Activo-label">
-                  Seleccionar Placa del Activo
-                </InputLabel>
-                <Select
-                  labelId="Placa-Activo-label"
-                  id="Placa-Activo"
-                  value={selectedAsset? selectedAsset.id.toString() : ""}
-                  onChange={handleSelectChange}
-                >
-                  <MenuItem>
-                    <em>Seleccione una opción</em>
+    <Card>
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <FormControl fullWidth>
+              <InputLabel id="placa-activo-label">
+                Seleccionar Código de Cuenta
+              </InputLabel>
+              <Select
+                labelId="placa-activo-label"
+                id="placa-activo"
+                name="PlacaActivo"
+                value={newAssetRetirement.PlacaActivo.toString() || ""}
+                onChange={handleSelectChange}
+                label="Seleccionar Código de Cuenta"
+              
+              >
+                {Array.isArray(assets) && assets.map((account) => (
+                  <MenuItem key={account.id} value={account.id}>
+                    {account.NumeroPlaca}
                   </MenuItem>
-                  {assets.map((asset) => (
-                    <MenuItem key={asset.id} value={asset.id.toString()}>
-
-                      {asset.NumeroPlaca}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              {selectedAsset && (
-                <Card>
-                  <p>
-                    <strong>Descripción:</strong> {selectedAsset.Descripcion}
-                  </p>
-                  <p>
-                    <strong>Cuenta Principal:</strong>{" "}
-                    {selectedAsset.CodigoCuenta}
-                  </p>
-                  <p>
-                    <strong>Tipo de Activo:</strong> {selectedAsset.Tipo}
-                  </p>
-                  <p>
-                    <strong>Zonas:</strong> {selectedAsset.Zona}
-                  </p>
-                </Card>
-              )}
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                id="razonBaja"
-                name="razonBaja"
-                label="Explicar Razón de Baja"
-                value={razonBaja}
-                onChange={(e) => setRazonBaja(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                id="destinoFinal"
-                name="destinoFinal"
-                label="Explicar Destino Final"
-                value={destinoFinal}
-                onChange={(e) => setDestinoFinal(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <label htmlFor="documentoAprobacion">
-                <Button variant="contained" component="span">
-                  Adjuntar Documento de Aprobación
-                </Button>
-              </label>
-              <input
-                id="documentoAprobacion"
-                type="file"
-                accept=".pdf,.doc,.docx"
-                style={{ display: "none" }}
-                onChange={handleDocumentoAprobacionChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <label htmlFor="fotografia">
-                <Button variant="contained" component="span">
-                  Adjuntar Fotografía
-                </Button>
-              </label>
-              <input
-                id="fotografia"
-                type="file"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={handleFotografiaChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                id="numeroBoleta"
-                name="numeroBoleta"
-                label="Número de Boleta"
-                value={numeroBoleta}
-                disabled
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                id="usuario"
-                name="usuario"
-                label={user?.nombre_usuario} // asi se obtiene el usuario logueado
-                value={usuario}
-                disabled
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Button type="submit" variant="contained" color="primary">
-                Guardar
-              </Button>
-            </Grid>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
-        </form>
-
-        {/* Información adicional para impresión */}
-        {selectedAsset && (
-          <div style={{ marginTop: 20 }}>
-            <h2>Detalles del Activo de Baja</h2>
-            <p>
-              <strong>Placa:</strong> {selectedAsset.NumeroPlaca}
-            </p>
-            <p>
-              <strong>Descripción:</strong> {selectedAsset.Descripcion}
-            </p>
-            <p>
-              <strong>Cuenta Principal:</strong> {selectedAsset.CodigoCuenta}
-            </p>
-            <p>
-              <strong>Tipo de Activo:</strong> {selectedAsset.Tipo}
-            </p>
-            <p>
-              <strong>Zonas:</strong> {selectedAsset.Zona}
-            </p>
-            <p>
-              <strong>Razón de Baja:</strong> {razonBaja}
-            </p>
-            <p>
-              <strong>Destino Final:</strong> {destinoFinal}
-            </p>
-            <p>
-              <strong>Número de Boleta:</strong> {numeroBoleta}
-            </p>
-            <p>
-              <strong>Usuario:</strong> {usuario}
-            </p>
-            <p>
-              <strong>Fecha/Hora:</strong> {new Date().toLocaleString()}
-            </p>
-            {documentoAprobacion && (
-              <p>
-                <strong>Documento de Aprobación:</strong>{" "}
-                {documentoAprobacion.name}
-              </p>
-            )}
-            {fotografia && (
-              <p>
-                <strong>Fotografía Adjunta:</strong> {fotografia.name}
-              </p>
-            )}
-          </div>
-        )}
-      </div>
-      <Grid container spacing={2} style={{ marginTop: 20 }}>
-        <Grid item xs={12}>
-          <ReactToPrint
-            trigger={() => (
-              <Button variant="contained">Imprimir/Guardar como PDF</Button>
-            )}
-            content={() => componentRef.current}
-          />
+            <Grid item xs={12}>
+              <Button variant="contained" component="label" fullWidth>
+                Adjuntar documento Aprobatorio
+                <VisuallyHiddenInput
+                  type="file"
+                  name="DocumentoAprobado"
+                  onChange={handleFileInputChange}
+                />
+              </Button>
+              {newAssetRetirement.DocumentoAprobado && <FormHelperText>Archivo cargado: {newAssetRetirement.DocumentoAprobado.name}</FormHelperText>}
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                id="descripcion"
+                name="Descripcion"
+                label="Explicar la razon de la baja del activo"
+                value={newAssetRetirement.Descripcion || ""}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button variant="contained" component="label" fullWidth>
+                Subir Fotografia
+                <VisuallyHiddenInput
+                  type="file"
+                  name="Fotografia"
+                  onChange={handleFileInputChange}
+                />
+              </Button>
+              {newAssetRetirement.Fotografia && <FormHelperText>Archivo cargado: {newAssetRetirement.Fotografia.name}</FormHelperText>}
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                disabled
+                id="numero-boleta"
+                name="NumeroBoleta"
+                label="Numero de Boleta"
+                value={numeroBoleta} //revisar ya que no lo guarda en la base de datos
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                disabled
+                id="usuario"
+                name="Usuario"
+                label={user?.nombre_usuario}
+                value={user?.nombre_usuario} //revisar ya que no lo guarda en  la base de datos
+                onChange={handleInputChange}
+              />
+            </Grid>
         </Grid>
-      </Grid>
-
-      {/* Estilos para ocultar input[type="file"] en la impresión */}
-      <style>
-        {`
-          @media print {
-            input[type="file"] {
-              display: none;
-            }
-          }
-        `}
-      </style>
-    </div>
+          <Button type="submit" disabled={isSubmitting}>
+            Agregar
+          </Button>
+      </form>
+    </Card>
   );
 }
