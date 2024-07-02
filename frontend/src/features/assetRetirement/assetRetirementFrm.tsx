@@ -6,14 +6,9 @@ import { toast } from "react-toastify";
 import api from "../../app/api/api";
 import { newAssetModels } from "../../app/models/newAssetModels";
 import { assetRetirementModel } from "../../app/models/assetRetirementModel";
-import { Zona } from "../../app/models/zone"; // Zonas
-import { accountingAccount } from "../../app/models/accountingAccount"; // Cuentas
-import { serviceLifeModels } from "../../app/models/serviceLifeModels"; // Tipos
-import { statusAssets } from "../../app/models/statusAsset"; // Estados
 import { SelectChangeEvent } from "@mui/material/Select";
 import { useNavigate } from "react-router-dom";
 import { FieldValues, useForm } from "react-hook-form";
-import AssetRetirementFrm from "../assetRetirement/assetRetirementFrm";
 
 import { useAppDispatch, useAppSelector } from "../../store/configureStore";//ruta para obtener el usuario
 
@@ -34,11 +29,6 @@ export default function RegisterAsset() {
     NumeroBoleta: numeroBoleta, // Consecutivo automático
     Usuario: "" // Usuario automático
   });
-
-  const [zones, setZones] = useState<Zona[]>([]);
-  const [accountingAccounts, setAccountingAccounts] = useState<accountingAccount[]>([]);
-  const [serviceLives, setServiceLives] = useState<serviceLifeModels[]>([]);
-  const [statuses, setStatuses] = useState<statusAssets[]>([]);
   const [assets, setAssets] = useState<newAssetModels[]>([]);
   const dispatch = useAppDispatch(); 
   const {user} = useAppSelector(state => state.account);// se obtiene al usuario que esta logueado
@@ -60,39 +50,11 @@ export default function RegisterAsset() {
 
     const fetchData = async () => {
       try {
-        const [zonesData, accountsData, serviceLifeData, statusData, assetsData] = await Promise.all([
-          api.Zones.getZona(),
-          api.AcountingAccounts.getAccountingAccounts(),
-          api.serviceLife.getServiceLifes(),
-          api.statusAssets.getStatusAssets(),
+        const [ assetsData] = await Promise.all([
           api.newAsset.getNewAssets()
         ]);
         
                // Se verifica que las respuestas sean arrays antes de actualizar el estado
-               if (zonesData && Array.isArray(zonesData.data)) {
-                setZones(zonesData.data);
-              } else {
-                console.error("Zones data is not an array", zonesData);
-              }
-          
-              if (accountsData && Array.isArray(accountsData.data)) {
-                setAccountingAccounts(accountsData.data);
-              } else {
-                console.error("Accounting accounts data is not an array", accountsData);
-              }
-       
-               if (serviceLifeData && Array.isArray(serviceLifeData.data)) {
-                setServiceLives(serviceLifeData.data);
-              } else {
-                console.error("Service life data is not an array", serviceLifeData);
-              }
-       
-               if (statusData && Array.isArray(statusData.data)) {
-                setStatuses(statusData.data);
-              } else {
-                console.error("Status data is not an array", statusData);
-              }
-
               if (assetsData && Array.isArray(assetsData.data)) {
                 setAssets(assetsData.data);
               } else {
@@ -174,18 +136,6 @@ async function getLastConsecutive(letra: string): Promise<number> {
     }
   };
 
-  // const handleAdd = async () => {
-  //   try {
-  //     const addedAsset = await api.newAsset.saveNewAsset(newAsset);
-  //     toast.success("Activo agregado");
-  //     navigate("/RegisterAsset"); // Redirigir a la lista de zonas después de agregar el activo
-  //     //register(addedAsset);
-  //   } catch (error) {
-  //     handleApiErrors(errors);
-  //     console.error("Error al agregar el nuevo activo:", error);
-  //     toast.error("Error al agregar el nuevo activo");
-  //   }
-  // };
 
   //esto tambien es nuevo
   const onSubmit = async (data: FieldValues) => {

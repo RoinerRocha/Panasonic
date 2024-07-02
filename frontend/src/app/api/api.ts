@@ -152,7 +152,7 @@ const salesAssest = {
   updateSalesAsset: (assetSaleId: any, assetSaleData: any) =>
     requests.put(`/salesAssets/${assetSaleId}`, assetSaleData),//metodo comentado en el backend
   deleteSalesAsset: (id: number) => requests.delete(`deleteSalesAsset/${id}`),//metodo commentado en el backend
-
+  getAssetSaleByNumeroBoleta: (id: string) => requests.get(`/salesAssets/boleta/${id}`),
 };
 
 const api = {

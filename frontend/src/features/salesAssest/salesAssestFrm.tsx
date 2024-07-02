@@ -1,326 +1,300 @@
-import {
-    Grid,
-    Button,
-    TextField,
-    Card,
-    Select,
-    FormControl,
-    InputLabel,
-    MenuItem,
-  } from "@mui/material";
-  import { useState, useEffect, useRef } from "react";
-  import { toast } from "react-toastify";
-  import api from "../../app/api/api";
-  import { assetSaleModel } from "../../app/models/assetSaleModel";
-  import { SelectChangeEvent } from "@mui/material/Select";
-  import ReactToPrint from "react-to-print";
-  import { useAppDispatch, useAppSelector } from "../../store/configureStore";
+import {Grid,Button,TextField,Card,Select,FormControl,FormHelperText,
+  InputLabel,MenuItem,styled,
+} from "@mui/material";
+import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
+import api from "../../app/api/api";
+import { newAssetModels } from "../../app/models/newAssetModels";
+import { assetSaleModel } from "../../app/models/assetSaleModel";
+import { SelectChangeEvent } from "@mui/material/Select";
+import { useNavigate } from "react-router-dom";
+import { FieldValues, useForm } from "react-hook-form";
+
+import { useAppDispatch, useAppSelector } from "../../store/configureStore";//ruta para obtener el usuario
+
+
+export default function RegisterAsset() {
+
+  const navigate = useNavigate();
+  const [numeroBoleta, setNumeroBoleta] = useState<string>("");
+
+  // Estados para el nuevo activo y las listas desplegables
+  const [newAssetSale, setNewAssetSales] = useState<assetSaleModel>({
+    id:0,
+    Descripcion: "",
+    DocumentoAprobado: null,
+    MontoVentas: 0,
+    PlacaActivo: "",
+    CotizacionVentas: null,
+    Fotografia: null,
+    Comprobante: null,
+    NumeroBoleta: numeroBoleta, // Consecutivo automático
+    Usuario: "" // Usuario automático
+  });
+  const [assets, setAssets] = useState<newAssetModels[]>([]);
+  const dispatch = useAppDispatch(); 
+  const {user} = useAppSelector(state => state.account);// se obtiene al usuario que esta logueado
+
   
-  export default function SalesAssetFrm() {
-    const [assets, setAssets] = useState<assetSaleModel[]>([]);
-    const [selectedAsset, setSelectedAsset] = useState<assetSaleModel | null>(null);
-    const [documentoAprobacion, setDocumentoAprobacion] = useState<File | null>(null);
-    const [cotizacionVenta, setCotizacionVenta] = useState<File | null>(null);
-    const [documentoAprobacionBanco, setDocumentoAprobacionBanco] = useState<File | null>(null);
-    const [fotografia, setFotografia] = useState<File | null>(null);
-    const [razonVenta, setRazonVenta] = useState<string>("");
-    const [montoVenta, setMontoVenta] = useState<Number>(0);
-    const [numeroBoleta, setNumeroBoleta] = useState<string>("");
-    const { user } = useAppSelector((state) => state.account);
-  
-    // Referencia para el contenedor a imprimir
-    const componentRef = useRef<HTMLDivElement>(null);
-  
-    useEffect(() => {
-      // Cargar lista de activos al montar el componente
-      async function fetchAssets() {
-        try {
-          const response = await api.newAsset.getNewAssets();
-          setAssets(response.data);
-          console.log("Activos cargados:", response.data);
-        } catch (error) {
-          toast.error("Error al cargar la lista de activos");
-        }
-      }
-  
-      fetchAssets();
-      generarNumeroBoleta("S");
-    }, []);
-  
-    const handleSelectChange = async (event: SelectChangeEvent<string>) => {
-      const assetId = event.target.value;
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setError,
+    formState: { isDirty, isSubmitting, errors, isValid, isSubmitSuccessful },
+  } = useForm({
+    mode: "onTouched",
+  });
+
+  useEffect(() => {
+    // Fetch the data for the dropdowns
+    generarNumeroBoleta("S");
+
+    const fetchData = async () => {
       try {
-        const assetResponse = await api.newAsset.getNewAssetById(parseInt(assetId));
-        setSelectedAsset(assetResponse.data);
-      } catch (error) {
-        toast.error("Error al cargar la información del activo");
-      }
-    };
-  
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value } = event.target;
-      setAssets((prevAsset) => ({
-        ...prevAsset,
-        [name]: value,
-      }));
-    };
-  
-    const handleDocumentoAprobacionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (event.target.files) {
-        setDocumentoAprobacion(event.target.files[0]);
-      }
-    };
-  
-    const handleCotizacionVentaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (event.target.files) {
-        setCotizacionVenta(event.target.files[0]);
-      }
-    };
-  
-    const handleDocumentoAprobacionBancoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (event.target.files) {
-        setDocumentoAprobacionBanco(event.target.files[0]);
-      }
-    };
-  
-    const handleFotografiaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (event.target.files) {
-        setFotografia(event.target.files[0]);
-      }
-    };
-  
-    /**
-     * Método para Generar consecutivo automático (S1, S2, etc.)
-     */
-    var consecutivoBolet: string;
-    async function generarNumeroBoleta(letra: string): Promise<void> {
-      try {
-        const response = await api.newAsset.getAssetByNumBoleta(letra);
-        if (response && response.data && Array.isArray(response.data) && response.data.length >= 0) {
-          const consecutivo = letra + (response.data.length + 1);
-          consecutivoBolet = consecutivo;
-          setNumeroBoleta(consecutivo);
-        } else {
-          console.error("Invalid response from API");
-        }
-      } catch (error) {
-        console.error("Error generating boleta number:", error);
-      }
-    }
-  
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      // Validaciones y envío de datos
-      const formData = new FormData();
-      const id = selectedAsset?.id.toString() || "";
-      formData.append("PlacaActivo", selectedAsset?.id.toString() || "");
-      formData.append("DocumentoAprobado", documentoAprobacion as Blob);
-      formData.append("DocumentoAprobadoBanco", documentoAprobacionBanco as Blob);
-      formData.append("CotizacionVenta", cotizacionVenta as Blob);
-      formData.append("RazonVenta", razonVenta);
-      formData.append("Fotografia", fotografia as Blob);
-      formData.append("NumeroBoleta", consecutivoBolet);
-      formData.append("Usuario", user?.nombre_usuario || "");
-  
-      try {
-        await api.assetRetirement.saveAssetRetirement(formData);
-        await api.newAsset.deleteNewAsset(parseInt(id));
-        toast.success("Venta de activo registrada con éxito");
-      } catch (error) {
-        toast.error("Error al registrar la Venta del Activo");
-      }
-    };
-  
-    return (
-      <div>
-        <div ref={componentRef}>
-          <form onSubmit={handleSubmit}>
-            <Grid container spacing={2}>
-              <h1>VENTA DE ACTIVOS</h1>
-              <Grid item xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel id="Placa-Activo-label">Seleccionar Placa del Activo</InputLabel>
-                  <Select
-                    labelId="Placa-Activo-label"
-                    id="Placa-Activo"
-                    value={selectedAsset ? selectedAsset.id.toString() : ""}
-                    onChange={handleSelectChange}
-                  >
-                    <MenuItem>
-                      <em>Seleccione una opción</em>
-                    </MenuItem>
-                    {assets.map((asset) => (
-                      <MenuItem key={asset.id} value={asset.id.toString()}>
-                        {asset.PlacaActivo}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                {selectedAsset && (
-                  <Card>
-                    <p><strong>Descripción:</strong> {selectedAsset.Descripcion}</p>
-                    <p><strong>Cuenta Principal:</strong> {selectedAsset.CodigoCuenta}</p>
-                    <p><strong>Tipo de Activo:</strong> {selectedAsset.Tipo}</p>
-                    <p><strong>Zonas:</strong> {selectedAsset.Zona}</p>
-                  </Card>
-                )}
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  id="razonVenta"
-                  name="razonVenta"
-                  label="Explicar Razón de Venta"
-                  value={razonVenta}
-                  onChange={(e) => setRazonVenta(e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  type="number"
-                  id="valor-venta"
-                  name="ValorVenta"
-                  label="Monto de Venta"
-                  value={montoVenta}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <label htmlFor="documentoAprobacion">
-                  <Button variant="contained" component="span">
-                    Adjuntar Documento de Aprobación
-                  </Button>
-                </label>
-                <input
-                  id="documentoAprobacion"
-                  type="file"
-                  accept=".pdf,.doc,.docx"
-                  style={{ display: "none" }}
-                  onChange={handleDocumentoAprobacionChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <label htmlFor="cotizacionVenta">
-                  <Button variant="contained" component="span">
-                    Adjuntar Cotización de Venta
-                  </Button>
-                </label>
-                <input
-                  id="cotizacionVenta"
-                  type="file"
-                  accept=".pdf,.doc,.docx"
-                  style={{ display: "none" }}
-                  onChange={handleCotizacionVentaChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <label htmlFor="fotografia">
-                  <Button variant="contained" component="span">
-                    Adjuntar Fotografía Actual del Activo
-                  </Button>
-                </label>
-                <input
-                  id="fotografia"
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={handleFotografiaChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <label htmlFor="comprobanteBanco">
-                  <Button variant="contained" component="span">
-                    Adjuntar Comprobante Banco
-                  </Button>
-                </label>
-                <input
-                  id="comprobanteBanco"
-                  type="file"
-                  accept=".pdf,.doc,.docx,image/*"
-                  style={{ display: "none" }}
-                  onChange={handleDocumentoAprobacionBancoChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  id="numeroBoleta"
-                  name="numeroBoleta"
-                  label="Número de Boleta"
-                  value={numeroBoleta}
-                  disabled
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  id="usuario"
-                  name="usuario"
-                  label="Usuario"
-                  value={user?.nombre_usuario || ""}
-                  disabled
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <Button type="submit" variant="contained" color="primary">
-                  Guardar
-                </Button>
-              </Grid>
-            </Grid>
-          </form>
-  
-          {selectedAsset && (
-            <div style={{ marginTop: 20 }}>
-              <h2>Detalles Venta Activo</h2>
-              <p><strong>Placa:</strong> {selectedAsset.PlacaActivo}</p>
-              <p><strong>Descripción:</strong> {selectedAsset.Descripcion}</p>
-              <p><strong>Cuenta Principal:</strong> {selectedAsset.CodigoCuenta}</p>
-              <p><strong>Tipo de Activo:</strong> {selectedAsset.Tipo}</p>
-              <p><strong>Zonas:</strong> {selectedAsset.Zona}</p>
-              <p><strong>Razón de Venta:</strong> {razonVenta}</p>
-              <p><strong>Monto de Venta:</strong> {montoVenta.toString()}</p>
-              <p><strong>Número de Boleta:</strong> {numeroBoleta}</p>
-              <p><strong>Usuario:</strong> {user?.nombre_usuario}</p>
-              <p><strong>Fecha/Hora:</strong> {new Date().toLocaleString()}</p>
-              {documentoAprobacion && (
-                <p><strong>Documento de Aprobación:</strong> {documentoAprobacion.name}</p>
-              )}
-              {cotizacionVenta && (
-                <p><strong>Cotización de Venta:</strong> {cotizacionVenta.name}</p>
-              )}
-              {documentoAprobacionBanco && (
-                <p><strong>Comprobante Banco:</strong> {documentoAprobacionBanco.name}</p>
-              )}
-              {fotografia && (
-                <p><strong>Fotografía Adjunta del Activo:</strong> {fotografia.name}</p>
-              )}
-            </div>
-          )}
-        </div>
-        <Grid container spacing={2} style={{ marginTop: 20 }}>
-          <Grid item xs={12}>
-            <ReactToPrint
-              trigger={() => (
-                <Button variant="contained">Imprimir/Guardar como PDF</Button>
-              )}
-              content={() => componentRef.current}
-            />
-          </Grid>
-        </Grid>
-  
-        <style>
-          {`
-            @media print {
-              input[type="file"] {
-                display: none;
+        const [ assetsData] = await Promise.all([
+          api.newAsset.getNewAssets()
+        ]);
+        
+               // Se verifica que las respuestas sean arrays antes de actualizar el estado
+              if (assetsData && Array.isArray(assetsData.data)) {
+                setAssets(assetsData.data);
+              } else {
+                console.error("Assets data is not an array", assetsData);
               }
-            }
-          `}
-        </style>
-      </div>
-    );
+       
+             } catch (error) {
+               console.error("Error fetching data:", error);
+               toast.error("Error al cargar datos");
+             }
+           };
+       
+    fetchData();
+  }, []);
+
+  /**
+ * Método para obtener el último consecutivo para una letra dada
+ */
+async function getLastConsecutive(letra: string): Promise<number> {
+  try {
+    const response = await api.salesAssest.getAssetSaleByNumeroBoleta(letra);
+    if (response && response.data && Array.isArray(response.data)) {
+      return response.data.length;
+    } else {
+      throw new Error("Invalid response from API");
+    }
+   } catch (error) {
+    console.error("Error getting last consecutive:", error);
+    return 0;
+   }
   }
-  
+   /**
+    * Meotodo para Generar consecutivo automático (B1, B2, etc.)
+   */
+   async function generarNumeroBoleta(letra: string): Promise<string> {
+    const lastConsecutive = await getLastConsecutive(letra);
+    const consecutivo = letra + (lastConsecutive + 1);
+  newAssetSale.NumeroBoleta = consecutivo; 
+  setNumeroBoleta(consecutivo);
+  return consecutivo;
+  }
+
+  const handleSelectChange = (event: SelectChangeEvent<string>) => {
+    const name = event.target.name as keyof newAssetModels;
+    const value = event.target.value;
+    setNewAssetSales((prevAsset) => ({
+      ...prevAsset,
+      [name]: value,
+    }));
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = event.target;
+    setNewAssetSales((prevAsset) => ({
+      ...prevAsset,
+      [name]: value,
+    }));
+  };
+
+  const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, files } = event.target;
+    if (files && files.length > 0) {
+      setNewAssetSales((prevAsset) => ({
+        ...prevAsset,
+        [name]: files[0],
+      }));
+    }
+  };
+
+
+  //esto tambien es nuevo
+  const onSubmit = async (data: FieldValues) => {
+    try {
+      await api.salesAssest.saveSalesAsset(data);
+      toast.success("Venta de activo registrado exitosamente");
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      toast.error("Error registrando el activo");
+    }
+  };
+
+
+  // esto tambien es nuevo
+  const handleFormSubmit = (data: FieldValues) => {
+    // Ajustar datos antes de enviar al backend
+    const formData = new FormData();
+    formData.append("PlacaActivo", newAssetSale.Descripcion);
+    if (newAssetSale.DocumentoAprobado) {
+      formData.append("DocumentoAprobado", newAssetSale.DocumentoAprobado);
+    }
+    formData.append("Descripcion", newAssetSale.Descripcion);
+    formData.append("MontoVentas", newAssetSale.MontoVentas.toString());
+    if (newAssetSale.CotizacionVentas) {
+      formData.append("CotizacionVentas", newAssetSale.CotizacionVentas);
+    }
+    if (newAssetSale.Fotografia) {
+      formData.append("Fotografia", newAssetSale.Fotografia);
+    }
+    if (newAssetSale.Comprobante) {
+      formData.append("Comprobante", newAssetSale.Comprobante);
+    }
+    formData.append("NumeroBoleta", newAssetSale.NumeroBoleta);
+    formData.append("Usuario", user?.nombre_usuario || ""); 
+
+    onSubmit(formData);
+  };
+
+
+  const VisuallyHiddenInput = styled("input")({
+    clip: "rect(0 0 0 0)",
+    clipPath: "inset(50%)",
+    height: 1,
+    overflow: "hidden",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    whiteSpace: "nowrap",
+    width: 1,
+  });
+
+  return (
+    <Card>
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel id="placa-activo-label">
+                  Seleccionar Placa de activo
+                </InputLabel>
+                <Select
+                  labelId="placa-activo-label"
+                  id="placa-activo"
+                  name="PlacaActivo"
+                  value={newAssetSale.PlacaActivo.toString() || ""}
+                  onChange={handleSelectChange}
+                  label="Seleccionar Placa de Activo"
+                >
+                  {Array.isArray(assets) && assets.map((account) => (
+                    <MenuItem key={account.id} value={account.id}>
+                      {account.NumeroPlaca}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <Button variant="contained" component="label" fullWidth>
+                Adjuntar documento de aprobacion
+                <VisuallyHiddenInput
+                  type="file"
+                  name="DocumentoAprobado"
+                  onChange={handleFileInputChange}
+                />
+              </Button>
+              {newAssetSale.DocumentoAprobado && <FormHelperText>Archivo cargado: {newAssetSale.DocumentoAprobado.name}</FormHelperText>}
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                id="descripcion"
+                name="Descripcion"
+                label="Explicar la razon de venta"
+                value={newAssetSale.Descripcion || ""}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                type="number"
+                id="monto-ventas"
+                name="MontoVentas"
+                label="Monto de ventas"
+                value={newAssetSale.MontoVentas || ""}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <Button variant="contained" component="label" fullWidth>
+                Adjuntar Cotizacion de venta
+                <VisuallyHiddenInput
+                  type="file"
+                  name="CotizacionVentas"
+                  onChange={handleFileInputChange}
+                />
+              </Button>
+              {newAssetSale.CotizacionVentas && <FormHelperText>Archivo cargado: {newAssetSale.CotizacionVentas.name}</FormHelperText>}
+            </Grid>
+            <Grid item xs={6}>
+              <Button variant="contained" component="label" fullWidth>
+                Adjuntar Fotografia actual del activo
+                <VisuallyHiddenInput
+                  type="file"
+                  name="Fotografia"
+                  onChange={handleFileInputChange}
+                />
+              </Button>
+              {newAssetSale.Fotografia && <FormHelperText>Archivo cargado: {newAssetSale.Fotografia.name}</FormHelperText>}
+            </Grid>
+            <Grid item xs={6}>
+              <Button variant="contained" component="label" fullWidth>
+                Adjuntar Comprobante del banco
+                <VisuallyHiddenInput
+                  type="file"
+                  name="Comprobante"
+                  onChange={handleFileInputChange}
+                />
+              </Button>
+              {newAssetSale.Comprobante && <FormHelperText>Archivo cargado: {newAssetSale.Comprobante.name}</FormHelperText>}
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                disabled
+                id="numero-boleta"
+                name="NumeroBoleta"
+                label="Numero de Boleta"
+                value={numeroBoleta} //revisar ya que no lo guarda en la base de datos
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                disabled
+                id="usuario"
+                name="Usuario"
+                label={user?.nombre_usuario}
+                value={user?.nombre_usuario} //revisar ya que no lo guarda en  la base de datos
+                onChange={handleInputChange}
+              />
+            </Grid>
+        </Grid>
+          <Button type="submit" disabled={isSubmitting}>
+            Agregar
+          </Button>
+      </form>
+    </Card>
+  );
+}

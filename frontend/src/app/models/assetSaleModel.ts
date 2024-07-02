@@ -1,12 +1,12 @@
 export interface assetSaleModel {
   id: number;
   Descripcion: string;
-  DocumentoAprobado: string | null;
+  DocumentoAprobado: File | null;
   MontoVentas: number;
   PlacaActivo: string;
-  CotizacionVentas: string | null;
-  Fotografia: string | null;
-  Comprobante: string | null;
+  CotizacionVentas: File | null;
+  Fotografia: File | null;
+  Comprobante: File | null;
   NumeroBoleta: string;
   Usuario: string;
 }
