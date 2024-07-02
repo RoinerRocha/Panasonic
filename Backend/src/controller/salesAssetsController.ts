@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import SalesAssetsModel from "../models/salesAssetsModel";
 import { Op } from "sequelize";
+import Joi from 'joi';
 
 
 interface MulterFiles {
@@ -55,6 +56,44 @@ export const saveSalesAsset = async (req: Request, res: Response) => {
      res.status(500).json({ error: error.message });
    }
  };
+
+ const numeroBoletaSchema = Joi.string().required().pattern(/^[A-Za-z]/);
+
+export const getAssetSaleByNumeroBoleta = async (req: Request, res: Response) => {
+  const { NumeroBoleta } = req.params;
+
+  try {
+    await numeroBoletaSchema.validateAsync(NumeroBoleta);
+  } catch (error) {
+    return res.status(400).json({ message: 'Invalid NumeroBoleta' });
+  }
+
+  try {
+    const salesAsset = await SalesAssetsModel.findAll({
+      where: {
+        NumeroBoleta: {
+          [Op.like]: `${NumeroBoleta}%`,
+        },
+      },
+    });
+
+    if (salesAsset.length >= 0) {
+      res.status(200).json({
+        message: "Sale Asset fetched successfully",
+        data: salesAsset,
+      });
+    } 
+    else {
+      res.status(404).json({ message: "Sale Asset not found" });
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  }
+};
 
 // Método para eliminar una venta de activo por ID
 // export const deleteSalesAsset = async (req: Request, res: Response) => {
