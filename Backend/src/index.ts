@@ -3,6 +3,7 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import cors from "cors";
 import sequelize from "./Services/Postgresql";
+import path from "path";
 //import {connection} from "./Services/Postgresql";
 
 //routes
@@ -19,6 +20,7 @@ import routerEditAsset from "./routes/editAsset.route"
 import routerAssetRetirement from "./routes/assetRetirement.route"
 import routerSalesAssets from "./routes/salesAssets.router"
 import routerDepreciation from "./routes/depreciation.router"
+import routerUploads from "./routes/uploads.router"
 
 dotenv.config();
 
@@ -30,6 +32,20 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(exceptionMiddleware);
 
+
+// Servir archivos estáticos desde la carpeta 'uploads'
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Configura las rutas para servir imágenes desde subcarpetas específicas
+app.use('/uploads/ComprobanteVentas', express.static(path.join(__dirname, '../uploads/ComprobanteVentas')));
+app.use('/uploads/CotizacionesVentas', express.static(path.join(__dirname, '../uploads/CotizacionesVentas')));
+app.use('/uploads/DocumentoAprobadoBajas', express.static(path.join(__dirname, '../uploads/DocumentoAprobadoBajas')));
+app.use('/uploads/DocumentoAprobadoVentas', express.static(path.join(__dirname, '../uploads/DocumentoAprobadoVentas')));
+app.use('/uploads/Facturas', express.static(path.join(__dirname, '../uploads/Facturas')));
+app.use('/uploads/Fotografias', express.static(path.join(__dirname, '../uploads/Fotografias')));
+app.use('/uploads/FotografiasBajas', express.static(path.join(__dirname, '../uploads/FotografiasBajas')));
+app.use('/uploads/FotogreafiasVentas', express.static(path.join(__dirname, '../uploads/FotogreafiasVentas')));
+app.use('/uploads/Ordenes', express.static(path.join(__dirname, '../uploads/Ordenes')));
 //const PORT = 3000;
 const PORT = process.env.PORT || 5000;
 
@@ -63,7 +79,7 @@ app.use("/api", routerEditAsset);
 app.use("/api", routerAssetRetirement);
 app.use("/api", routerSalesAssets);
 app.use("/api", routerDepreciation);
-
+//app.use(routerUploads);
 
 // import cors from "cors";
 // import bodyParser from "body-parser";
