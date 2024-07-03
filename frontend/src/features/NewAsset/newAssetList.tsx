@@ -1,5 +1,4 @@
 import {
-  Grid,
   TableContainer,
   Paper,
   Table,
@@ -8,24 +7,16 @@ import {
   TableRow,
   TableBody,
   Button,
-  TextField,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   TablePagination,
-  Card,
-  Select,
-  FormControl,
-  FormHelperText,
-  InputLabel,
 } from "@mui/material";
 import { newAssetModels } from "../../app/models/newAssetModels";
 import { useState, useEffect } from "react";
 import api from "../../app/api/api";
 import { toast } from "react-toastify";
-import { Buffer } from 'buffer';
 import RegisterAsset from "./registerAsset";
 
 interface Props {
@@ -33,29 +24,11 @@ interface Props {
   setNewAssets: React.Dispatch<React.SetStateAction<newAssetModels[]>>;
 }
 
-function bufferToDataUrl(buffer: ArrayBuffer | Uint8Array, mimeType: string): string {
-  let uint8Array: Uint8Array;
-  if (buffer instanceof ArrayBuffer) {
-    uint8Array = new Uint8Array(buffer);
-  } else {
-    uint8Array = buffer;
-  }
-
-  const binaryString = Array.prototype.map.call(uint8Array, (x) => String.fromCharCode(x)).join('');
-  const base64String = btoa(binaryString);
-  return `data:${mimeType};base64,${base64String}`;
-}
-
-
-
-export default function NewAssetsList({
-  newAssets,
-  setNewAssets,
-}: Props) {
-  const [selectedNewAsset, setSelectedNewAsset] =
-    useState<newAssetModels | null>(null);
+function NewAssetsList({ newAssets, setNewAssets }: Props) {
+  const [selectedNewAsset, setSelectedNewAsset] = useState<newAssetModels | null>(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [openDetailDialog, setOpenDetailDialog] = useState(false);
   const [newAsset, setNewAsset] = useState<Partial<newAssetModels>>({
     CodigoCuenta: 0,
     Zona: 0,
@@ -77,19 +50,60 @@ export default function NewAssetsList({
     Usuario: "",
   });
 
+  const [imageUrlMap, setImageUrlMap] = useState<Map<number, Map<string, string>>>(new Map());
+
   useEffect(() => {
-    loadNewAsset();
+    loadNewAsset()
   }, []);
 
-  const loadNewAsset = async () => {
+  const loadNewAsset: () => Promise<void> = async () => {
     try {
       const response = await api.newAsset.getNewAssets();
       setNewAssets(response.data);
+      convertImagesToDataUrl(response.data);
     } catch (error) {
       console.error("Error al cargar Lista de Ingreso de Activos:", error);
     }
   };
 
+  /**
+   * Metodo para conviertir los nombres de los archivos en URLs
+   * @param assets 
+   */
+  const convertImagesToDataUrl = (assets: newAssetModels[]) => {
+    assets.forEach((asset) => {
+      if (asset.Fotografia) {
+        //console.log("URL img Activo: "+asset.Fotografia);
+        setImageUrlMap((prevMap) => {
+          const assetMap = prevMap.get(asset.id) || new Map();
+          const imageUrl = `http://localhost:5000/${asset.Fotografia}`;
+          //console.log(`Fotografía URL para ID ${asset.id}: ${imageUrl}`);
+          //console.log(prevMap);
+          assetMap.set('Fotografia', imageUrl);
+          return new Map(prevMap).set(asset.id, assetMap);         
+        });
+      }
+      if (asset.FacturaImagen) {
+        setImageUrlMap((prevMap) => {
+          const assetMap = prevMap.get(asset.id) || new Map();
+          assetMap.set('FacturaImagen', `http://localhost:5000/${asset.FacturaImagen}`);
+          return new Map(prevMap).set(asset.id, assetMap);
+        });
+      }
+      if (asset.OrdenCompraImagen) {
+        setImageUrlMap((prevMap) => {
+          const assetMap = prevMap.get(asset.id) || new Map();
+          assetMap.set('OrdenCompraImagen', `http://localhost:5000/${asset.OrdenCompraImagen}`);
+          return new Map(prevMap).set(asset.id, assetMap);
+        });
+      }
+    });
+  };
+
+  /**
+   * Metodo para eliminar el activo por id
+   * @param id del activo seleccionado
+   */
   const handleDelete = async (id: number) => {
     try {
       await api.newAsset.deleteNewAsset(id);
@@ -110,7 +124,7 @@ export default function NewAssetsList({
       try {
         const newAssetId = selectedNewAsset.id;
         const updatedNewAsset = {
-          CodigoCCuenta: selectedNewAsset.CodigoCuenta,
+          CodigoCuenta: selectedNewAsset.CodigoCuenta,
           Zona: selectedNewAsset.Zona,
           Tipo: selectedNewAsset.Tipo,
           Estado: selectedNewAsset.Estado,
@@ -157,13 +171,18 @@ export default function NewAssetsList({
   const endIndex = startIndex + rowsPerPage;
   const paginatedProfiles = newAssets.slice(startIndex, endIndex);
 
+  // Función para manejar la apertura del diálogo de detalles del Activo seleccionado
+  const handleRowClick = (newAsset: newAssetModels) => {
+    setSelectedNewAsset(newAsset);
+    setOpenDetailDialog(true);
+  };
+
   return (
     <div>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              {/* Column Headers */}
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Codigo Cuenta</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Zona</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Tipo</TableCell>
@@ -172,7 +191,7 @@ export default function NewAssetsList({
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Numero Placa</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Valor Compra CRC</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Valor Compra USD</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Fotografia</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Fotografía</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Nombre Proveedor</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Fecha Compra</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Numero Factura</TableCell>
@@ -187,58 +206,45 @@ export default function NewAssetsList({
           </TableHead>
           <TableBody>
             {paginatedProfiles.map((newAsset) => (
-              <TableRow key={newAsset.id}>
-                {/* Data Rows */}
+              <TableRow key={newAsset.id} onClick={() => handleRowClick(newAsset)} style={{ cursor: "pointer" }}>
                 <TableCell>{newAsset.CodigoCuenta}</TableCell>
                 <TableCell>{newAsset.Zona}</TableCell>
                 <TableCell>{newAsset.Tipo}</TableCell>
                 <TableCell>{newAsset.Estado}</TableCell>
                 <TableCell>{newAsset.Descripcion}</TableCell>
                 <TableCell>{newAsset.NumeroPlaca}</TableCell>
-                <TableCell>{'₡'+newAsset.ValorCompraCRC}</TableCell>
-                <TableCell>{"$"+newAsset.ValorCompraUSD}</TableCell>
+                <TableCell>{'₡' + newAsset.ValorCompraCRC}</TableCell>
+                <TableCell>{"$" + newAsset.ValorCompraUSD}</TableCell>
                 <TableCell>
-                {newAsset.Fotografia ? (
-                  
-                    <>
-                      {console.log('Tipo de Fotografia:', typeof newAsset.Fotografia)}
-                      <img 
-                        src={typeof newAsset.Fotografia === 'string' ? newAsset.Fotografia: bufferToDataUrl(newAsset.Fotografia,'image/png')} 
-                        alt="Fotografia" 
-                        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-                      />
-                    </>
-                 ) : 'No Image'}
+                  {imageUrlMap.get(newAsset.id)?.get('Fotografia') ? (
+                    <img
+                      src={imageUrlMap.get(newAsset.id)?.get('Fotografia')}
+                      alt="Fotografía"
+                      style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                    />
+                  ) : 'No Image'}
                 </TableCell>
                 <TableCell>{newAsset.NombreProveedor}</TableCell>
-                <TableCell>
-                  {new Date(newAsset.FechaCompra).toLocaleDateString()}
-                </TableCell>
+                <TableCell>{new Date(newAsset.FechaCompra).toLocaleDateString()}</TableCell>
                 <TableCell>{newAsset.FacturaNum}</TableCell>
                 <TableCell>
-                {newAsset.FacturaImagen ? (
-    <>
-      {console.log('Tipo de FacturaImagen:', typeof newAsset.FacturaImagen)}
-      <img 
-        src={typeof newAsset.FacturaImagen === 'string' ? newAsset.FacturaImagen : bufferToDataUrl(newAsset.FacturaImagen,'image/png')} 
-        alt="Factura Imagen" 
-        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-      />
-    </>
-  ) : 'No Image'}
+                  {newAsset.FacturaImagen ? (
+                    <img 
+                      src={imageUrlMap.get(newAsset.id)?.get('FacturaImagen') || ''} 
+                      alt="Factura Imagen" 
+                      style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                    />
+                  ) : 'No Image'}
                 </TableCell>
                 <TableCell>{newAsset.OrdenCompraNum}</TableCell>
                 <TableCell>
-                {newAsset.OrdenCompraImagen ? (
-    <>
-      {console.log('Tipo de OrdenCompraImagen:', typeof newAsset.OrdenCompraImagen)}
-      <img 
-        src={typeof newAsset.OrdenCompraImagen === 'string' ? newAsset.OrdenCompraImagen : bufferToDataUrl(newAsset.OrdenCompraImagen,'image/png')} 
-        alt="Orden Compra Imagen" 
-        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-      />
-    </>
-  ) : 'No Image'}
+                  {newAsset.OrdenCompraImagen ? (
+                    <img 
+                      src={imageUrlMap.get(newAsset.id)?.get('OrdenCompraImagen') || ''} 
+                      alt="Orden Compra Imagen" 
+                      style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                    />
+                  ) : 'No Image'}
                 </TableCell>
                 <TableCell>{newAsset.NumeroAsiento}</TableCell>
                 <TableCell>{newAsset.NumeroBoleta}</TableCell>
@@ -248,7 +254,10 @@ export default function NewAssetsList({
                     variant="contained"
                     color="info"
                     sx={{ margin: "5px" }}
-                    onClick={() => handleEdit(newAsset)}
+                    onClick={(event) => {
+                      event.stopPropagation(); // Prevenir que el clic propague y abra el diálogo de detalles
+                      handleEdit(newAsset);
+                    }}
                   >
                     Editar
                   </Button>
@@ -256,7 +265,10 @@ export default function NewAssetsList({
                     variant="contained"
                     color="error"
                     sx={{ margin: "5px" }}
-                    onClick={() => handleDelete(newAsset.id)}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleDelete(newAsset.id);
+                    }}
                   >
                     Eliminar
                   </Button>
@@ -274,7 +286,7 @@ export default function NewAssetsList({
           <RegisterAsset></RegisterAsset>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => handleAdd()}>Agregar</Button>
+         {/* <Button onClick={() => handleAdd()}>Agregar</Button>*/}
           <Button onClick={() => setOpenAddDialog(false)}>Cancelar</Button>
         </DialogActions>
       </Dialog>
@@ -288,18 +300,71 @@ export default function NewAssetsList({
           <Button onClick={() => setOpenEditDialog(false)}>Cancelar</Button>
         </DialogActions>
       </Dialog>
+      <Dialog open={openDetailDialog} onClose={() => setOpenDetailDialog(false)}>
+        <DialogTitle>Detalle del Activo</DialogTitle>
+        <DialogContent>
+          {selectedNewAsset && (
+            <div>
+              <p><strong>Código Cuenta:</strong> {selectedNewAsset.CodigoCuenta}</p>
+              <p><strong>Zona:</strong> {selectedNewAsset.Zona}</p>
+              <p><strong>Tipo:</strong> {selectedNewAsset.Tipo}</p>
+              <p><strong>Estado:</strong> {selectedNewAsset.Estado}</p>
+              <p><strong>Descripción:</strong> {selectedNewAsset.Descripcion}</p>
+              <p><strong>Número Placa:</strong> {selectedNewAsset.NumeroPlaca}</p>
+              <p><strong>Valor Compra CRC:</strong> {'₡' + selectedNewAsset.ValorCompraCRC}</p>
+              <p><strong>Valor Compra USD:</strong> {'$' + selectedNewAsset.ValorCompraUSD}</p>
+              <p><strong>Fotografía:</strong></p>
+              {imageUrlMap.get(selectedNewAsset.id)?.get('Fotografia') ? (
+                <img
+                  src={imageUrlMap.get(selectedNewAsset.id)?.get('Fotografia')}
+                  alt="Fotografía"
+                  style={{ width: '700px', height: '700px', objectFit: 'cover' }}
+                />
+              ) : 'No Image'}
+              <p><strong>Nombre Proveedor:</strong> {selectedNewAsset.NombreProveedor}</p>
+              <p><strong>Fecha Compra:</strong> {new Date(selectedNewAsset.FechaCompra).toLocaleDateString()}</p>
+              <p><strong>Número Factura:</strong> {selectedNewAsset.FacturaNum}</p>
+              <p><strong>Factura Imagen:</strong></p>
+              {imageUrlMap.get(selectedNewAsset.id)?.get('FacturaImagen') ? (
+                <img
+                  src={imageUrlMap.get(selectedNewAsset.id)?.get('FacturaImagen')}
+                  alt="Factura Imagen"
+                  style={{ width: '700px', height: '700px', objectFit: 'cover' }}
+                />
+              ) : 'No Image'}
+              <p><strong>Orden Compra Número:</strong> {selectedNewAsset.OrdenCompraNum}</p>
+              <p><strong>Orden Compra Imagen:</strong></p>
+              {imageUrlMap.get(selectedNewAsset.id)?.get('OrdenCompraImagen') ? (
+                <img
+                  src={imageUrlMap.get(selectedNewAsset.id)?.get('OrdenCompraImagen')}
+                  alt="Orden Compra Imagen"
+                  style={{ width: '700px', height: '700px', objectFit: 'cover' }}
+                />
+              ) : 'No Image'}
+              <p><strong>Número Asiento:</strong> {selectedNewAsset.NumeroAsiento}</p>
+              <p><strong>Número Boleta:</strong> {selectedNewAsset.NumeroBoleta}</p>
+              <p><strong>Usuario:</strong> {selectedNewAsset.Usuario}</p>
+            </div>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDetailDialog(false)}>Cerrar</Button>
+        </DialogActions>
+      </Dialog>
       <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
+        rowsPerPageOptions={[6, 20, 50]}
         component="div"
         count={newAssets.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={(event, newPage) => setPage(newPage)}
         onRowsPerPageChange={(event) => {
-          setRowsPerPage(parseInt(event.target.value, 10));
+          setRowsPerPage(parseInt(event.target.value, 6));
           setPage(0);
         }}
       />
     </div>
   );
 }
+
+export default NewAssetsList;
