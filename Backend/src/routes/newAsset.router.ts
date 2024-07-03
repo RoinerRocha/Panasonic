@@ -28,7 +28,16 @@ router.post(
 
 router.get("/getNewAssets", getNewAssets);
 
-router.put("/newAssets/:id", updateNewAsset);
+// router.put("/newAssets/:id", updateNewAsset);
+router.put(
+  "/newAssets/:id",
+  upload.fields([
+    { name: 'Fotografia', maxCount: 1 },
+    { name: 'OrdenCompraImagen', maxCount: 1 },
+    { name: 'FacturaImagen', maxCount: 1 }
+  ]),
+  updateNewAsset
+);
 
 router.delete("/deleteNewAsset/:id", deleteNewAsset);
 router.get("/searchIdNewAsset/:id", searchIdNewAsset);

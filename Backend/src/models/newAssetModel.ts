@@ -12,7 +12,7 @@ class NewAssetModel extends Model {
     public ValorCompraCRC!: string;
     public ValorCompraUSD!: string;
     public Fotografia!: string | null;
-    public NombreProveedor!: string;
+    public  !: string;
     public FechaCompra!: Date;
     public FacturaNum!: number;
     public FacturaImagen!: string | null;

@@ -7,6 +7,7 @@
   import { Op } from "sequelize";
   import { upload } from '../Middleware/multerConfig'
   import Joi from 'joi';
+  import path from 'path';
 
 
   interface MulterFiles {
@@ -14,6 +15,16 @@
     OrdenCompraImagen?: Express.Multer.File[];
     FacturaImagen?: Express.Multer.File[];
   }
+  
+  const deleteFile = (filePath: string) => {
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.error(`Error deleting file: ${filePath}`, err);
+      } else {
+        console.log(`File deleted: ${filePath}`);
+      }
+    });
+  };
   // Método para guardar un nuevo activo
   export const saveNewAsset = async (req: Request, res: Response) => {
     const {
@@ -111,7 +122,8 @@
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
-  }; 
+  };
+
 
   // Método para actualizar un nuevo activo
   export const updateNewAsset = async (req: Request, res: Response) => {
@@ -125,19 +137,28 @@
       NumeroPlaca,
       ValorCompraCRC,
       ValorCompraUSD,
-      Fotografia,
       NombreProveedor,
       FechaCompra,
       FacturaNum,
-      FacturaImagen,
       OrdenCompraNum,
-      OrdenCompraImagen,
       NumeroAsiento,
       NumeroBoleta,
       Usuario
     } = req.body;
 
+    const files = req.files as MulterFiles;
+
+    const fotografiaPath = files?.Fotografia?.[0]?.path || null;
+    const ordenCompraImagenPath = files?.OrdenCompraImagen?.[0]?.path || null;
+    const facturaImagenPath = files?.FacturaImagen?.[0]?.path || null;
+
     try {
+      const existingAsset = await NewAssetModel.findByPk(newAssetId);
+
+      if (!existingAsset) {
+        return res.status(404).json({ message: "New asset not found" });
+      }
+
       const [updated] = await NewAssetModel.update(
         {
           CodigoCuenta,
@@ -148,13 +169,13 @@
           NumeroPlaca,
           ValorCompraCRC,
           ValorCompraUSD,
-          Fotografia,
+          Fotografia: fotografiaPath,
           NombreProveedor,
           FechaCompra,
           FacturaNum,
-          FacturaImagen,
+          FacturaImagen: ordenCompraImagenPath,
           OrdenCompraNum,
-          OrdenCompraImagen,
+          OrdenCompraImagen: facturaImagenPath,
           NumeroAsiento,
           NumeroBoleta,
           Usuario
@@ -166,6 +187,16 @@
       );
 
       if (updated) {
+        if (fotografiaPath && existingAsset.Fotografia) {
+          deleteFile(path.resolve(existingAsset.Fotografia));
+        }
+        if (ordenCompraImagenPath && existingAsset.OrdenCompraImagen) {
+          deleteFile(path.resolve(existingAsset.OrdenCompraImagen));
+        }
+        if (facturaImagenPath && existingAsset.FacturaImagen) {
+          deleteFile(path.resolve(existingAsset.FacturaImagen));
+        }
+
         const updatedNewAsset = await NewAssetModel.findByPk(newAssetId);
         res
           .status(200)
