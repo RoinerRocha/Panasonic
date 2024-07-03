@@ -1,23 +1,16 @@
 import {
-  TableContainer,
-  Paper,
-  Table,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableBody,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TablePagination,
+  TableContainer, Paper, Table, TableCell, TableHead,
+  TableRow, TableBody, Button, Dialog, DialogActions,
+  DialogContent, DialogTitle, TablePagination,
+  FormControl, InputLabel, Select, MenuItem,
 } from "@mui/material";
 import { newAssetModels } from "../../app/models/newAssetModels";
 import { useState, useEffect } from "react";
 import api from "../../app/api/api";
 import { toast } from "react-toastify";
 import RegisterAsset from "./registerAsset";
+import { SelectChangeEvent } from "@mui/material/Select";
+import { accountingAccount } from "../../app/models/accountingAccount";
 
 interface Props {
   newAssets: newAssetModels[];
@@ -25,6 +18,7 @@ interface Props {
 }
 
 function NewAssetsList({ newAssets, setNewAssets }: Props) {
+  const [accountingAccounts, setAccountingAccounts] = useState<accountingAccount[]>([]);
   const [selectedNewAsset, setSelectedNewAsset] = useState<newAssetModels | null>(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openAddDialog, setOpenAddDialog] = useState(false);
@@ -99,6 +93,26 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
       }
     });
   };
+  
+  // Aqui empiezan mis cambios
+  const handleSelectChange = (event: SelectChangeEvent<string>) => {
+    const name = event.target.name as keyof newAssetModels;
+    const value = event.target.value;
+    setNewAsset((prevAsset) => ({
+      ...prevAsset,
+      [name]: value,
+    }));
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = event.target;
+    setNewAsset((prevAsset) => ({
+      ...prevAsset,
+      [name]: value,
+    }));
+  };
+
+  // Aqui terminan mis cambios
 
   /**
    * Metodo para eliminar el activo por id
@@ -123,27 +137,29 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
     if (selectedNewAsset) {
       try {
         const newAssetId = selectedNewAsset.id;
-        const updatedNewAsset = {
-          CodigoCuenta: selectedNewAsset.CodigoCuenta,
-          Zona: selectedNewAsset.Zona,
-          Tipo: selectedNewAsset.Tipo,
-          Estado: selectedNewAsset.Estado,
-          Descripcion: selectedNewAsset.Descripcion,
-          NumeroPlaca: selectedNewAsset.NumeroPlaca,
-          ValorCompraCRC: selectedNewAsset.ValorCompraCRC,
-          ValorCompraUSD: selectedNewAsset.ValorCompraUSD,
-          Fotografia: selectedNewAsset.Fotografia,
-          NombreProveedor: selectedNewAsset.NombreProveedor,
-          FechaCompra: selectedNewAsset.FechaCompra,
-          FacturaNum: selectedNewAsset.FacturaNum,
-          FacturaImagen: selectedNewAsset.FacturaImagen,
-          OrdenCompraNum: selectedNewAsset.OrdenCompraNum,
-          OrdenCompraImagen: selectedNewAsset.OrdenCompraImagen,
-          NumeroAsiento: selectedNewAsset.NumeroAsiento,
-          NumeroBoleta: selectedNewAsset.NumeroBoleta,
-          Usuario: selectedNewAsset.Usuario,
-        };
-        await api.newAsset.updateNewAsset(newAssetId, updatedNewAsset);
+        const formData = new FormData();
+        formData.append("CodigoCuenta", selectedNewAsset.CodigoCuenta.toString());
+        // const updatedNewAsset = {
+        //   CodigoCuenta: selectedNewAsset.CodigoCuenta,
+        //   Zona: selectedNewAsset.Zona,
+        //   Tipo: selectedNewAsset.Tipo,
+        //   Estado: selectedNewAsset.Estado,
+        //   Descripcion: selectedNewAsset.Descripcion,
+        //   NumeroPlaca: selectedNewAsset.NumeroPlaca,
+        //   ValorCompraCRC: selectedNewAsset.ValorCompraCRC,
+        //   ValorCompraUSD: selectedNewAsset.ValorCompraUSD,
+        //   Fotografia: selectedNewAsset.Fotografia,
+        //   NombreProveedor: selectedNewAsset.NombreProveedor,
+        //   FechaCompra: selectedNewAsset.FechaCompra,
+        //   FacturaNum: selectedNewAsset.FacturaNum,
+        //   FacturaImagen: selectedNewAsset.FacturaImagen,
+        //   OrdenCompraNum: selectedNewAsset.OrdenCompraNum,
+        //   OrdenCompraImagen: selectedNewAsset.OrdenCompraImagen,
+        //   NumeroAsiento: selectedNewAsset.NumeroAsiento,
+        //   NumeroBoleta: selectedNewAsset.NumeroBoleta,
+        //   Usuario: selectedNewAsset.Usuario,
+        // };
+        await api.newAsset.updateNewAsset(newAssetId, formData);
         toast.success("Activo Ingresado Actualizado");
         setOpenEditDialog(false);
         loadNewAsset();
@@ -283,6 +299,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
         <DialogTitle>Agregar Activo</DialogTitle>
         <DialogContent>
           {/* Aquí va el formulario de agregar un nuevo activo */}
+
           <RegisterAsset></RegisterAsset>
         </DialogContent>
         <DialogActions>
@@ -294,6 +311,26 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
         <DialogTitle>Editar Activo</DialogTitle>
         <DialogContent>
           {/* Aquí va el formulario de editar un nuevo activo */}
+              <FormControl fullWidth>
+                <InputLabel id="codigo-cuenta-label">
+                  Seleccionar Código de Cuenta
+                </InputLabel>
+                <Select
+                  labelId="codigo-cuenta-label"
+                  id="codigo-cuenta"
+                  name="CodigoCuenta"
+                  value={selectedNewAsset?.CodigoCuenta.toString() || ""}
+                  onChange={handleSelectChange}
+                  label="Seleccionar Código de Cuenta"
+                
+                >
+                  {Array.isArray(accountingAccounts) && accountingAccounts.map((account) => (
+                    <MenuItem key={account.id} value={account.id}>
+                      {account.codigoCuenta}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handleUpdate()}>Actualizar</Button>
