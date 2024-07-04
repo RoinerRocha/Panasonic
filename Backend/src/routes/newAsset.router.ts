@@ -28,7 +28,7 @@ router.post(
 
 router.get("/getNewAssets", getNewAssets);
 
-// router.put("/newAssets/:id", updateNewAsset);
+
 router.put(
   "/newAssets/:id",
   upload.fields([

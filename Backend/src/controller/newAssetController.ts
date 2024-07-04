@@ -91,16 +91,30 @@
   // Método para eliminar un nuevo activo por ID por si acaso
   export const deleteNewAsset = async (req: Request, res: Response) => {
     const newAssetId = req.params.id;
-
+  
     try {
-      const deleted = await NewAssetModel.destroy({
-        where: { id: newAssetId },
-      });
-
-      if (deleted === 0) {
+      const assetToDelete = await NewAssetModel.findByPk(newAssetId);
+  
+      if (!assetToDelete) {
         return res.status(404).json({ message: "New asset not found" });
       }
-
+  
+      // Eliminar archivos de imagen asociados
+      if (assetToDelete.Fotografia) {
+        deleteFile(path.resolve(assetToDelete.Fotografia));
+      }
+      if (assetToDelete.OrdenCompraImagen) {
+        deleteFile(path.resolve(assetToDelete.OrdenCompraImagen));
+      }
+      if (assetToDelete.FacturaImagen) {
+        deleteFile(path.resolve(assetToDelete.FacturaImagen));
+      }
+  
+      // Eliminar el activo de la base de datos
+      await NewAssetModel.destroy({
+        where: { id: newAssetId },
+      });
+  
       res.status(200).json({ message: "Delete new asset successful" });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
