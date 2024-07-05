@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import RegisterAsset from "./registerAsset";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { accountingAccount } from "../../app/models/accountingAccount";
+import { useAppDispatch, useAppSelector } from "../../store/configureStore";//ruta para obtener el usuario
 
 interface Props {
   newAssets: newAssetModels[];
@@ -45,6 +46,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
   });
 
   const [imageUrlMap, setImageUrlMap] = useState<Map<number, Map<string, string>>>(new Map());
+  const {user} = useAppSelector(state => state.account);// se obtiene al usuario que esta logueado
 
   useEffect(() => {
     loadNewAsset()
@@ -94,25 +96,6 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
     });
   };
   
-  // Aqui empiezan mis cambios
-  const handleSelectChange = (event: SelectChangeEvent<string>) => {
-    const name = event.target.name as keyof newAssetModels;
-    const value = event.target.value;
-    setNewAsset((prevAsset) => ({
-      ...prevAsset,
-      [name]: value,
-    }));
-  };
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = event.target;
-    setNewAsset((prevAsset) => ({
-      ...prevAsset,
-      [name]: value,
-    }));
-  };
-
-  // Aqui terminan mis cambios
 
   /**
    * Metodo para eliminar el activo por id
@@ -133,32 +116,36 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
     setOpenEditDialog(true);
   };
 
-  const handleUpdate = async () => {
+  const handleUpdateAsset = async (updatedAsset: newAssetModels) => {
     if (selectedNewAsset) {
       try {
         const newAssetId = selectedNewAsset.id;
         const formData = new FormData();
         formData.append("CodigoCuenta", selectedNewAsset.CodigoCuenta.toString());
-        // const updatedNewAsset = {
-        //   CodigoCuenta: selectedNewAsset.CodigoCuenta,
-        //   Zona: selectedNewAsset.Zona,
-        //   Tipo: selectedNewAsset.Tipo,
-        //   Estado: selectedNewAsset.Estado,
-        //   Descripcion: selectedNewAsset.Descripcion,
-        //   NumeroPlaca: selectedNewAsset.NumeroPlaca,
-        //   ValorCompraCRC: selectedNewAsset.ValorCompraCRC,
-        //   ValorCompraUSD: selectedNewAsset.ValorCompraUSD,
-        //   Fotografia: selectedNewAsset.Fotografia,
-        //   NombreProveedor: selectedNewAsset.NombreProveedor,
-        //   FechaCompra: selectedNewAsset.FechaCompra,
-        //   FacturaNum: selectedNewAsset.FacturaNum,
-        //   FacturaImagen: selectedNewAsset.FacturaImagen,
-        //   OrdenCompraNum: selectedNewAsset.OrdenCompraNum,
-        //   OrdenCompraImagen: selectedNewAsset.OrdenCompraImagen,
-        //   NumeroAsiento: selectedNewAsset.NumeroAsiento,
-        //   NumeroBoleta: selectedNewAsset.NumeroBoleta,
-        //   Usuario: selectedNewAsset.Usuario,
-        // };
+        formData.append("Zona", selectedNewAsset.Zona.toString());
+    formData.append("Tipo", selectedNewAsset.Tipo.toString());
+    formData.append("Estado", selectedNewAsset.Estado.toString());
+    formData.append("Descripcion", selectedNewAsset.Descripcion);
+    formData.append("NumeroPlaca", selectedNewAsset.NumeroPlaca.toString());
+    formData.append("ValorCompraCRC", selectedNewAsset.ValorCompraCRC);
+    formData.append("ValorCompraUSD", selectedNewAsset.ValorCompraUSD);
+    if (newAsset.Fotografia) {
+      formData.append("Fotografia", newAsset.Fotografia);
+    }
+    formData.append("NombreProveedor", selectedNewAsset.NombreProveedor);
+    formData.append("FechaCompra", selectedNewAsset.FechaCompra.toString());
+    formData.append("FacturaNum", selectedNewAsset.FacturaNum.toString());
+    if (newAsset.FacturaImagen) {
+      formData.append("FacturaImagen", newAsset.FacturaImagen);
+    }
+    formData.append("OrdenCompraNum", selectedNewAsset.OrdenCompraNum.toString());
+    if (newAsset.OrdenCompraImagen) {
+      formData.append("OrdenCompraImagen", newAsset.OrdenCompraImagen);
+    }
+    formData.append("NumeroAsiento", selectedNewAsset.NumeroAsiento.toString());
+    formData.append("NumeroBoleta", selectedNewAsset.NumeroBoleta);
+    formData.append("Usuario", user?.nombre_usuario || ""); 
+        
         await api.newAsset.updateNewAsset(newAssetId, formData);
         toast.success("Activo Ingresado Actualizado");
         setOpenEditDialog(false);
@@ -168,7 +155,6 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
       }
     }
   };
-
   const handleAdd = async () => {
     try {
       const addedStatusAsset = await api.newAsset.saveNewAsset(newAsset);
@@ -311,29 +297,9 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
         <DialogTitle>Editar Activo</DialogTitle>
         <DialogContent>
           {/* Aquí va el formulario de editar un nuevo activo */}
-              <FormControl fullWidth>
-                <InputLabel id="codigo-cuenta-label">
-                  Seleccionar Código de Cuenta
-                </InputLabel>
-                <Select
-                  labelId="codigo-cuenta-label"
-                  id="codigo-cuenta"
-                  name="CodigoCuenta"
-                  value={selectedNewAsset?.CodigoCuenta.toString() || ""}
-                  onChange={handleSelectChange}
-                  label="Seleccionar Código de Cuenta"
-                
-                >
-                  {Array.isArray(accountingAccounts) && accountingAccounts.map((account) => (
-                    <MenuItem key={account.id} value={account.id}>
-                      {account.codigoCuenta}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => handleUpdate()}>Actualizar</Button>
+          <Button>Actualizar</Button>
           <Button onClick={() => setOpenEditDialog(false)}>Cancelar</Button>
         </DialogActions>
       </Dialog>
@@ -389,14 +355,14 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
         </DialogActions>
       </Dialog>
       <TablePagination
-        rowsPerPageOptions={[6, 20, 50]}
+        rowsPerPageOptions={[10, 15, 25]}
         component="div"
         count={newAssets.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={(event, newPage) => setPage(newPage)}
         onRowsPerPageChange={(event) => {
-          setRowsPerPage(parseInt(event.target.value, 6));
+          setRowsPerPage(parseInt(event.target.value, 10));
           setPage(0);
         }}
       />

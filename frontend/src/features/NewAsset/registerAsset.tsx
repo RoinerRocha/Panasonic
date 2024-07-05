@@ -189,7 +189,10 @@ async function getLastConsecutive(letra: string): Promise<number> {
   //   }
   // };
 
-  //esto tambien es nuevo
+  /**
+   * Metodo para guardar/registrar el activo obtenido del formulario
+   * @param data 
+   */
   const onSubmit = async (data: FieldValues) => {
     try {
       await api.newAsset.saveNewAsset(data);
@@ -201,8 +204,27 @@ async function getLastConsecutive(letra: string): Promise<number> {
     }
   };
 
+  /**
+   * Metodo para actualizar Activo registrado
+   * @param data 
+   */
+  const onSubmitEdit = async (data: FieldValues) => {
+    try {
+      const newAssetId = newAsset.id;
+      await api.newAsset.updateNewAsset(newAssetId,data);
+      toast.success("El Activo Se Actualizado Exitosamente");
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      toast.error("Error al Actualizar El Activo");
+    }
+  };
 
-  // esto tambien es nuevo
+
+  /**
+   * Metodo para capturar los datos del formulario
+   * @param data 
+   */
   const handleFormSubmit = (data: FieldValues) => {
     // Ajustar datos antes de enviar al backend
     const formData = new FormData();
@@ -531,7 +553,7 @@ async function getLastConsecutive(letra: string): Promise<number> {
               />
             </Grid>
         </Grid>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button  variant="contained" color="info" sx={{ margin: "5px" }} type="submit" disabled={isSubmitting}>
             Agregar
           </Button>
       </form>
