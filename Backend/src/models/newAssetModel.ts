@@ -52,7 +52,6 @@ try {
         },
         Descripcion: {
           type: DataTypes.STRING(150),
-          unique: true,
           allowNull: false,
         },
         NumeroPlaca: {
