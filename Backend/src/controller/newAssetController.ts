@@ -25,6 +25,7 @@
       }
     });
   };
+  
   // Método para guardar un nuevo activo
   export const saveNewAsset = async (req: Request, res: Response) => {
     const {
@@ -52,6 +53,16 @@
     const facturaImagenPath = files?.FacturaImagen?.[0]?.path || null;
 
     try {
+      const existingPlacaNum = await NewAssetModel.findOne({ where: { NumeroPlaca } });
+      if (existingPlacaNum ) {
+        return res.status(400).json({ message: "El numero de placa ya existe" });
+      }
+
+      const existingFacturaNum = await NewAssetModel.findOne({ where: { FacturaNum } });
+      if (existingFacturaNum) {
+        return res.status(400).json({ message: "El numero de factura debe de ser diferente" });
+      }
+
       const newAsset = await NewAssetModel.create({
         CodigoCuenta,
         Zona,

@@ -12,7 +12,7 @@ class NewAssetModel extends Model {
     public ValorCompraCRC!: string;
     public ValorCompraUSD!: string;
     public Fotografia!: string | null;
-    public  !: string;
+    public NombreProveedor!: string;
     public FechaCompra!: Date;
     public FacturaNum!: number;
     public FacturaImagen!: string | null;
@@ -58,6 +58,7 @@ try {
         NumeroPlaca: {
           type: DataTypes.INTEGER,
           allowNull: false,
+          unique: true,
         },
         ValorCompraCRC: {
           type: DataTypes.STRING(100),
@@ -82,6 +83,7 @@ try {
         FacturaNum: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            unique: true,
         },
         FacturaImagen: {
             type: DataTypes.STRING(250),
