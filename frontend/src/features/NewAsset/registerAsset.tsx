@@ -15,7 +15,11 @@ import { FieldValues, useForm } from "react-hook-form";
 import AssetRetirementFrm from "../assetRetirement/assetRetirementFrm";
 
 import { useAppDispatch, useAppSelector } from "../../store/configureStore";//ruta para obtener el usuario
-
+/**
+ * NOTA: COSAS POR CORREGIR: las img no se muestran cuando se editan,
+ *  en el frm register hay un error cuando se agrega un nuevo activo ya que en la tbl se agrega con onSave,
+ *  y en e frm se agrega con onSubmit
+ */
 interface Props {
   selectedAsset?: newAssetModels | null;
   onSave: (updatedAsset: newAssetModels) => void;
