@@ -1,5 +1,6 @@
 import {Grid,Button,TextField,Card,Select,FormControl,FormHelperText,
   InputLabel,MenuItem,styled,
+  Input,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
@@ -153,17 +154,17 @@ async function getLastConsecutive(letra: string): Promise<number> {
   return consecutivo;
   }
 
-  const handleApiErrors = (errors: any) => {
+  function handleApiErrors(errors: any) {
     if (Array.isArray(errors)) {
       errors.forEach((error: string) => {
-        if (error.includes("numeroZona")) {
-          setError("numeroZona", { message: error });
-        } else if (error.includes("nombreZona")) {
-          setError("nombreZona", { message: error });
+        if (error.includes('NumeroPlaca')) {
+          setError('NumeroPlaca', { message: error });
+        } else if (error.includes('FacturaNum')) {
+          setError('FacturaNum', { message: error });
         }
       });
     }
-  };
+  }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -230,7 +231,8 @@ async function getLastConsecutive(letra: string): Promise<number> {
       navigate("/");
     } catch (error) {
       console.error(error);
-      toast.error("Error registrando el activo");
+      handleApiErrors(errors);
+      toast.error("Error al ingresar nuevo activo");
     }
   };
 
@@ -446,6 +448,8 @@ async function getLastConsecutive(letra: string): Promise<number> {
                 label="Numero de Placa"
                 value={newAsset.NumeroPlaca || ""}
                 onChange={handleInputChange}
+                error={!!errors.NumeroPlaca}
+                helperText={errors?.NumeroPlaca?.message as string}
               />
             </Grid>
             <Grid item xs={6}>
@@ -514,6 +518,8 @@ async function getLastConsecutive(letra: string): Promise<number> {
                 label="Factura"
                 value={newAsset.FacturaNum || ""}
                 onChange={handleInputChange}
+                error={!!errors.FacturaNum}
+                helperText={errors?.FacturaNum?.message as string}
               />
             </Grid>
             <Grid item xs={6}>
