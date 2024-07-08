@@ -12,6 +12,8 @@ import RegisterAsset from "./registerAsset";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { accountingAccount } from "../../app/models/accountingAccount";
 import { useAppDispatch, useAppSelector } from "../../store/configureStore";//ruta para obtener el usuario
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 interface Props {
   newAssets: newAssetModels[];
@@ -52,16 +54,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
     loadNewAsset()
   }, []);
 
-  const loadNewAsset: () => Promise<void> = async () => {
-    try {
-      const response = await api.newAsset.getNewAssets();
-      setNewAssets(response.data);
-      convertImagesToDataUrl(response.data);
-    } catch (error) {
-      console.error("Error al cargar Lista de Ingreso de Activos:", error);
-    }
-  };
-
+  
   /**
    * Metodo para conviertir los nombres de los archivos en URLs
    * @param assets 
@@ -95,20 +88,45 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
       }
     });
   };
-  
+  const loadNewAsset: () => Promise<void> = async () => {
+    try {
+      const response = await api.newAsset.getNewAssets();
+      setNewAssets(response.data);
+      convertImagesToDataUrl(response.data);
+    } catch (error) {
+      console.error("Error al cargar Lista de Ingreso de Activos:", error);
+    }
+  };
+
 
   /**
    * Metodo para eliminar el activo por id
    * @param id del activo seleccionado
    */
-  const handleDelete = async (id: number) => {
-    try {
-      await api.newAsset.deleteNewAsset(id);
-      toast.success("Activo Ingresado Eliminado");
-      loadNewAsset();
-    } catch (error) {
-      console.error("Error al eliminar El activo ingresado", error);
-    }
+  const handleDelete = (id: number) => {
+    confirmAlert({
+      title: 'Confirmar Eliminación',
+      message: '¿Estás seguro de que deseas eliminar este activo?',
+      buttons: [
+        {
+          label: 'Sí',
+          onClick: async () => {
+            try {
+              await api.newAsset.deleteNewAsset(id);
+              toast.success("Activo Eliminado Correctamente");
+              loadNewAsset();
+            } catch (error) {
+              console.error("Error al eliminar El Activo", error);
+              toast.error("Error al eliminar El activo");
+            }
+          }
+        },
+        {
+          label: 'No',
+          onClick: () => {}
+        }
+      ]
+    });
   };
 
   const handleEdit = (newAsset: newAssetModels) => {
@@ -119,59 +137,56 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
   const handleUpdateAsset = async (updatedAsset: newAssetModels) => {
     if (selectedNewAsset) {
       try {
-        const newAssetId = selectedNewAsset.id;
-        const formData = new FormData();
-        formData.append("CodigoCuenta", selectedNewAsset.CodigoCuenta.toString());
-        formData.append("Zona", selectedNewAsset.Zona.toString());
-    formData.append("Tipo", selectedNewAsset.Tipo.toString());
-    formData.append("Estado", selectedNewAsset.Estado.toString());
-    formData.append("Descripcion", selectedNewAsset.Descripcion);
-    formData.append("NumeroPlaca", selectedNewAsset.NumeroPlaca.toString());
-    formData.append("ValorCompraCRC", selectedNewAsset.ValorCompraCRC);
-    formData.append("ValorCompraUSD", selectedNewAsset.ValorCompraUSD);
-    if (newAsset.Fotografia) {
-      formData.append("Fotografia", newAsset.Fotografia);
-    }
-    formData.append("NombreProveedor", selectedNewAsset.NombreProveedor);
-    formData.append("FechaCompra", selectedNewAsset.FechaCompra.toString());
-    formData.append("FacturaNum", selectedNewAsset.FacturaNum.toString());
-    if (newAsset.FacturaImagen) {
-      formData.append("FacturaImagen", newAsset.FacturaImagen);
-    }
-    formData.append("OrdenCompraNum", selectedNewAsset.OrdenCompraNum.toString());
-    if (newAsset.OrdenCompraImagen) {
-      formData.append("OrdenCompraImagen", newAsset.OrdenCompraImagen);
-    }
-    formData.append("NumeroAsiento", selectedNewAsset.NumeroAsiento.toString());
-    formData.append("NumeroBoleta", selectedNewAsset.NumeroBoleta);
-    formData.append("Usuario", user?.nombre_usuario || ""); 
-        
-        await api.newAsset.updateNewAsset(newAssetId, formData);
+        await api.newAsset.updateNewAsset(selectedNewAsset.id, updatedAsset);
         toast.success("Activo Ingresado Actualizado");
         setOpenEditDialog(false);
         loadNewAsset();
       } catch (error) {
         console.error("Error al actualizar El Activo Ingresado:", error);
+        toast.error("Error al intentar Actualizar Activo");
       }
     }
   };
-  const handleAdd = async () => {
+
+  const handleAddNewAsset = async (newAsset: newAssetModels) => {
     try {
-      const addedStatusAsset = await api.newAsset.saveNewAsset(newAsset);
+      await api.newAsset.saveNewAsset(newAsset);
+      toast.success("Nuevo Activo Agregado");
+      setOpenAddDialog(false);
+      loadNewAsset();
+    } catch (error) {
+      console.error("Error al agregar nuevo activo:", error);
+      toast.error("Error al intentar agregar nuevo activo");
+    }
+  };
+   // Esta función ahora es responsable de manejar los datos recibidos del formulario RegisterAsset
+   /*const handleAddNewAsset = async (newAssetData: Partial<newAssetModels>) => {
+    try {
+      // Agregar el nuevo activo
+      await api.newAsset.saveNewAsset(newAssetData);
       toast.success("Activo Agregado");
       setOpenAddDialog(false);
       loadNewAsset();
     } catch (error) {
       console.error("Error al agregar El nuevo Activo:", error);
+      toast.error("Error al intentar Agregar Activo");
     }
-  };
+  };*/
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
-  const paginatedProfiles = newAssets.slice(startIndex, endIndex);
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   // Función para manejar la apertura del diálogo de detalles del Activo seleccionado
   const handleRowClick = (newAsset: newAssetModels) => {
@@ -181,6 +196,13 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
 
   return (
     <div>
+           <Button
+        variant="contained"
+        color="primary"
+        onClick={() => setOpenAddDialog(true)}
+      >
+        Agregar Nuevo Activo
+      </Button>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>
@@ -207,7 +229,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {paginatedProfiles.map((newAsset) => (
+            {newAssets.slice(startIndex, endIndex).map((newAsset) => (
               <TableRow key={newAsset.id} onClick={() => handleRowClick(newAsset)} style={{ cursor: "pointer" }}>
                 <TableCell>{newAsset.CodigoCuenta}</TableCell>
                 <TableCell>{newAsset.Zona}</TableCell>
@@ -280,13 +302,13 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
           </TableBody>
         </Table>
       </TableContainer>
-      <Button onClick={() => setOpenAddDialog(true)}>Agregar</Button>
+      <Button onClick={() => setOpenAddDialog(true)}></Button>
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
         <DialogTitle>Agregar Activo</DialogTitle>
         <DialogContent>
           {/* Aquí va el formulario de agregar un nuevo activo */}
 
-          <RegisterAsset></RegisterAsset>
+          <RegisterAsset  onSave={handleAddNewAsset}/>
         </DialogContent>
         <DialogActions>
          {/* <Button onClick={() => handleAdd()}>Agregar</Button>*/}
@@ -297,9 +319,12 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
         <DialogTitle>Editar Activo</DialogTitle>
         <DialogContent>
           {/* Aquí va el formulario de editar un nuevo activo */}
+          <RegisterAsset
+            selectedAsset={selectedNewAsset}
+            onSave={handleUpdateAsset}
+            isEditing={true}/>
         </DialogContent>
         <DialogActions>
-          <Button>Actualizar</Button>
           <Button onClick={() => setOpenEditDialog(false)}>Cancelar</Button>
         </DialogActions>
       </Dialog>
@@ -355,16 +380,13 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
         </DialogActions>
       </Dialog>
       <TablePagination
-        rowsPerPageOptions={[10, 15, 25]}
+        rowsPerPageOptions={[10, 25, 50]}
         component="div"
         count={newAssets.length}
         rowsPerPage={rowsPerPage}
         page={page}
-        onPageChange={(event, newPage) => setPage(newPage)}
-        onRowsPerPageChange={(event) => {
-          setRowsPerPage(parseInt(event.target.value, 10));
-          setPage(0);
-        }}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </div>
   );

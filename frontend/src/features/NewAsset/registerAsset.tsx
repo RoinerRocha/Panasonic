@@ -16,11 +16,17 @@ import AssetRetirementFrm from "../assetRetirement/assetRetirementFrm";
 
 import { useAppDispatch, useAppSelector } from "../../store/configureStore";//ruta para obtener el usuario
 
+interface Props {
+  selectedAsset?: newAssetModels | null;
+  onSave: (updatedAsset: newAssetModels) => void;
+  isEditing?: boolean;
+}
 
-export default function RegisterAsset() {
+export default function RegisterAsset({ selectedAsset, onSave, isEditing = false }: Props) {
 
   const navigate = useNavigate();
   const [numeroBoleta, setNumeroBoleta] = useState<string>("");
+  const {user} = useAppSelector(state => state.account);// se obtiene al usuario que esta logueado
 
   // Estados para el nuevo activo y las listas desplegables
   const [newAsset, setNewAsset] = useState<newAssetModels>({
@@ -42,15 +48,21 @@ export default function RegisterAsset() {
     OrdenCompraImagen: null,
     NumeroAsiento: 0,
     NumeroBoleta: numeroBoleta, // Consecutivo automático
-    Usuario: "" // Usuario automático
+    Usuario: (user?.nombre_usuario || "") // Usuario automático
   });
+
+  useEffect(() => {//para que los datos se carguen en el formulario de editar
+    if (selectedAsset && isEditing) {
+      setNewAsset(selectedAsset);
+    }
+  }, [selectedAsset, isEditing]);
 
   const [zones, setZones] = useState<Zona[]>([]);
   const [accountingAccounts, setAccountingAccounts] = useState<accountingAccount[]>([]);
   const [serviceLives, setServiceLives] = useState<serviceLifeModels[]>([]);
   const [statuses, setStatuses] = useState<statusAssets[]>([]);
   const dispatch = useAppDispatch(); 
-  const {user} = useAppSelector(state => state.account);// se obtiene al usuario que esta logueado
+  
 
   
   const {
@@ -149,6 +161,14 @@ async function getLastConsecutive(letra: string): Promise<number> {
     }
   };
 
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setNewAsset((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   const handleSelectChange = (event: SelectChangeEvent<string>) => {
     const name = event.target.name as keyof newAssetModels;
     const value = event.target.value;
@@ -193,6 +213,12 @@ async function getLastConsecutive(letra: string): Promise<number> {
    * Metodo para guardar/registrar el activo obtenido del formulario
    * @param data 
    */
+  const handleSave = () => {
+    if (newAsset) {
+      onSave(newAsset as newAssetModels);
+    }
+  };
+
   const onSubmit = async (data: FieldValues) => {
     try {
       await api.newAsset.saveNewAsset(data);
@@ -510,7 +536,7 @@ async function getLastConsecutive(letra: string): Promise<number> {
             </Grid>
             <Grid item xs={12}>
               <Button variant="contained" component="label" fullWidth>
-                Subir Imagen de Factura
+                Subir Imagen Orden de Compra
                 <VisuallyHiddenInput
                   type="file"
                   name="OrdenCompraImagen"
@@ -553,8 +579,8 @@ async function getLastConsecutive(letra: string): Promise<number> {
               />
             </Grid>
         </Grid>
-          <Button  variant="contained" color="info" sx={{ margin: "5px" }} type="submit" disabled={isSubmitting}>
-            Agregar
+          <Button  variant="contained" color="info" sx={{ margin: "5px" }} onClick={handleSave}  type="submit"disable={isSubmitting}>
+          {isEditing ? "Actualizar" : "Agregar"}
           </Button>
       </form>
     </Card>
