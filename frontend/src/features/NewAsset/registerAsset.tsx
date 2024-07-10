@@ -1,6 +1,5 @@
 import {Grid,Button,TextField,Card,Select,FormControl,FormHelperText,
   InputLabel,MenuItem,styled,
-  Input,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
@@ -16,22 +15,12 @@ import { FieldValues, useForm } from "react-hook-form";
 import AssetRetirementFrm from "../assetRetirement/assetRetirementFrm";
 
 import { useAppDispatch, useAppSelector } from "../../store/configureStore";//ruta para obtener el usuario
-/**
- * NOTA: COSAS POR CORREGIR: las img no se muestran cuando se editan,
- *  en el frm register hay un error cuando se agrega un nuevo activo ya que en la tbl se agrega con onSave,
- *  y en e frm se agrega con onSubmit
- */
-interface Props {
-  selectedAsset?: newAssetModels | null;
-  onSave: (updatedAsset: newAssetModels) => void;
-  isEditing?: boolean;
-}
 
-export default function RegisterAsset({ selectedAsset, onSave, isEditing = false }: Props) {
+
+export default function RegisterAsset() {
 
   const navigate = useNavigate();
   const [numeroBoleta, setNumeroBoleta] = useState<string>("");
-  const {user} = useAppSelector(state => state.account);// se obtiene al usuario que esta logueado
 
   // Estados para el nuevo activo y las listas desplegables
   const [newAsset, setNewAsset] = useState<newAssetModels>({
@@ -53,21 +42,15 @@ export default function RegisterAsset({ selectedAsset, onSave, isEditing = false
     OrdenCompraImagen: null,
     NumeroAsiento: 0,
     NumeroBoleta: numeroBoleta, // Consecutivo automático
-    Usuario: (user?.nombre_usuario || "") // Usuario automático
+    Usuario: "" // Usuario automático
   });
-
-  useEffect(() => {//para que los datos se carguen en el formulario de editar
-    if (selectedAsset && isEditing) {
-      setNewAsset(selectedAsset);
-    }
-  }, [selectedAsset, isEditing]);
 
   const [zones, setZones] = useState<Zona[]>([]);
   const [accountingAccounts, setAccountingAccounts] = useState<accountingAccount[]>([]);
   const [serviceLives, setServiceLives] = useState<serviceLifeModels[]>([]);
   const [statuses, setStatuses] = useState<statusAssets[]>([]);
   const dispatch = useAppDispatch(); 
-  
+  const {user} = useAppSelector(state => state.account);// se obtiene al usuario que esta logueado
 
   
   const {
@@ -154,24 +137,16 @@ async function getLastConsecutive(letra: string): Promise<number> {
   return consecutivo;
   }
 
-  function handleApiErrors(errors: any) {
+  const handleApiErrors = (errors: any) => {
     if (Array.isArray(errors)) {
       errors.forEach((error: string) => {
-        if (error.includes('NumeroPlaca')) {
-          setError('NumeroPlaca', { message: error });
-        } else if (error.includes('FacturaNum')) {
-          setError('FacturaNum', { message: error });
+        if (error.includes("numeroZona")) {
+          setError("numeroZona", { message: error });
+        } else if (error.includes("nombreZona")) {
+          setError("nombreZona", { message: error });
         }
       });
     }
-  }
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setNewAsset((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
   };
 
   const handleSelectChange = (event: SelectChangeEvent<string>) => {
@@ -218,12 +193,6 @@ async function getLastConsecutive(letra: string): Promise<number> {
    * Metodo para guardar/registrar el activo obtenido del formulario
    * @param data 
    */
-  const handleSave = () => {
-    if (newAsset) {
-      onSave(newAsset as newAssetModels);
-    }
-  };
-
   const onSubmit = async (data: FieldValues) => {
     try {
       await api.newAsset.saveNewAsset(data);
@@ -231,8 +200,7 @@ async function getLastConsecutive(letra: string): Promise<number> {
       navigate("/");
     } catch (error) {
       console.error(error);
-      handleApiErrors(errors);
-      toast.error("Error al ingresar nuevo activo");
+      toast.error("Error registrando el activo");
     }
   };
 
@@ -448,8 +416,6 @@ async function getLastConsecutive(letra: string): Promise<number> {
                 label="Numero de Placa"
                 value={newAsset.NumeroPlaca || ""}
                 onChange={handleInputChange}
-                error={!!errors.NumeroPlaca}
-                helperText={errors?.NumeroPlaca?.message as string}
               />
             </Grid>
             <Grid item xs={6}>
@@ -518,8 +484,6 @@ async function getLastConsecutive(letra: string): Promise<number> {
                 label="Factura"
                 value={newAsset.FacturaNum || ""}
                 onChange={handleInputChange}
-                error={!!errors.FacturaNum}
-                helperText={errors?.FacturaNum?.message as string}
               />
             </Grid>
             <Grid item xs={6}>
@@ -589,8 +553,8 @@ async function getLastConsecutive(letra: string): Promise<number> {
               />
             </Grid>
         </Grid>
-          <Button  variant="contained" color="info" sx={{ margin: "5px" }} onClick={handleSave}  type="submit"disable={isSubmitting}>
-          {isEditing ? "Actualizar" : "Agregar"}
+          <Button  variant="contained" color="info" sx={{ margin: "5px" }} type="submit" disabled={isSubmitting}>
+            Agregar
           </Button>
       </form>
     </Card>

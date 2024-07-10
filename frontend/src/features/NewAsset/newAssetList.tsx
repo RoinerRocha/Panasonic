@@ -3,6 +3,10 @@ import {
   TableRow, TableBody, Button, Dialog, DialogActions,
   DialogContent, DialogTitle, TablePagination,
   FormControl, InputLabel, Select, MenuItem,
+  TextField,
+  FormHelperText,
+  Grid,
+  styled
 } from "@mui/material";
 import { newAssetModels } from "../../app/models/newAssetModels";
 import { useState, useEffect } from "react";
@@ -11,7 +15,7 @@ import { toast } from "react-toastify";
 import RegisterAsset from "./registerAsset";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { accountingAccount } from "../../app/models/accountingAccount";
-import { useAppDispatch, useAppSelector } from "../../store/configureStore";//ruta para obtener el usuario
+import { useAppDispatch, useAppSelector } from "../../store/configureStore";
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 
@@ -48,13 +52,28 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
   });
 
   const [imageUrlMap, setImageUrlMap] = useState<Map<number, Map<string, string>>>(new Map());
-  const {user} = useAppSelector(state => state.account);// se obtiene al usuario que esta logueado
+  const { user } = useAppSelector(state => state.account);
 
   useEffect(() => {
     loadNewAsset()
   }, []);
 
+  const loadNewAsset: () => Promise<void> = async () => {
+    try {
+      const response = await api.newAsset.getNewAssets();
+      setNewAssets(response.data);
+      convertImagesToDataUrl(response.data);
+    } catch (error) {
+      console.error("Error al cargar Lista de Ingreso de Activos:", error);
+    }
+  };
   
+  
+  /**
+   * Metodo para conviertir los nombres de los archivos en URLs
+   * @param assets 
+   */
+
   /**
    * Metodo para conviertir los nombres de los archivos en URLs
    * @param assets 
@@ -62,14 +81,11 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
   const convertImagesToDataUrl = (assets: newAssetModels[]) => {
     assets.forEach((asset) => {
       if (asset.Fotografia) {
-        //console.log("URL img Activo: "+asset.Fotografia);
         setImageUrlMap((prevMap) => {
           const assetMap = prevMap.get(asset.id) || new Map();
           const imageUrl = `http://localhost:5000/${asset.Fotografia}`;
-          //console.log(`Fotografía URL para ID ${asset.id}: ${imageUrl}`);
-          //console.log(prevMap);
           assetMap.set('Fotografia', imageUrl);
-          return new Map(prevMap).set(asset.id, assetMap);         
+          return new Map(prevMap).set(asset.id, assetMap);
         });
       }
       if (asset.FacturaImagen) {
@@ -88,21 +104,16 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
       }
     });
   };
-  const loadNewAsset: () => Promise<void> = async () => {
-    try {
-      const response = await api.newAsset.getNewAssets();
-      setNewAssets(response.data);
-      convertImagesToDataUrl(response.data);
-    } catch (error) {
-      console.error("Error al cargar Lista de Ingreso de Activos:", error);
+  const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, files } = event.target;
+    if (files && files.length > 0) {
+      setNewAsset((prevAsset) => ({
+        ...prevAsset,
+        [name]: files[0],
+      }));
     }
   };
 
-
-  /**
-   * Metodo para eliminar el activo por id
-   * @param id del activo seleccionado
-   */
   const handleDelete = (id: number) => {
     confirmAlert({
       title: 'Confirmar Eliminación',
@@ -123,7 +134,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
         },
         {
           label: 'No',
-          onClick: () => {}
+          onClick: () => { }
         }
       ]
     });
@@ -131,13 +142,14 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
 
   const handleEdit = (newAsset: newAssetModels) => {
     setSelectedNewAsset(newAsset);
+    setNewAsset(newAsset);
     setOpenEditDialog(true);
   };
 
-  const handleUpdateAsset = async (updatedAsset: newAssetModels) => {
+  const handleUpdateAsset = async () => {
     if (selectedNewAsset) {
       try {
-        await api.newAsset.updateNewAsset(selectedNewAsset.id, updatedAsset);
+        await api.newAsset.updateNewAsset(selectedNewAsset.id, newAsset as newAssetModels);
         toast.success("Activo Ingresado Actualizado");
         setOpenEditDialog(false);
         loadNewAsset();
@@ -159,19 +171,6 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
       toast.error("Error al intentar agregar nuevo activo");
     }
   };
-   // Esta función ahora es responsable de manejar los datos recibidos del formulario RegisterAsset
-   /*const handleAddNewAsset = async (newAssetData: Partial<newAssetModels>) => {
-    try {
-      // Agregar el nuevo activo
-      await api.newAsset.saveNewAsset(newAssetData);
-      toast.success("Activo Agregado");
-      setOpenAddDialog(false);
-      loadNewAsset();
-    } catch (error) {
-      console.error("Error al agregar El nuevo Activo:", error);
-      toast.error("Error al intentar Agregar Activo");
-    }
-  };*/
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -188,15 +187,25 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
     setPage(0);
   };
 
-  // Función para manejar la apertura del diálogo de detalles del Activo seleccionado
   const handleRowClick = (newAsset: newAssetModels) => {
     setSelectedNewAsset(newAsset);
     setOpenDetailDialog(true);
   };
-
+  const VisuallyHiddenInput = styled("input")({
+    clip: "rect(0 0 0 0)",
+    clipPath: "inset(50%)",
+    height: 1,
+    overflow: "hidden",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    whiteSpace: "nowrap",
+    width: 1,
+  });
+  
   return (
     <div>
-           <Button
+      <Button
         variant="contained"
         color="primary"
         onClick={() => setOpenAddDialog(true)}
@@ -301,95 +310,253 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
             ))}
           </TableBody>
         </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={newAssets.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </TableContainer>
-      <Button onClick={() => setOpenAddDialog(true)}></Button>
-      <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-        <DialogTitle>Agregar Activo</DialogTitle>
-        <DialogContent>
-          {/* Aquí va el formulario de agregar un nuevo activo */}
 
-          <RegisterAsset  onSave={handleAddNewAsset}/>
+      <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
+        <DialogTitle>Agregar Nuevo Activo</DialogTitle>
+        <DialogContent>
+          <RegisterAsset></RegisterAsset>
         </DialogContent>
         <DialogActions>
-         {/* <Button onClick={() => handleAdd()}>Agregar</Button>*/}
           <Button onClick={() => setOpenAddDialog(false)}>Cancelar</Button>
         </DialogActions>
       </Dialog>
+
       <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
         <DialogTitle>Editar Activo</DialogTitle>
         <DialogContent>
-          {/* Aquí va el formulario de editar un nuevo activo */}
-          <RegisterAsset
-            selectedAsset={selectedNewAsset}
-            onSave={handleUpdateAsset}
-            isEditing={true}/>
+          <TextField
+            label="Código Cuenta"
+            value={newAsset.CodigoCuenta}
+            onChange={(e) => setNewAsset({ ...newAsset, CodigoCuenta: +e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Zona"
+            value={newAsset.Zona}
+            onChange={(e) => setNewAsset({ ...newAsset, Zona: +e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Tipo"
+            value={newAsset.Tipo}
+            onChange={(e) => setNewAsset({ ...newAsset, Tipo: +e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Estado"
+            value={newAsset.Estado}
+            onChange={(e) => setNewAsset({ ...newAsset, Estado: +e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Descripción"
+            value={newAsset.Descripcion}
+            onChange={(e) => setNewAsset({ ...newAsset, Descripcion: e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Número Placa"
+            value={newAsset.NumeroPlaca}
+            onChange={(e) => setNewAsset({ ...newAsset, NumeroPlaca: +e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Valor Compra CRC"
+            value={newAsset.ValorCompraCRC}
+            onChange={(e) => setNewAsset({ ...newAsset, ValorCompraCRC: e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Valor Compra USD"
+            value={newAsset.ValorCompraUSD}
+            onChange={(e) => setNewAsset({ ...newAsset, ValorCompraUSD: e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+          <Grid item xs={6}>
+            <Button variant="contained" component="label" fullWidth>
+              Subir Imagen de Fotografia
+              <VisuallyHiddenInput
+                type="file"
+                name="ImagenFotografia"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];  // Obtener el primer archivo seleccionado
+                  if (file) {
+                    setNewAsset({ ...newAsset, Fotografia: file });
+                  }
+                }}
+              />
+            </Button>
+            {newAsset.Fotografia && <FormHelperText>Archivo cargado: {newAsset.Fotografia.name}</FormHelperText>}
+          </Grid>
+          <TextField
+            label="Nombre Proveedor"
+            value={newAsset.NombreProveedor}
+            onChange={(e) => setNewAsset({ ...newAsset, NombreProveedor: e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+          
+          <TextField
+            label="Fecha Compra"
+            type="date"
+            value={newAsset.FechaCompra}
+
+            onChange={(e) => setNewAsset({ ...newAsset, FechaCompra: new Date(e.target.value) })}
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Número Factura"
+            value={newAsset.FacturaNum}
+            onChange={(e) => setNewAsset({ ...newAsset, FacturaNum: +e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+          <Grid item xs={6}>
+            <Button variant="contained" component="label" fullWidth>
+              Subir Imagen de Factura
+              <VisuallyHiddenInput
+                type="file"
+                name="FacturaImagen"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];  // Obtener el primer archivo seleccionado
+                  if (file) {
+                    setNewAsset({ ...newAsset, FacturaImagen: file });
+                  }
+                }}
+              />
+            </Button>
+            {newAsset.FacturaImagen && <FormHelperText>Archivo cargado: {newAsset.FacturaImagen.name}</FormHelperText>}
+          </Grid>
+          <TextField
+            label="Ordén De Comprá"
+            value={newAsset.OrdenCompraNum}
+            onChange={(e) => setNewAsset({ ...newAsset, OrdenCompraNum: +e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+           <Grid item xs={6}>
+            <Button variant="contained" component="label" fullWidth>
+              Subir Imagen de Factura
+              <VisuallyHiddenInput
+                type="file"
+                name="OrdenCompImagen"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];  // Obtener el primer archivo seleccionado
+                  if (file) {
+                    setNewAsset({ ...newAsset, OrdenCompraImagen: file });
+                  }
+                }}
+              />
+            </Button>
+            {newAsset.OrdenCompraImagen && <FormHelperText>Archivo cargado: {newAsset.OrdenCompraImagen.name}</FormHelperText>}
+          </Grid>
+          <TextField
+            label="Número Asiento"
+            value={newAsset.NumeroAsiento}
+            onChange={(e) => setNewAsset({ ...newAsset, NumeroAsiento: +e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Número Boleta"
+            value={newAsset.NumeroBoleta}
+            onChange={(e) => setNewAsset({ ...newAsset, NumeroBoleta: e.target.value })}
+            fullWidth
+            margin="dense"
+            disabled={true}
+          />
+          <TextField
+            label="Usuario"
+            value={newAsset.Usuario}
+            onChange={(e) => setNewAsset({ ...newAsset, Usuario: e.target.value })}
+            fullWidth
+            margin="dense"
+            disabled={true}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenEditDialog(false)}>Cancelar</Button>
+          <Button onClick={handleUpdateAsset}>Actualizar</Button>
         </DialogActions>
       </Dialog>
+
       <Dialog open={openDetailDialog} onClose={() => setOpenDetailDialog(false)}>
-        <DialogTitle>Detalle del Activo</DialogTitle>
+        <DialogTitle>Detalles del Activo</DialogTitle>
         <DialogContent>
-          {selectedNewAsset && (
-            <div>
-              <p><strong>Código Cuenta:</strong> {selectedNewAsset.CodigoCuenta}</p>
-              <p><strong>Zona:</strong> {selectedNewAsset.Zona}</p>
-              <p><strong>Tipo:</strong> {selectedNewAsset.Tipo}</p>
-              <p><strong>Estado:</strong> {selectedNewAsset.Estado}</p>
-              <p><strong>Descripción:</strong> {selectedNewAsset.Descripcion}</p>
-              <p><strong>Número Placa:</strong> {selectedNewAsset.NumeroPlaca}</p>
-              <p><strong>Valor Compra CRC:</strong> {'₡' + selectedNewAsset.ValorCompraCRC}</p>
-              <p><strong>Valor Compra USD:</strong> {'$' + selectedNewAsset.ValorCompraUSD}</p>
-              <p><strong>Fotografía:</strong></p>
-              {imageUrlMap.get(selectedNewAsset.id)?.get('Fotografia') ? (
+          <div>
+            <p><strong>Código Cuenta:</strong> {selectedNewAsset?.CodigoCuenta}</p>
+            <p><strong>Zona:</strong> {selectedNewAsset?.Zona}</p>
+            <p><strong>Tipo:</strong> {selectedNewAsset?.Tipo}</p>
+            <p><strong>Estado:</strong> {selectedNewAsset?.Estado}</p>
+            <p><strong>Descripción:</strong> {selectedNewAsset?.Descripcion}</p>
+            <p><strong>Número Placa:</strong> {selectedNewAsset?.NumeroPlaca}</p>
+            <p><strong>Valor Compra CRC:</strong> {selectedNewAsset?.ValorCompraCRC}</p>
+            <p><strong>Valor Compra USD:</strong> {selectedNewAsset?.ValorCompraUSD}</p>
+            {imageUrlMap.get(selectedNewAsset?.id || 0)?.get('Fotografia') && (
+              <p>
+                <strong>Fotografía:</strong>
                 <img
-                  src={imageUrlMap.get(selectedNewAsset.id)?.get('Fotografia')}
-                  alt="Fotografía"
-                  style={{ width: '700px', height: '700px', objectFit: 'cover' }}
+                  src={imageUrlMap.get(selectedNewAsset?.id || 0)?.get('Fotografia')}
+                  alt="Fotografía del Activo"
+                  style={{ width: 600, height: 600 }}
                 />
-              ) : 'No Image'}
-              <p><strong>Nombre Proveedor:</strong> {selectedNewAsset.NombreProveedor}</p>
-              <p><strong>Fecha Compra:</strong> {new Date(selectedNewAsset.FechaCompra).toLocaleDateString()}</p>
-              <p><strong>Número Factura:</strong> {selectedNewAsset.FacturaNum}</p>
-              <p><strong>Factura Imagen:</strong></p>
-              {imageUrlMap.get(selectedNewAsset.id)?.get('FacturaImagen') ? (
+              </p>
+            )}
+            <p><strong>Nombre Proveedor:</strong> {selectedNewAsset?.NombreProveedor}</p>
+            <p><strong>Fecha Compra:</strong> {selectedNewAsset?.FechaCompra ? new Date(selectedNewAsset.FechaCompra).toLocaleDateString() : 'N/A'}</p>
+
+            <p><strong>Número Factura:</strong> {selectedNewAsset?.FacturaNum}</p>
+            {imageUrlMap.get(selectedNewAsset?.id || 0)?.get('FacturaImagen') && (
+              <p>
+                <strong>Imagen de Factura:</strong>
                 <img
-                  src={imageUrlMap.get(selectedNewAsset.id)?.get('FacturaImagen')}
-                  alt="Factura Imagen"
-                  style={{ width: '700px', height: '700px', objectFit: 'cover' }}
+                  src={imageUrlMap.get(selectedNewAsset?.id || 0)?.get('FacturaImagen')}
+                  alt="Imagen de Factura"
+                  style={{ width: 600, height: 600 }}
                 />
-              ) : 'No Image'}
-              <p><strong>Orden Compra Número:</strong> {selectedNewAsset.OrdenCompraNum}</p>
-              <p><strong>Orden Compra Imagen:</strong></p>
-              {imageUrlMap.get(selectedNewAsset.id)?.get('OrdenCompraImagen') ? (
+              </p>
+            )}
+            <p><strong>Número Orden de Compra:</strong> {selectedNewAsset?.OrdenCompraNum}</p>
+            {imageUrlMap.get(selectedNewAsset?.id || 0)?.get('OrdenCompraImagen') && (
+              <p>
+                <strong>Imagen de Orden de Compra:</strong>
                 <img
-                  src={imageUrlMap.get(selectedNewAsset.id)?.get('OrdenCompraImagen')}
-                  alt="Orden Compra Imagen"
-                  style={{ width: '700px', height: '700px', objectFit: 'cover' }}
+                  src={imageUrlMap.get(selectedNewAsset?.id || 0)?.get('OrdenCompraImagen')}
+                  alt="Imagen de Orden de Compra"
+                  style={{ width: 600, height: 600 }}
                 />
-              ) : 'No Image'}
-              <p><strong>Número Asiento:</strong> {selectedNewAsset.NumeroAsiento}</p>
-              <p><strong>Número Boleta:</strong> {selectedNewAsset.NumeroBoleta}</p>
-              <p><strong>Usuario:</strong> {selectedNewAsset.Usuario}</p>
-            </div>
-          )}
+              </p>
+            )}
+            <p><strong>Número Asiento:</strong> {selectedNewAsset?.NumeroAsiento}</p>
+            <p><strong>Número Boleta:</strong> {selectedNewAsset?.NumeroBoleta}</p>
+            <p><strong>Usuario:</strong> {selectedNewAsset?.Usuario}</p>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDetailDialog(false)}>Cerrar</Button>
         </DialogActions>
       </Dialog>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 50]}
-        component="div"
-        count={newAssets.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
     </div>
   );
-}
+};
 
 export default NewAssetsList;
