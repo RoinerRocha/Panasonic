@@ -16,7 +16,7 @@ import ResetPassword from "../../features/account/ResetPassword";
 import RegisterAssets from "../../features/NewAsset/registerAsset";
 import AssetRetirement from "../../features/assetRetirement/assetRetirementFrm"; 
 import AssetSales from "../../features/salesAssest/salesAssestFrm";
-
+import Depreciation from "../../features/depreciations/NewDepreciations";
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +39,7 @@ export const router = createBrowserRouter([
       { path: "RegisterAsset", element: <RegisterAssets/>},
       { path: "AssetRetirement", element: <AssetRetirement/>},//frm
       { path: "AssetSales", element: <AssetSales/>},//frm
+      { path: "Depreciation", element: <Depreciation/>},//frm
     ],
   },
 ]);

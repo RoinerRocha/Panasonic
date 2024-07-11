@@ -66,8 +66,8 @@ export default function ServiceLifeList({
     Partial<serviceLifeModels>
   >({
      id: 0,
-    tipo: "",
-    añoUtil: 0,
+     tipo: "",
+     añoUtil: 0,
   });
 
   useEffect(() => {
