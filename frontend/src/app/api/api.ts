@@ -155,6 +155,14 @@ const salesAssest = {
   getAssetSaleByNumeroBoleta: (id: string) => requests.get(`/salesAssets/boleta/${id}`),
 };
 
+const depreciations = {
+  saveDepreciation: (values: any) => requests.post("/saveDepreciation", values),
+  getDepreciations: () => requests.get("/getDepreciations"),
+  updateDepreciation: (depreciationId: any, depreciationData: any) =>
+    requests.put(`depreciations/${depreciationId}`, depreciationData ),
+  deleteDepreciation: (id: number) => requests.delete(`/deleteDepreciation/${id}`)
+}
+
 const api = {
   Account,
   TestErrors,
@@ -166,6 +174,7 @@ const api = {
   newAsset,
   assetRetirement,
   salesAssest,
+  depreciations,
 };
 
 export default api;
