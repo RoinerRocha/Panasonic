@@ -202,7 +202,19 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
     whiteSpace: "nowrap",
     width: 1,
   });
-  
+  const [imageUrlMap1, setImageUrlMap1] = useState<Map<string, string>>(new Map());
+
+  const handleFileInputChangeQ = (event: React.ChangeEvent<HTMLInputElement >) => {
+    const { name, files } = event.target;
+    if (files && files.length > 0) {
+      setNewAsset((prevAsset) => ({
+        ...prevAsset,
+        [name]: files[0],
+     
+      }));   console.log("img: "+  [name], files[0]);
+    }
+  };
+
   return (
     <div>
       <Button
@@ -399,13 +411,19 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                 onChange={(e) => {
                   const file = e.target.files?.[0];  // Obtener el primer archivo seleccionado
                   if (file) {
+                    const fileUrl = URL.createObjectURL(file); // Crear una URL temporal para el archivo
                     setNewAsset({ ...newAsset, Fotografia: file });
+                    setImageUrlMap1(prevMap => new Map(prevMap).set(file.name, fileUrl));
                   }
                 }}
               />
-            </Button>
+            </Button> 
             {newAsset.Fotografia && <FormHelperText>Archivo cargado: {newAsset.Fotografia.name}</FormHelperText>}
+            {imageUrlMap1.get(newAsset.Fotografia?.name || '') && (
+              <img src={imageUrlMap1.get(newAsset.Fotografia?.name || '')} alt="Fotografía" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+            )}
           </Grid>
+
           <TextField
             label="Nombre Proveedor"
             value={newAsset.NombreProveedor}
@@ -439,12 +457,17 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                 onChange={(e) => {
                   const file = e.target.files?.[0];  // Obtener el primer archivo seleccionado
                   if (file) {
+                    const fileUrl = URL.createObjectURL(file); // Crear una URL temporal para el archivo
                     setNewAsset({ ...newAsset, FacturaImagen: file });
+                    setImageUrlMap1(prevMap => new Map(prevMap).set(file.name, fileUrl));
                   }
                 }}
               />
-            </Button>
+            </Button> 
             {newAsset.FacturaImagen && <FormHelperText>Archivo cargado: {newAsset.FacturaImagen.name}</FormHelperText>}
+            {imageUrlMap1.get(newAsset.FacturaImagen?.name || '') && (
+              <img src={imageUrlMap1.get(newAsset.FacturaImagen?.name || '')} alt="FacturaImg" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+            )}
           </Grid>
           <TextField
             label="Ordén De Comprá"
@@ -459,15 +482,20 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
               <VisuallyHiddenInput
                 type="file"
                 name="OrdenCompImagen"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];  // Obtener el primer archivo seleccionado
-                  if (file) {
-                    setNewAsset({ ...newAsset, OrdenCompraImagen: file });
-                  }
-                }}
-              />
-            </Button>
-            {newAsset.OrdenCompraImagen && <FormHelperText>Archivo cargado: {newAsset.OrdenCompraImagen.name}</FormHelperText>}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];  // Obtener el primer archivo seleccionado
+                    if (file) {
+                      const fileUrl = URL.createObjectURL(file); // Crear una URL temporal para el archivo
+                      setNewAsset({ ...newAsset, OrdenCompraImagen: file });
+                      setImageUrlMap1(prevMap => new Map(prevMap).set(file.name, fileUrl));
+                    }
+                  }}
+                />
+              </Button> 
+              {newAsset.OrdenCompraImagen && <FormHelperText>Archivo cargado: {newAsset.OrdenCompraImagen.name}</FormHelperText>}
+              {imageUrlMap1.get(newAsset.OrdenCompraImagen?.name || '') && (
+                <img src={imageUrlMap1.get(newAsset.OrdenCompraImagen?.name || '')} alt="OrdemCompImgen" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+              )}
           </Grid>
           <TextField
             label="Número Asiento"
