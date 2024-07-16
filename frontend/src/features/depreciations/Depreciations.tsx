@@ -3,11 +3,15 @@ import {
     TableHead, TableRow, TableBody, Button, TextField,
     Dialog, DialogActions, DialogContent, DialogContentText,
     DialogTitle, TablePagination,
+    styled, alpha
 } from "@mui/material";
-import { depreciationModel } from "../../app/models/depreciationModel";
+import { depreciationModel, depreciationFormModel } from "../../app/models/depreciationModel";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import api from "../../app/api/api";
+import { Search } from "@mui/icons-material";
+import SearchIcon from '@mui/icons-material/Search';
+import InputBase from '@mui/material/InputBase';
 
 interface Props {
     depreciations: depreciationModel[];
@@ -26,7 +30,6 @@ const handleKeyDown = (
         setError(null); // Clear error if the key is valid
     }
 };
-
 
 const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -48,85 +51,90 @@ export default function Depreciations({
     setDepreciations: setDepreciations,
 }: Props) {
     const [selectedDepreciations, setSelectedDepreciations] =
-    useState<depreciationModel | null>(null);
+        useState<depreciationFormModel | null>(null);
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [openAddDialog, setOpenAddDialog] = useState(false);
     const [newDepreciation, setNewDepreciation] = useState<
-    Partial<depreciationModel & { Dolares: string | number, Colones: string | number }>
+        Partial<depreciationFormModel>
     >({
         id: 0,
         Codigo: "",
         Cuenta: "",
-        Dolares: 0,
-        Colones: 0,
+        Dolares: "",
+        Colones: "",
         Clasificacion: "",
     });
 
     useEffect(() => {
-        // Cargar la losta de Mh al montar el componente
+        // Cargar la lista de depreciaciones al montar el componente
         loadDepreciation();
     }, []);
 
     const loadDepreciation = async () => {
         try {
-          const response = await api.depreciations.getDepreciations();
-          setSelectedDepreciations(response.data);
+            const response = await api.depreciations.getDepreciations();
+            setDepreciations(response.data);
         } catch (error) {
-          console.error("Error al cargar la lista de depreciaciones:", error);
+            console.error("Error al cargar la lista de depreciaciones:", error);
         }
     };
 
     const handleDelete = async (id: number) => {
         try {
-          await api.depreciations.deleteDepreciation(id);
-          toast.success("Depreciacion Eliminada");
-          loadDepreciation();
+            await api.depreciations.deleteDepreciation(id);
+            toast.success("Depreciación Eliminada");
+            loadDepreciation();
         } catch (error) {
-          console.error("Error al eliminar la depreciacion:", error);
+            console.error("Error al eliminar la depreciación:", error);
         }
     };
 
     const handleEdit = (depreciation: depreciationModel) => {
-        setSelectedDepreciations(depreciation);
+        setSelectedDepreciations({
+            ...depreciation,
+            Dolares: depreciation.Dolares.toString(),
+            Colones: depreciation.Colones.toString()
+        } as depreciationFormModel); // Asegúrate de que el tipo sea correcto
         setOpenEditDialog(true);
     };
 
     const handleUpdate = async () => {
         if (selectedDepreciations) {
-          try {
-            const depreciationId = selectedDepreciations.id;
-            const updatedDepreciation = {
-              Codigo: selectedDepreciations.Codigo,
-              Cuenta: selectedDepreciations.Cuenta,
-              Dolares: selectedDepreciations.Dolares,
-              Colones: selectedDepreciations.Colones,
-              Clasificacion: selectedDepreciations.Clasificacion,
-            };
-            await api.depreciations.updateDepreciation(
-              depreciationId,
-              updatedDepreciation
-            );
-            toast.success("Lista de depreciaciones Actualizada");
-            setOpenEditDialog(false);
-            loadDepreciation();
-          } catch (error) {
-            console.error("Error al actualizar las depreciaciones:", error);
-          }
+            try {
+                const updatedDepreciation: depreciationModel = {
+                    id: selectedDepreciations.id,
+                    Codigo: selectedDepreciations.Codigo,
+                    Cuenta: selectedDepreciations.Cuenta,
+                    Dolares: parseFloat(selectedDepreciations.Dolares),
+                    Colones: parseFloat(selectedDepreciations.Colones),
+                    Clasificacion: selectedDepreciations.Clasificacion,
+                };
+                await api.depreciations.updateDepreciation(updatedDepreciation.id, updatedDepreciation);
+                toast.success("Lista de depreciaciones Actualizada");
+                setOpenEditDialog(false);
+                loadDepreciation();
+            } catch (error) {
+                console.error("Error al actualizar las depreciaciones:", error);
+            }
         }
     };
 
     const handleAdd = async () => {
         try {
-            const addedDepreciation = await api.depreciations.saveDepreciation({
-                ...newDepreciation,
-                Dolares: parseFloat(newDepreciation.Dolares?.toString() || "0"),
-                Colones: parseFloat(newDepreciation.Colones?.toString() || "0"),
-            });
-            toast.success("Depreciacion agregada");
+            const addedDepreciation: depreciationModel = {
+                id: newDepreciation.id ?? 0, // Default to 0 if id is undefined
+                Codigo: newDepreciation.Codigo!,
+                Cuenta: newDepreciation.Cuenta!,
+                Dolares: parseFloat(newDepreciation.Dolares || "0"),
+                Colones: parseFloat(newDepreciation.Colones || "0"),
+                Clasificacion: newDepreciation.Clasificacion!,
+            };
+            await api.depreciations.saveDepreciation(addedDepreciation);
+            toast.success("Depreciación agregada");
             setOpenAddDialog(false);
             loadDepreciation();
         } catch (error) {
-            console.error("Error al agregar la depreciacion:", error);
+            console.error("Error al agregar la depreciación:", error);
         }
     };
 
@@ -139,8 +147,51 @@ export default function Depreciations({
 
     const [error, setError] = useState<string | null>(null);
 
-    const [anotherValue, setAnotherValue] = useState<number>(0);
+    const [anotherValue, setAnotherValue] = useState<string>("0");
     const [anotherError, setAnotherError] = useState<string | null>(null);
+
+
+    const SearchIconWrapper = styled('div')(({ theme }) => ({
+        padding: theme.spacing(0, 2),
+        height: '100%',
+        position: 'absolute',
+        pointerEvents: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    }));
+
+    const Search = styled('div')(({ theme }) => ({
+        position: 'relative',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: alpha(theme.palette.common.white, 0.15),
+        '&:hover': {
+          backgroundColor: alpha(theme.palette.common.white, 0.25),
+        },
+        marginLeft: 0,
+        width: '100%',
+        [theme.breakpoints.up('sm')]: {
+          marginLeft: theme.spacing(1),
+          width: 'auto',
+        },
+      }));
+
+    const StyledInputBase = styled(InputBase)(({ theme }) => ({
+        color: 'inherit',
+        width: '100%',
+        '& .MuiInputBase-input': {
+          padding: theme.spacing(1, 1, 1, 0),
+          // vertical padding + font size from searchIcon
+          paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+          transition: theme.transitions.create('width'),
+          [theme.breakpoints.up('sm')]: {
+            width: '12ch',
+            '&:focus': {
+              width: '20ch',
+            },
+          },
+        },
+      }));
 
     return (
         <Grid container spacing={1}>
@@ -149,8 +200,18 @@ export default function Depreciations({
                 color="primary"
                 onClick={() => setOpenAddDialog(true)}
             >
-                Agregar Depreciacion
+                Agregar Depreciación
             </Button>
+
+            <Search>
+                <SearchIconWrapper>
+                    <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                    placeholder="Search…"
+                    inputProps={{ 'aria-label': 'search' }}
+                />
+            </Search>
 
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -160,7 +221,7 @@ export default function Depreciations({
                                 align="center"
                                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
                             >
-                                Codigo
+                                Código
                             </TableCell>
                             <TableCell
                                 align="center"
@@ -172,7 +233,7 @@ export default function Depreciations({
                                 align="center"
                                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
                             >
-                                Dolares
+                                Dólares
                             </TableCell>
                             <TableCell
                                 align="center"
@@ -184,7 +245,7 @@ export default function Depreciations({
                                 align="center"
                                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
                             >
-                                Clasificacion
+                                Clasificación
                             </TableCell>
                             <TableCell
                                 align="center"
@@ -195,62 +256,62 @@ export default function Depreciations({
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                    {paginatedServiceLife.map((depreciation) => (
-                        <TableRow key={depreciation.id}>
-                            <TableCell align="center">{depreciation.Codigo}</TableCell>
-                            <TableCell align="center">{depreciation.Cuenta}</TableCell>
-                            <TableCell align="center">{depreciation.Dolares}</TableCell>
-                            <TableCell align="center">{depreciation.Colones}</TableCell>
-                            <TableCell align="center">{depreciation.Clasificacion}</TableCell>
-                            <TableCell align="center">
-                                <Button
-                                    variant="contained"
-                                    color="info"
-                                    sx={{ margin: "5px" }}
-                                    onClick={() => handleEdit(depreciation)}
-                                >
-                                    Editar
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    color="error"
-                                    sx={{ margin: "5px" }}
-                                    onClick={() => handleDelete(depreciation.id)}
-                                >
-                                    Eliminar
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    ))}
+                        {paginatedServiceLife.map((depreciation) => (
+                            <TableRow key={depreciation.id}>
+                                <TableCell align="center">{depreciation.Codigo}</TableCell>
+                                <TableCell align="center">{depreciation.Cuenta}</TableCell>
+                                <TableCell align="center">{depreciation.Dolares}</TableCell>
+                                <TableCell align="center">{depreciation.Colones}</TableCell>
+                                <TableCell align="center">{depreciation.Clasificacion}</TableCell>
+                                <TableCell align="center">
+                                    <Button
+                                        variant="contained"
+                                        color="info"
+                                        sx={{ margin: "5px" }}
+                                        onClick={() => handleEdit(depreciation)}
+                                    >
+                                        Editar
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        color="error"
+                                        onClick={() => handleDelete(depreciation.id)}
+                                    >
+                                        Eliminar
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>
             <TablePagination
-                rowsPerPageOptions={[10, 15, 25]}
-                component="div"
-                count={depreciations.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={(event, newPage) => setPage(newPage)}
-                onRowsPerPageChange={(event) =>
-                setRowsPerPage(parseInt(event.target.value, 10))
-                }
-            />
+                    rowsPerPageOptions={[10, 25, 50]}
+                    component="div"
+                    count={depreciations.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={(event, newPage) => setPage(newPage)}
+                    onRowsPerPageChange={(event) => {
+                        setRowsPerPage(parseInt(event.target.value, 10));
+                        setPage(0); // Reset page to 0 when rows per page changes
+                    }}
+                />
             <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
-                <DialogTitle>Editar Depreciacion </DialogTitle>
+                <DialogTitle>Editar Depreciación</DialogTitle>
                 <DialogContent>
                     <TextField
-                        label="Cpdigo"
-                        value={selectedDepreciations?.Codigo || null}
+                        label="Código"
+                        value={selectedDepreciations?.Codigo || ""}
                         onChange={(e) =>
-                        setSelectedDepreciations(
-                            selectedDepreciations
-                            ? {
-                                ...selectedDepreciations,
-                                Codigo: e.target.value,
-                            }
-                            : null
-                        )
+                            setSelectedDepreciations(
+                                selectedDepreciations
+                                ? {
+                                    ...selectedDepreciations,
+                                    Codigo: e.target.value,
+                                }
+                                : null
+                            )
                         }
                         fullWidth
                         margin="dense"
@@ -259,16 +320,16 @@ export default function Depreciations({
                 <DialogContent>
                     <TextField
                         label="Cuenta"
-                        value={selectedDepreciations?.Cuenta || null}
+                        value={selectedDepreciations?.Cuenta || ""}
                         onChange={(e) =>
-                        setSelectedDepreciations(
-                            selectedDepreciations
-                            ? {
-                                ...selectedDepreciations,
-                                Cuenta: e.target.value,
-                            }
-                            : null
-                        )
+                            setSelectedDepreciations(
+                                selectedDepreciations
+                                ? {
+                                    ...selectedDepreciations,
+                                    Cuenta: e.target.value,
+                                }
+                                : null
+                            )
                         }
                         fullWidth
                         margin="dense"
@@ -276,18 +337,18 @@ export default function Depreciations({
                 </DialogContent>
                 <DialogContent>
                     <TextField
-                        label="Dolares"
-                        value={selectedDepreciations?.Dolares || null}
+                        label="Dólares"
+                        value={selectedDepreciations?.Dolares || ""}
                         onChange={(e) =>
                             setSelectedDepreciations(
                                 selectedDepreciations
                                 ? {
                                     ...selectedDepreciations,
-                                    Dolares: parseFloat(e.target.value),
-                                    }
+                                    Dolares: e.target.value,
+                                }
                                 : null
                             )
-                            }
+                        }
                         fullWidth
                         margin="dense"
                     />
@@ -295,34 +356,34 @@ export default function Depreciations({
                 <DialogContent>
                     <TextField
                         label="Colones"
-                        value={selectedDepreciations?.Colones || null}
+                        value={selectedDepreciations?.Colones || ""}
                         onChange={(e) =>
                             setSelectedDepreciations(
                                 selectedDepreciations
                                 ? {
                                     ...selectedDepreciations,
-                                    Colones: parseFloat(e.target.value),
-                                    }
+                                    Colones: e.target.value,
+                                }
                                 : null
                             )
-                            }
+                        }
                         fullWidth
                         margin="dense"
                     />
                 </DialogContent>
                 <DialogContent>
                     <TextField
-                        label="Cuenta"
-                        value={selectedDepreciations?.Clasificacion || null}
+                        label="Clasificación"
+                        value={selectedDepreciations?.Clasificacion || ""}
                         onChange={(e) =>
-                        setSelectedDepreciations(
-                            selectedDepreciations
-                            ? {
-                                ...selectedDepreciations,
-                                Clasificacion: e.target.value,
-                            }
-                            : null
-                        )
+                            setSelectedDepreciations(
+                                selectedDepreciations
+                                ? {
+                                    ...selectedDepreciations,
+                                    Clasificacion: e.target.value,
+                                }
+                                : null
+                            )
                         }
                         fullWidth
                         margin="dense"
@@ -334,16 +395,16 @@ export default function Depreciations({
                 </DialogActions>
             </Dialog>
             <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-                <DialogTitle>Agregar depreciacion</DialogTitle>
+                <DialogTitle>Agregar Depreciación</DialogTitle>
                 <DialogContent>
                     <TextField
-                        label="Nuevo Codigo"
-                        value={newDepreciation?.Codigo}
+                        label="Nuevo Código"
+                        value={newDepreciation?.Codigo || ""}
                         onChange={(e) =>
-                        setNewDepreciation({
-                            ...newDepreciation,
-                            Codigo: e.target.value,
-                        })
+                            setNewDepreciation({
+                                ...newDepreciation,
+                                Codigo: e.target.value,
+                            })
                         }
                         fullWidth
                         margin="dense"
@@ -352,27 +413,26 @@ export default function Depreciations({
                 <DialogContent>
                     <TextField
                         label="Nueva Cuenta"
-                        value={newDepreciation?.Cuenta}
+                        value={newDepreciation?.Cuenta || ""}
                         onChange={(e) =>
-                        setNewDepreciation({
-                            ...newDepreciation,
-                            Cuenta: e.target.value,
-                        })
+                            setNewDepreciation({
+                                ...newDepreciation,
+                                Cuenta: e.target.value,
+                            })
                         }
                         fullWidth
                         margin="dense"
                     />
                 </DialogContent>
-                
                 <DialogContent>
                     <TextField
-                        label="Dolares"
+                        label="Dólares"
                         value={newDepreciation?.Dolares || ""}
                         onChange={(e) =>
                             handleChange(e, setError, (val) =>
                                 setNewDepreciation({
                                     ...newDepreciation,
-                                    Dolares: parseFloat(val),
+                                    Dolares: val,
                                 })
                             )
                         }
@@ -393,7 +453,7 @@ export default function Depreciations({
                             handleChange(e, setError, (val) =>
                                 setNewDepreciation({
                                     ...newDepreciation,
-                                    Colones: parseFloat(val),
+                                    Colones: val,
                                 })
                             )
                         }
@@ -408,13 +468,13 @@ export default function Depreciations({
                 </DialogContent>
                 <DialogContent>
                     <TextField
-                        label="Clasificacion"
-                        value={newDepreciation?.Clasificacion}
+                        label="Clasificación"
+                        value={newDepreciation?.Clasificacion || ""}
                         onChange={(e) =>
-                        setNewDepreciation({
-                            ...newDepreciation,
-                            Clasificacion: e.target.value,
-                        })
+                            setNewDepreciation({
+                                ...newDepreciation,
+                                Clasificacion: e.target.value,
+                            })
                         }
                         fullWidth
                         margin="dense"
@@ -424,7 +484,6 @@ export default function Depreciations({
                     <Button onClick={() => setOpenAddDialog(false)}>Cancelar</Button>
                     <Button onClick={handleAdd}>Agregar</Button>
                 </DialogActions>
-
             </Dialog>
         </Grid>
     );
