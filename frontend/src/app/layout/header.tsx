@@ -89,7 +89,7 @@ const midLinks = [
   { title: "- Baja de Activos", path: "/AssetRetirement" },//frm
   { title: "- Ventas de Activos", path: "/AssetSales" },//frm
   { title: "- Reportes", path: "/" },
-  { title: "- Depreciación Mensual", path: "/" },
+  { title: "- Depreciación Mensual", path: "/Depreciation" },
   { title: "- Lista Depreciación de Activos (Mh)", path: "/NewServiceLife" },
   { title: "Ayuda", path: "/" }, // Manual
 ];
