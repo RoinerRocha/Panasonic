@@ -29,10 +29,6 @@ try {
           type: DataTypes.STRING(150),
           allowNull: false,
         },
-        Descripcion: {
-          type: DataTypes.STRING(150),
-          allowNull: false,
-        },
         Dolares: {
             type: DataTypes.DECIMAL(10, 2),
             allowNull: false,

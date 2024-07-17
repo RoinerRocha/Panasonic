@@ -9,7 +9,6 @@ export const saveDepreciation = async (req: Request, res: Response) => {
     const depreciation = await DepreciationModel.create({
       Codigo,
       Cuenta,
-      Descripcion,
       Dolares,
       Colones,
       Clasificacion,
@@ -53,11 +52,11 @@ export const deleteDepreciation = async (req: Request, res: Response) => {
 // Método para actualizar una depreciación
 export const updateDepreciation = async (req: Request, res: Response) => {
   const depreciationId = req.params.id;
-  const { Codigo, Cuenta, Descripcion, Dolares, Colones, Clasificacion } = req.body;
+  const { Codigo, Cuenta, Dolares, Colones, Clasificacion } = req.body;
 
   try {
     const [updated] = await DepreciationModel.update(
-      { Codigo, Cuenta, Descripcion, Dolares, Colones, Clasificacion },
+      { Codigo, Cuenta, Dolares, Colones, Clasificacion },
       {
         where: { id: depreciationId },
         returning: true,

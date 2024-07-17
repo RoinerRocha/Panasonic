@@ -95,6 +95,28 @@ export const getAssetSaleByNumeroBoleta = async (req: Request, res: Response) =>
   }
 };
 
+//Metodo para buscar una venta de activo mediante barra de busqueda
+export const searchSalesAssets = async (req: Request, res: Response) => {
+  const { searchQuery } = req.query;
+
+  try {
+    const salesAssets = await SalesAssetsModel.findAll({
+      where: {
+        [Op.or]: [
+          { PlacaActivo: { [Op.like]: `%${searchQuery}%` } },
+          { NumeroBoleta: { [Op.like]: `%${searchQuery}%` } },
+          { Usuario: { [Op.like]: `%${searchQuery}%` } },
+          { Descripcion: { [Op.like]: `%${searchQuery}%` } },
+        ],
+      },
+    });
+
+    res.status(200).json({ message: "Search results fetched successfully", data: salesAssets });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // Método para eliminar una venta de activo por ID
 // export const deleteSalesAsset = async (req: Request, res: Response) => {
 //   const salesAssetId = req.params.id;
