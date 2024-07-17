@@ -18,6 +18,7 @@ import { accountingAccount } from "../../app/models/accountingAccount";
 import { useAppDispatch, useAppSelector } from "../../store/configureStore";
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import { Dataset } from "@mui/icons-material";
 
 interface Props {
   newAssets: newAssetModels[];
@@ -69,11 +70,6 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
   };
   
   
-  /**
-   * Metodo para conviertir los nombres de los archivos en URLs
-   * @param assets 
-   */
-
   /**
    * Metodo para conviertir los nombres de los archivos en URLs
    * @param assets 
@@ -142,7 +138,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
 
   const handleEdit = (newAsset: newAssetModels) => {
     setSelectedNewAsset(newAsset);
-    setNewAsset(newAsset);
+    setNewAsset({...newAsset });
     setOpenEditDialog(true);
   };
 
@@ -204,16 +200,6 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
   });
   const [imageUrlMap1, setImageUrlMap1] = useState<Map<string, string>>(new Map());
 
-  const handleFileInputChangeQ = (event: React.ChangeEvent<HTMLInputElement >) => {
-    const { name, files } = event.target;
-    if (files && files.length > 0) {
-      setNewAsset((prevAsset) => ({
-        ...prevAsset,
-        [name]: files[0],
-     
-      }));   console.log("img: "+  [name], files[0]);
-    }
-  };
 
   return (
     <div>
@@ -397,14 +383,17 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
           />
           <TextField
             label="Valor Compra USD"
-            value={newAsset.ValorCompraUSD}
+            value={selectedNewAsset?.ValorCompraUSD}
             onChange={(e) => setNewAsset({ ...newAsset, ValorCompraUSD: e.target.value })}
             fullWidth
             margin="dense"
           />
           <Grid item xs={6}>
+          {newAsset.Fotografia && (
+        <img src={imageUrlMap.get(newAsset.id || 0)?.get('Fotografia')} alt="Fotografía" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+      )}
             <Button variant="contained" component="label" fullWidth>
-              Subir Imagen de Fotografia
+            {newAsset.Fotografia? 'Cambiar Imagen de Fotografia' : 'Subir Imagen de Fotografia'}
               <VisuallyHiddenInput
                 type="file"
                 name="ImagenFotografia"
@@ -412,6 +401,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                   const file = e.target.files?.[0];  // Obtener el primer archivo seleccionado
                   if (file) {
                     const fileUrl = URL.createObjectURL(file); // Crear una URL temporal para el archivo
+                    
                     setNewAsset({ ...newAsset, Fotografia: file });
                     setImageUrlMap1(prevMap => new Map(prevMap).set(file.name, fileUrl));
                   }
@@ -435,7 +425,8 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
           <TextField
             label="Fecha Compra"
             type="date"
-            value={newAsset.FechaCompra}
+            value={selectedNewAsset?.FechaCompra}
+            
 
             onChange={(e) => setNewAsset({ ...newAsset, FechaCompra: new Date(e.target.value) })}
             fullWidth
@@ -449,6 +440,10 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
             margin="dense"
           />
           <Grid item xs={6}>
+            Imagen Actual:
+          {newAsset.Fotografia && (
+        <img src={imageUrlMap.get(newAsset.id || 0)?.get('FacturaImagen')} alt="Fotografía del Activo" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+      )}
             <Button variant="contained" component="label" fullWidth>
               Subir Imagen de Factura
               <VisuallyHiddenInput
@@ -477,6 +472,9 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
             margin="dense"
           />
            <Grid item xs={6}>
+           {newAsset.Fotografia && (
+        <img src={imageUrlMap.get(newAsset.id || 0)?.get('OrdenCompraImagen')} alt="Imagen de Orden de Compra" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+      )}
             <Button variant="contained" component="label" fullWidth>
               Subir Imagen de Factura
               <VisuallyHiddenInput
@@ -567,6 +565,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
             {imageUrlMap.get(selectedNewAsset?.id || 0)?.get('OrdenCompraImagen') && (
               <p>
                 <strong>Imagen de Orden de Compra:</strong>
+                
                 <img
                   src={imageUrlMap.get(selectedNewAsset?.id || 0)?.get('OrdenCompraImagen')}
                   alt="Imagen de Orden de Compra"
