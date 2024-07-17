@@ -5,6 +5,7 @@ import {
    deleteAssetRetirement,
    updateAssetRetirement,
    getAssetRetirementByNumeroBoleta, 
+   searchSalesRetirenement,
 } from "../controller/assetRetirementController";
 import { uploadAssetRetirement } from "../Middleware/multerConfigAssetRetirement";
 
@@ -31,5 +32,7 @@ router.put("/assetRetirements/:id", updateAssetRetirement);
 router.delete("/deleteAssetRetirement/:id", deleteAssetRetirement);
 
 router.get("/assetRetirements/boleta/:NumeroBoleta", getAssetRetirementByNumeroBoleta);
+
+router.get("/searchAssetsRetirenement", searchSalesRetirenement);
 
 export default router;

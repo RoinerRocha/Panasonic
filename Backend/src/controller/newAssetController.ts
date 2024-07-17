@@ -272,3 +272,27 @@ export const getAssetRetirementByNumeroBoleta = async (req: Request, res: Respon
     }
   }
 };
+
+//Metodo para buscar una venta de activo mediante barra de busqueda
+export const searchNewAssets = async (req: Request, res: Response) => {
+  const { searchAsset } = req.query;
+
+  try {
+    const newAsset = await NewAssetModel.findAll({
+      where: {
+        [Op.or]: [
+          { CodigoCuenta: { [Op.like]: `%${searchAsset}%` } },
+          { Zona: { [Op.like]: `%${searchAsset}%` } },
+          { Tipo: { [Op.like]: `%${searchAsset}%` } },
+          { NumeroPlaca: { [Op.like]: `%${searchAsset}%` } },
+          { NumeroBoleta: { [Op.like]: `%${searchAsset}%` } },
+          { Usuario: { [Op.like]: `%${searchAsset}%` } },
+        ],
+      },
+    });
+
+    res.status(200).json({ message: "Search results fetched successfully", data: newAsset });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};

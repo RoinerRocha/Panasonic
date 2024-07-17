@@ -6,6 +6,7 @@ import {
   updateNewAsset,
   searchIdNewAsset,
   getAssetRetirementByNumeroBoleta,
+  searchNewAssets,
 } from "../controller/newAssetController";
 import { upload } from '../Middleware/multerConfig';
 
@@ -43,5 +44,7 @@ router.delete("/deleteNewAsset/:id", deleteNewAsset);
 router.get("/searchIdNewAsset/:id", searchIdNewAsset);
 
 router.get("/assetByNumBolet/boleta/:NumeroBoleta", getAssetRetirementByNumeroBoleta);
+
+router.get("/searchNewAssets",  searchNewAssets);
 
 export default router;

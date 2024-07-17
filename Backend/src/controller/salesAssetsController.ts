@@ -106,7 +106,6 @@ export const searchSalesAssets = async (req: Request, res: Response) => {
           { PlacaActivo: { [Op.like]: `%${searchQuery}%` } },
           { NumeroBoleta: { [Op.like]: `%${searchQuery}%` } },
           { Usuario: { [Op.like]: `%${searchQuery}%` } },
-          { Descripcion: { [Op.like]: `%${searchQuery}%` } },
         ],
       },
     });

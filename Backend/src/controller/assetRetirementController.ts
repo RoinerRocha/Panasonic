@@ -165,3 +165,24 @@ export const getAssetRetirementByNumeroBoleta = async (req: Request, res: Respon
     }
   }
 };
+
+//Metodo para buscar una baja de  activo mediante barra de busqueda
+export const searchSalesRetirenement = async (req: Request, res: Response) => {
+  const { searchRetirement } = req.query;
+
+  try {
+    const assetRetirement = await AssetRetirementModel.findAll({
+      where: {
+        [Op.or]: [
+          { PlacaActivo: { [Op.like]: `%${searchRetirement}%` } },
+          { NumeroBoleta: { [Op.like]: `%${searchRetirement}%` } },
+          { Usuario: { [Op.like]: `%${searchRetirement}%` } },
+        ],
+      },
+    });
+
+    res.status(200).json({ message: "Search results fetched successfully", data: assetRetirement });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
