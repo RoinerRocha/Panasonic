@@ -13,6 +13,7 @@ import {
   Switch,
   Toolbar,
   Typography,
+  Button,
 } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import { useAppSelector } from "../../store/configureStore";
@@ -24,6 +25,8 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import SignInMenu from "./SigninMenu";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from '../../app/context/LanguageContext';
 
 const drawerWidth = 240;
 
@@ -117,6 +120,8 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
   const { user } = useAppSelector((state) => state.account);
 
   const theme = useTheme();
+  const { t } = useTranslation();
+  const { changeLanguage, language } = useLanguage();
 
   const [open, setOpen] = React.useState(false);
 
@@ -126,6 +131,10 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handleChangeLanguage = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    changeLanguage(event.target.value);
   };
 
   // Filtrar enlaces en función del perfil del usuario
@@ -160,9 +169,14 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
               <MenuIcon />
             </IconButton>
             <Typography variant="h4" component={NavLink} to="/" sx={navStyles}>
-              Panasonic-Sistema de activos fijos
+              
+              {t('titulo')}
             </Typography>
             <Switch checked={darkMode} onChange={handleThemeChange} />
+            <select id="language-select" value={language} onChange={handleChangeLanguage}>
+              <option value="en">{t('english')}</option>
+              <option value="es">{t('spanish')}</option>
+            </select>
           </Box>
 
           <Box display="flex" alignItems="center">

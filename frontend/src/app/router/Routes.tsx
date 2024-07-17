@@ -40,6 +40,7 @@ export const router = createBrowserRouter([
       { path: "AssetRetirement", element: <AssetRetirement/>},//frm
       { path: "AssetSales", element: <AssetSales/>},//frm
       { path: "Depreciation", element: <Depreciation/>},//frm
+      { path: ""}
     ],
   },
 ]);

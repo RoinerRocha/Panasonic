@@ -16,6 +16,7 @@ import { FieldValues, useForm } from 'react-hook-form';
 import api from '../../app/api/api';
 import { toast } from 'react-toastify';
 import { profileModels } from '../../app/models/profileModels'; 
+import { useTranslation } from "react-i18next";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -92,13 +93,15 @@ export default function Register() {
     width: 1,
   });
 
+  const { t } = useTranslation();
+
   return (
     <Container component={Paper} maxWidth="sm" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 4 }}>
       <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
         <LockOutlinedIcon />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Registrar usuario
+        {t('titulo-registro')}
       </Typography>
       <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
         <TextField
