@@ -1,7 +1,27 @@
 {
+    "//": "header idioma",
     "select_language": "Select language",
     "english": "English",
     "spanish": "Spanish",
-    "titulo": "Panasonico",
+    "titulo": "Panasonic-Fixed assets system",
+    "titulo-login": "Login",
+    "menu-dashboard": "Dashboard",
+    "menu-historial": "History",
+    "menu-zonas": "Zones",
+    "menu-usuarios": "Users",
+    "menu-cuentas-contables": "Accounting Accounts",
+    "menu-estado-activos": "Statement of Assets",
+    "menu-perfiles": "Profiles",
+    "menu-lista-activos": "List of Assets",
+    "menu-ingreso-activos": "New Assets",
+    "menu-baja-activos": "Asset Retirement",
+    "menu-venta-activos": "Sales of Assets",
+    "menu-reportes": "Reports",
+    "menu-depreciacion-mensual": "Monthly Depreciation",
+    "menu-depreciacion-activos": "Depreciation of Assets List (Mh)",
+    "menu-ayuda": "Help",
+
+
+    "//": "registro idioma",
     "titulo-registro": "Register"
 }

@@ -79,25 +79,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-const midLinks = [
-  { title: "- Dashboard", path: "/" },
-  { title: "- Historial", path: "/" },
-  { title: "- Zonas", path: "/zonas" },
-  { title: "- Usuarios", path: "/users" },
-  { title: "- Cuentas Contables", path: "/NewAccount" },
-  { title: "- Estados De Activos", path: "/NewStatusAssets" },
-  { title: "- Perfiles", path: "/NewProfiles" },
-  { title: "- Lista de Activos", path: "/NewAsset" },
-  { title: "- Ingreso de Activos", path: "/RegisterAsset" },
-  { title: "- Baja de Activos", path: "/AssetRetirement" },//frm
-  { title: "- Ventas de Activos", path: "/AssetSales" },//frm
-  { title: "- Reportes", path: "/" },
-  { title: "- Depreciación Mensual", path: "/Depreciation" },
-  { title: "- Lista Depreciación de Activos (Mh)", path: "/NewServiceLife" },
-  { title: "Ayuda", path: "/" }, // Manual
-];
 
-const rightLinks = [{ title: "Iniciar sesión", path: "/login" }];
 
 const navStyles = {
   color: "inherit",
@@ -137,14 +119,34 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
     changeLanguage(event.target.value);
   };
 
+  const rightLinks = [{ title: t('titulo-login'), path: "/login" }];
+
+  const midLinks = [
+    { title: t('menu-dashboard'), path: "/" },
+    { title: t('menu-historial'), path: "/" },
+    { title: t('menu-zonas'), path: "/zonas" },
+    { title: t('menu-usuarios'), path: "/users" },
+    { title: t('menu-cuentas-contables'), path: "/NewAccount" },
+    { title: t('menu-estado-activos'), path: "/NewStatusAssets" },
+    { title: t('menu-perfiles'), path: "/NewProfiles" },
+    { title: t('menu-lista-activos'), path: "/NewAsset" },
+    { title: t('menu-ingreso-activos'), path: "/RegisterAsset" },
+    { title: t('menu-baja-activos'), path: "/AssetRetirement" },//frm
+    { title: t('menu-venta-activos'), path: "/AssetSales" },//frm
+    { title: t('menu-reportes'), path: "/" },
+    { title: t('menu-depreciacion-mensual'), path: "/depreciation" },
+    { title: t('menu-depreciacion-activos'), path: "/NewServiceLife" },
+    { title: t('menu-ayuda'), path: "/" }, // Manual
+  ];
+
   // Filtrar enlaces en función del perfil del usuario
   const filteredMidLinks = user?.perfil_asignado === "Maestro"
     ? midLinks
     : midLinks.filter(link =>
-        link.title === "- Ingreso de Activos" || 
-        link.title === "- Ventas de Activos" ||
-        link.title === "- Reportes" ||
-        link.title === "- Lista de Activos"
+        link.title === t('menu-ingreso-activos') || 
+        link.title === t('menu-venta-activos') ||
+        link.title === t('menu-reportes') ||
+        link.title === t('menu-lista-activos')
       );
 
   return (

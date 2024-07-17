@@ -1,7 +1,26 @@
 {
+    "//": "header idioma",
     "select_language": "Seleccionar Idioma",
     "english": "Inglés",
     "spanish": "Español",
     "titulo": "Panasonic-Sistema de activos fijos",
+    "titulo-login": "Iniciar sesión",
+    "menu-dashboard": "Principal",
+    "menu-historial": "Historial",
+    "menu-zonas": "Zonas",
+    "menu-usuarios": "Usuarios",
+    "menu-cuentas-contables": "Cuentas Contables",
+    "menu-estado-activos": "Estados De Activos",
+    "menu-perfiles": "Perfiles",
+    "menu-lista-activos": "Lista de Activos",
+    "menu-ingreso-activos": "Ingreso de Activos",
+    "menu-baja-activos": "Baja de Activos",
+    "menu-venta-activos": "Ventas de Activos",
+    "menu-reportes": "Reportes",
+    "menu-depreciacion-mensual": "Depreciación Mensual",
+    "menu-depreciacion-activos": "Lista Depreciación de Activos (Mh)",
+    "menu-ayuda": "Ayuda",
+
+    "//": "idioma registro",
     "titulo-registro": "Registro"
 }
