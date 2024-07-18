@@ -145,7 +145,35 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
   const handleUpdateAsset = async () => {
     if (selectedNewAsset) {
       try {
-        await api.newAsset.updateNewAsset(selectedNewAsset.id, newAsset as newAssetModels);
+        const formData = new FormData();
+
+        formData.append('CodigoCuenta', newAsset.CodigoCuenta?.toString() ?? '');
+        formData.append('Zona', newAsset.Zona?.toString() ?? '');
+        formData.append('Tipo', newAsset.Tipo?.toString() ?? '');
+        formData.append('Estado', newAsset.Estado?.toString() ?? '');
+        formData.append('Descripcion', newAsset.Descripcion ?? '');
+        formData.append('NumeroPlaca', newAsset.NumeroPlaca?.toString() ?? '');
+        formData.append('ValorCompraCRC', newAsset.ValorCompraCRC ?? '');
+        formData.append('ValorCompraUSD', newAsset.ValorCompraUSD ?? '');
+        if (newAsset.Fotografia) {
+          formData.append('Fotografia', newAsset.Fotografia);
+        }
+        formData.append('NombreProveedor', newAsset.NombreProveedor ?? '');
+        formData.append('FechaCompra', newAsset.FechaCompra?.toString() ?? '');
+        formData.append('FacturaNum', newAsset.FacturaNum?.toString() ?? '');
+        if (newAsset.FacturaImagen) {
+          formData.append('FacturaImagen', newAsset.FacturaImagen);
+        }
+        formData.append('OrdenCompraNum', newAsset.OrdenCompraNum?.toString() ?? '');
+        if (newAsset.OrdenCompraImagen) {
+          formData.append('OrdenCompraImagen', newAsset.OrdenCompraImagen);
+        }
+        formData.append('NumeroAsiento', newAsset.NumeroAsiento?.toString() ?? '');
+        formData.append('NumeroBoleta', newAsset.NumeroBoleta ?? '');
+        formData.append('Usuario', newAsset.Usuario ?? '');
+
+
+        await api.newAsset.updateNewAsset(selectedNewAsset.id, formData);
         toast.success("Activo Ingresado Actualizado");
         setOpenEditDialog(false);
         loadNewAsset();
