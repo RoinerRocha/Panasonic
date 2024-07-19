@@ -21,6 +21,10 @@
     "menu-depreciacion-activos": "Depreciation of Assets List (Mh)",
     "menu-ayuda": "Help",
 
+    "//": "idioma signMenu",
+    "logout": "Logout",
+    "signMenu-registro": "Register",
+
 
     "//": "registro idioma",
     "titulo-registro": "Register"

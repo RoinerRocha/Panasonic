@@ -21,6 +21,10 @@
     "menu-depreciacion-activos": "Lista Depreciación de Activos (Mh)",
     "menu-ayuda": "Ayuda",
 
+    "//": "idioma signMenu",
+    "logout": "Cerrar Sesion",
+    "signMenu-registro": "Registro",
+
     "//": "idioma registro",
     "titulo-registro": "Registro"
 }
