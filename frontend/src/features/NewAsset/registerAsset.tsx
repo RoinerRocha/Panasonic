@@ -288,7 +288,7 @@ async function getLastConsecutive(letra: string): Promise<number> {
               
               >
                 {Array.isArray(accountingAccounts) && accountingAccounts.map((account) => (
-                  <MenuItem key={account.id} value={account.id}>
+                  <MenuItem key={account.id} value={account.codigoCuenta}>
                     {account.codigoCuenta}
                   </MenuItem>
                 ))}
@@ -297,20 +297,20 @@ async function getLastConsecutive(letra: string): Promise<number> {
                 <FormHelperText>
                   <Card>
                     <p>
-                      <strong>NomCuentaPrincipal:</strong> {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.nombreCuentaPrincipal || ""}
+                      <strong>NomCuentaPrincipal:</strong> {accountingAccounts.find((account) => account.codigoCuenta === newAsset.CodigoCuenta)?.nombreCuentaPrincipal || ""}
                     </p>
                     <p>
                       <strong>Gastos(D):</strong>{" "}
-                      {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.gastos || ""}
+                      {accountingAccounts.find((account) => account.codigoCuenta === newAsset.CodigoCuenta)?.gastos || ""}
                     </p>
                     <p>
-                      <strong>NomCuenta:</strong> {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.nombreCuentaGastos || ""}
+                      <strong>NomCuenta:</strong> {accountingAccounts.find((account) => account.codigoCuenta === newAsset.CodigoCuenta)?.nombreCuentaGastos || ""}
                     </p>
                     <p>
-                      <strong>Depreciación(H):</strong> {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.depreciacion || ""}
+                      <strong>Depreciación(H):</strong> {accountingAccounts.find((account) => account.codigoCuenta === newAsset.CodigoCuenta)?.depreciacion || ""}
                     </p>
                     <p>
-                      <strong>NomCuenta:</strong> {accountingAccounts.find((account) => account.id === newAsset.CodigoCuenta)?.nombreCuentadDepreciacion || ""}
+                      <strong>NomCuenta:</strong> {accountingAccounts.find((account) => account.codigoCuenta === newAsset.CodigoCuenta)?.nombreCuentadDepreciacion || ""}
                     </p>
                   </Card>
                 </FormHelperText>
@@ -389,12 +389,12 @@ async function getLastConsecutive(letra: string): Promise<number> {
                   label="Seleccionar Estado"
                 >
                   {Array.isArray(statuses) && statuses.map((status) => (
-                    <MenuItem key={status.id} value={status.id.toString()}>
+                    <MenuItem key={status.id} value={status.status}>
                       {status.status}
                         </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText>Lista desplegable</FormHelperText>
+              {/*<FormHelperText>Lista desplegable</FormHelperText>*/}
             </FormControl>
           </Grid>
             <Grid item xs={12}>
