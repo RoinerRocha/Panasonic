@@ -170,48 +170,56 @@
       NumeroBoleta,
       Usuario
     } = req.body;
-
+  
     const files = req.files as MulterFiles;
-
+  
     const fotografiaPath = files?.Fotografia?.[0]?.path || null;
     const ordenCompraImagenPath = files?.OrdenCompraImagen?.[0]?.path || null;
     const facturaImagenPath = files?.FacturaImagen?.[0]?.path || null;
-
+  
     try {
       const existingAsset = await NewAssetModel.findByPk(newAssetId);
-
+  
       if (!existingAsset) {
         return res.status(404).json({ message: "New asset not found" });
       }
-
-      const [updated] = await NewAssetModel.update(
-        {
-          CodigoCuenta,
-          Zona,
-          Tipo,
-          Estado,
-          Descripcion,
-          NumeroPlaca,
-          ValorCompraCRC,
-          ValorCompraUSD,
-          Fotografia: fotografiaPath,
-          NombreProveedor,
-          FechaCompra,
-          FacturaNum,
-          FacturaImagen: ordenCompraImagenPath,
-          OrdenCompraNum,
-          OrdenCompraImagen: facturaImagenPath,
-          NumeroAsiento,
-          NumeroBoleta,
-          Usuario
-        },
-        {
-          where: { id: newAssetId },
-          returning: true,
-        }
-      );
-
+  
+      const updateData: any = {
+        CodigoCuenta,
+        Zona,
+        Tipo,
+        Estado,
+        Descripcion,
+        NumeroPlaca,
+        ValorCompraCRC,
+        ValorCompraUSD,
+        NombreProveedor,
+        FechaCompra,
+        FacturaNum,
+        OrdenCompraNum,
+        NumeroAsiento,
+        NumeroBoleta,
+        Usuario,
+      };
+  
+      // Solo actualizar las rutas de las imágenes si se han subido nuevas imágenes
+      if (fotografiaPath) {
+        updateData.Fotografia = fotografiaPath;
+      }
+      if (ordenCompraImagenPath) {
+        updateData.OrdenCompraImagen = ordenCompraImagenPath;
+      }
+      if (facturaImagenPath) {
+        updateData.FacturaImagen = facturaImagenPath;
+      }
+  
+      const [updated] = await NewAssetModel.update(updateData, {
+        where: { id: newAssetId },
+        returning: true,
+      });
+  
       if (updated) {
+        // Eliminar las imágenes antiguas solo si se han subido nuevas imágenes
         if (fotografiaPath && existingAsset.Fotografia) {
           deleteFile(path.resolve(existingAsset.Fotografia));
         }
@@ -221,7 +229,7 @@
         if (facturaImagenPath && existingAsset.FacturaImagen) {
           deleteFile(path.resolve(existingAsset.FacturaImagen));
         }
-
+  
         const updatedNewAsset = await NewAssetModel.findByPk(newAssetId);
         res
           .status(200)
