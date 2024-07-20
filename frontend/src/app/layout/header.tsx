@@ -128,6 +128,7 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
     { title: t('menu-usuarios'), path: "/users" },
     { title: t('menu-cuentas-contables'), path: "/NewAccount" },
     { title: t('menu-estado-activos'), path: "/NewStatusAssets" },
+    { title: t('menu-accesos'), path: "/Access" },
     { title: t('menu-perfiles'), path: "/NewProfiles" },
     { title: t('menu-lista-activos'), path: "/NewAsset" },
     { title: t('menu-ingreso-activos'), path: "/RegisterAsset" },

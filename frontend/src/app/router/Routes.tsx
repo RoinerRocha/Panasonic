@@ -17,6 +17,7 @@ import RegisterAssets from "../../features/NewAsset/registerAsset";
 import AssetRetirement from "../../features/assetRetirement/assetRetirementFrm"; 
 import AssetSales from "../../features/salesAssest/salesAssestFrm";
 import Depreciation from "../../features/depreciations/NewDepreciations";
+import Access from "../../features/Acces/NewAcces";
 
 export const router = createBrowserRouter([
   {
@@ -40,7 +41,7 @@ export const router = createBrowserRouter([
       { path: "AssetRetirement", element: <AssetRetirement/>},//frm
       { path: "AssetSales", element: <AssetSales/>},//frm
       { path: "Depreciation", element: <Depreciation/>},//frm
-      { path: ""}
+      { path: "Access", element: < Access/>},
     ],
   },
 ]);

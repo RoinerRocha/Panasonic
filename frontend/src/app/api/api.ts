@@ -162,6 +162,13 @@ const depreciations = {
     requests.put(`depreciations/${depreciationId}`, depreciationData ),
   deleteDepreciation: (id: number) => requests.delete(`/deleteDepreciation/${id}`)
 }
+const access = {
+  saveAccess: (values: any) => requests.post("/addNewAccess", values), 
+  getAccess: () => requests.get("/getAllAccesses"),
+  updateAccess: (accessId: any, accessData: any) => 
+    requests.put(`updateAccess/${accessId}`, accessData),
+  deleteAccess: (id: number) => requests.delete(`deleteAccess/${id}`),
+}
 
 const api = {
   Account,
@@ -175,6 +182,7 @@ const api = {
   assetRetirement,
   salesAssest,
   depreciations,
+  access,
 };
 
 export default api;

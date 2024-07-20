@@ -15,8 +15,13 @@ import {
   DialogContentText,
   DialogTitle,
   TablePagination,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { profileModels } from "../../app/models/profileModels";
+import { accessModel } from "../../app/models/access";
 import { useState, useEffect } from "react";
 import api from "../../app/api/api";
 import { toast } from "react-toastify";
@@ -33,6 +38,7 @@ export default function ProfilesList({
   const [selectedProfile, setSelectedProfile] = useState<profileModels | null>(
     null
   );
+  const [access, setAccess] = useState<accessModel[]>([]);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [newProfile, setNewProfile] = useState<Partial<profileModels>>({
@@ -44,7 +50,17 @@ export default function ProfilesList({
   useEffect(() => {
     // Cargar los Estado Activos al montar el componente
     loadProfile();
+    loadAccess();
   }, []);
+
+  const loadAccess = async () => {
+    try {
+      const response = await api.access.getAccess(); 
+      setAccess(response.data);
+    } catch (error) {
+      console.error("Error al cargar los permisos de acceso:", error);
+    }
+  };
 
   const loadProfile = async () => {
     try {
@@ -201,22 +217,29 @@ export default function ProfilesList({
         </DialogContent>
 
         <DialogContent>
-          <TextField
-            label="Permiso de Acceso"
-            value={selectedProfile?.permisoAcceso || null}
-            onChange={(e) =>
-              setSelectedProfile(
-                selectedProfile
-                  ? {
-                      ...selectedProfile,
-                      permisoAcceso: e.target.value,
-                    }
-                  : null
-              )
-            }
-            fullWidth
-            margin="dense"
-          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="perfil-asignado-label">Permisos de acceso</InputLabel>
+            <Select
+              label="Permiso de Acceso del Usuario"
+              value={selectedProfile?.permisoAcceso || ""}
+              onChange={(e) =>
+                setSelectedProfile(
+                  selectedProfile
+                    ? {
+                        ...selectedProfile,
+                        permisoAcceso: e.target.value,
+                      }
+                    : null
+                )
+              }
+            >
+              {access.map((accessName) => (
+                <MenuItem key={accessName.id} value={accessName.Acceso}>
+                  {accessName.Acceso}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
 
         <DialogActions>
@@ -241,19 +264,27 @@ export default function ProfilesList({
             margin="dense"
           />
         </DialogContent>
+        
         <DialogContent>
-          <TextField
-            label="Permiso de Acceso del Usuario"
-            value={newProfile?.permisoAcceso}
-            onChange={(e) =>
-              setNewProfile({
-                ...newProfile,
-                permisoAcceso: e.target.value,
-              })
-            }
-            fullWidth
-            margin="dense"
-          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="perfil-asignado-label">Permisos de acceso</InputLabel>
+            <Select
+              label="Permiso de Acceso del Usuario"
+              value={newProfile?.permisoAcceso || ""}
+              onChange={(e) =>
+                setNewProfile({
+                  ...newProfile,
+                  permisoAcceso: e.target.value,
+                })
+              }
+            >
+              {access.map((accessName) => (
+                <MenuItem key={accessName.id} value={accessName.Acceso}>
+                  {accessName.Acceso}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenAddDialog(false)}>Cancelar</Button>
