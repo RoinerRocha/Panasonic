@@ -9,7 +9,7 @@ import { depreciationModel, depreciationFormModel } from "../../app/models/depre
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import api from "../../app/api/api";
-import { Search } from "@mui/icons-material";
+import { Search, TextFields } from "@mui/icons-material";
 import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
 
@@ -195,13 +195,23 @@ export default function Depreciations({
 
     return (
         <Grid container spacing={1}>
-            <Button
+             <Grid item xs={12} sm={6} md={3}></Grid>
+            <TextField
+                        label="Fecha"
+                       
+                        type="date"
+                        disabled= {false}
+                        
+                        fullWidth
+                        margin="dense"
+                    />
+           {/* <Button
                 variant="contained"
                 color="primary"
                 onClick={() => setOpenAddDialog(true)}
             >
                 Agregar Depreciación
-            </Button>
+            </Button>*/}
 
             <Search>
                 <SearchIconWrapper>
@@ -246,6 +256,108 @@ export default function Depreciations({
                                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
                             >
                                 Clasificación
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Fecha Compra
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Vida Util
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Total Cuotas
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Cuotas Consumidas
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Gap
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Cuota Depreciada
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Cuota Pendiente
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Depreciación x mes CRC
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Depreciación x mes USD
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Depreciación del mes CRC
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Depreciación del mes USD
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Depreciación Acumulada CRC
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Depreciación Acumulada USD
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Valor en Libro CRC
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Valor en Libro USD
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Valor Rescate CRC
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Valor en Libro USD
                             </TableCell>
                             <TableCell
                                 align="center"
@@ -389,7 +501,7 @@ export default function Depreciations({
                         margin="dense"
                     />
                 </DialogContent>
-                <DialogActions>
+               {/* <DialogActions>
                     <Button onClick={() => setOpenEditDialog(false)}>Cancelar</Button>
                     <Button onClick={handleUpdate}>Actualizar</Button>
                 </DialogActions>
@@ -483,7 +595,7 @@ export default function Depreciations({
                 <DialogActions>
                     <Button onClick={() => setOpenAddDialog(false)}>Cancelar</Button>
                     <Button onClick={handleAdd}>Agregar</Button>
-                </DialogActions>
+                </DialogActions>*/}
             </Dialog>
         </Grid>
     );
