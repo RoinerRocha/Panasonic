@@ -288,21 +288,29 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                 <TableCell>{newAsset.FacturaNum}</TableCell>
                 <TableCell>
                   {newAsset.FacturaImagen ? (
-                    <img 
-                      src={imageUrlMap.get(newAsset.id)?.get('FacturaImagen') || ''} 
-                      alt="Factura Imagen" 
-                      style={{ width: '100px', height: '100px', objectFit: 'cover' }}
-                    />
+                     <a
+                      href={`http://localhost:5000/${newAsset.FacturaImagen}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Ver Factura
+                    </a>
                   ) : 'No Image'}
                 </TableCell>
                 <TableCell>{newAsset.OrdenCompraNum}</TableCell>
                 <TableCell>
                   {newAsset.OrdenCompraImagen ? (
-                    <img 
-                      src={imageUrlMap.get(newAsset.id)?.get('OrdenCompraImagen') || ''} 
-                      alt="Orden Compra Imagen" 
-                      style={{ width: '100px', height: '100px', objectFit: 'cover' }}
-                    />
+                      <a
+                        href={`http://localhost:5000/${newAsset.OrdenCompraImagen}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Ver Orden
+                      </a>
                   ) : 'No Image'}
                 </TableCell>
                 <TableCell>{newAsset.NumeroAsiento}</TableCell>
