@@ -55,7 +55,7 @@ export default function Depreciations({
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [openAddDialog, setOpenAddDialog] = useState(false);
     const [newDepreciation, setNewDepreciation] = useState<
-        Partial<depreciationFormModel>
+        Partial<depreciationFormModel>//revisar eso aqui y en el model 
     >({
         id: 0,
         Codigo: "",
@@ -79,7 +79,7 @@ export default function Depreciations({
         }
     };
 
-    const handleDelete = async (id: number) => {
+  /*  const handleDelete = async (id: number) => {
         try {
             await api.depreciations.deleteDepreciation(id);
             toast.success("Depreciación Eliminada");
@@ -87,18 +87,18 @@ export default function Depreciations({
         } catch (error) {
             console.error("Error al eliminar la depreciación:", error);
         }
-    };
+    };*/
 
-    const handleEdit = (depreciation: depreciationModel) => {
+  /*  const handleEdit = (depreciation: depreciationModel) => {
         setSelectedDepreciations({
             ...depreciation,
             Dolares: depreciation.Dolares.toString(),
             Colones: depreciation.Colones.toString()
         } as depreciationFormModel); // Asegúrate de que el tipo sea correcto
         setOpenEditDialog(true);
-    };
+    };*/
 
-    const handleUpdate = async () => {
+   /* const handleUpdate = async () => {
         if (selectedDepreciations) {
             try {
                 const updatedDepreciation: depreciationModel = {
@@ -117,9 +117,9 @@ export default function Depreciations({
                 console.error("Error al actualizar las depreciaciones:", error);
             }
         }
-    };
+    };*/
 
-    const handleAdd = async () => {
+   /* const handleAdd = async () => {
         try {
             const addedDepreciation: depreciationModel = {
                 id: newDepreciation.id ?? 0, // Default to 0 if id is undefined
@@ -136,7 +136,7 @@ export default function Depreciations({
         } catch (error) {
             console.error("Error al agregar la depreciación:", error);
         }
-    };
+    };*/
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -164,7 +164,7 @@ export default function Depreciations({
     const Search = styled('div')(({ theme }) => ({
         position: 'relative',
         borderRadius: theme.shape.borderRadius,
-        backgroundColor: alpha(theme.palette.common.white, 0.15),
+        backgroundColor: alpha(theme.palette.common.black, 0.15),
         '&:hover': {
           backgroundColor: alpha(theme.palette.common.white, 0.25),
         },
@@ -192,13 +192,12 @@ export default function Depreciations({
           },
         },
       }));
-
+//faltan agregar en el model los otos encabezdos de la tabla
     return (
         <Grid container spacing={1}>
              <Grid item xs={12} sm={6} md={3}></Grid>
             <TextField
-                        label="Fecha"
-                       
+                        label=""
                         type="date"
                         disabled= {false}
                         
@@ -227,23 +226,42 @@ export default function Depreciations({
                 <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
                     <TableHead>
                         <TableRow>
-                            <TableCell
+                        <TableCell
                                 align="center"
                                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
                             >
-                                Código
+                                {/**Aqui va el contador de row */}
+                                Contador
+                            </TableCell>
+                        <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                CTA
+                            </TableCell>
+                        <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Activo Fijo
                             </TableCell>
                             <TableCell
                                 align="center"
                                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
                             >
-                                Cuenta
+                                CTA
                             </TableCell>
                             <TableCell
                                 align="center"
                                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
                             >
-                                Dólares
+                                Dep Acumulada
+                            </TableCell>
+                            <TableCell
+                                align="center"
+                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                            >
+                                Detalle
                             </TableCell>
                             <TableCell
                                 align="center"
@@ -255,7 +273,7 @@ export default function Depreciations({
                                 align="center"
                                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
                             >
-                                Clasificación
+                                Dolares
                             </TableCell>
                             <TableCell
                                 align="center"
@@ -359,39 +377,39 @@ export default function Depreciations({
                             >
                                 Valor en Libro USD
                             </TableCell>
-                            <TableCell
-                                align="center"
-                                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-                            >
-                                Configuraciones
-                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {paginatedServiceLife.map((depreciation) => (
                             <TableRow key={depreciation.id}>
-                                <TableCell align="center">{depreciation.Codigo}</TableCell>
-                                <TableCell align="center">{depreciation.Cuenta}</TableCell>
+                                <TableCell align="center">{depreciation.CodCuenta}</TableCell>
+                                <TableCell align="center">{depreciation.ActivoFijo}</TableCell>
+                                <TableCell align="center">{depreciation.CodCuentaGasto}</TableCell>
+                                <TableCell align="center">{depreciation.GastoCuenta}</TableCell>
+                                <TableCell align="center">{depreciation.CodCuentaDepAcumulada}</TableCell>
+                                <TableCell align="center">{depreciation.DepAcumulada}</TableCell>
+                                <TableCell align="center">{depreciation.Detalle}</TableCell>
                                 <TableCell align="center">{depreciation.Dolares}</TableCell>
                                 <TableCell align="center">{depreciation.Colones}</TableCell>
-                                <TableCell align="center">{depreciation.Clasificacion}</TableCell>
-                                <TableCell align="center">
-                                    <Button
-                                        variant="contained"
-                                        color="info"
-                                        sx={{ margin: "5px" }}
-                                        onClick={() => handleEdit(depreciation)}
-                                    >
-                                        Editar
-                                    </Button>
-                                    <Button
-                                        variant="contained"
-                                        color="error"
-                                        onClick={() => handleDelete(depreciation.id)}
-                                    >
-                                        Eliminar
-                                    </Button>
-                                </TableCell>
+                                <TableCell align="center">{depreciation.FechaCompra.toISOString()}</TableCell>
+                                <TableCell align="center">{depreciation.VidaUtil}</TableCell>
+                                <TableCell align="center">{depreciation.TotalCuotas}</TableCell>
+                                <TableCell align="center">{depreciation.CuotaConsumidas}</TableCell>
+                                <TableCell align="center">{depreciation.Gap}</TableCell>
+                                <TableCell align="center">{depreciation.CuotasDepreciadas}</TableCell>
+                                <TableCell align="center">{depreciation.CuotasPendiente}</TableCell>
+                                <TableCell align="center">{depreciation.DepreciacionXmesCRC}</TableCell>
+                                <TableCell align="center">{depreciation.DepreciacionXmesUSD}</TableCell>
+                                <TableCell align="center">{depreciation.DepreciacionDelMesCRC}</TableCell>
+                                <TableCell align="center">{depreciation.DepreciacionDelMesUSD}</TableCell>
+                                <TableCell align="center">{depreciation.DepreciacionAcumuladaCRC}</TableCell>
+                                <TableCell align="center">{depreciation.DepreciacionAcumuladaUSD}</TableCell>
+                                <TableCell align="center">{depreciation.ValorEnLibroCRC}</TableCell>
+                                <TableCell align="center">{depreciation.ValorEnLibroUSD}</TableCell>
+                                <TableCell align="center">{depreciation.ValorRescateCRC}</TableCell>
+                                <TableCell align="center">{depreciation. ValorRescateUSD}</TableCell>
+                                <TableCell align="center">{depreciation.Fecha.toISOString()}</TableCell>
+
                             </TableRow>
                         ))}
                     </TableBody>
