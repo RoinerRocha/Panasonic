@@ -251,5 +251,3 @@ export const updatePasswordByEmail = async (req: Request, res: Response) => {
     }
   }
 };
-
-
