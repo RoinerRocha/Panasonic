@@ -26,6 +26,19 @@
     "logout": "Cerrar Sesion",
     "signMenu-registro": "Registro",
 
+    "//": "idiomas inicio sesion",
+    "titulo-sesion": "Iniciar Sesion",
+    "Nombre-sesion": "Usuario",
+    "Nombre-error": "Se necesita el usuario",
+    "Contraseña-sesion": "Contraseña",
+    "Contraseña-error": "Se necesita la contraseña",
+    "Boton-sesion": "Iniciar Sesion",
+    "Boton-correo": "Recuperar Contraseña",
+    "Dialog-correo-titulo": "Coreo de recuperacion",
+    "Label-correo-titulo": "Correo",
+    "Label-boton-cancelar": "Cancelar",
+    "Label-boton-enviar": "Enviar",
+
     "//": "idioma registro",
     "titulo-registro": "Registro"
 }

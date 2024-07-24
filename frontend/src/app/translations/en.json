@@ -26,6 +26,19 @@
     "logout": "Logout",
     "signMenu-registro": "Register",
 
+    "//": "idiomas inicio sesion",
+    "titulo-sesion": "Login",
+    "Nombre-sesion": "User",
+    "Nombre-error": "User required",
+    "Contraseña-sesion": "Password",
+    "Contraseña-error": "Password Required",
+    "Boton-sesion": "Login",
+    "Boton-correo": "Password recovery",
+    "Dialog-correo-titulo": "Recovery email",
+    "Label-correo-titulo": "Email",
+    "Label-boton-cancelar": "Cancel",
+    "Label-boton-enviar": "Send",
+
 
     "//": "registro idioma",
     "titulo-registro": "Register"

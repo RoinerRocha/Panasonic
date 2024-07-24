@@ -15,6 +15,8 @@ import { useAppDispatch, useAppSelector } from '../../store/configureStore';
 import { signInUser } from './accountSlice';
 import { Email } from '../../app/models/email';
 import api from "../../app/api/api";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from '../../app/context/LanguageContext';
 
 
 export default function Login() {
@@ -31,6 +33,9 @@ export default function Login() {
   const { register, handleSubmit, formState: { isSubmitting, errors, isValid, isSubmitSuccessful } } = useForm({
     mode: 'onTouched'
   });
+
+  const { t } = useTranslation();
+  const { changeLanguage, language } = useLanguage();
 
   const handdleAddEmail = async () => {
     try {
@@ -70,24 +75,24 @@ export default function Login() {
         <LockOutlinedIcon />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Inicio de sesión
+        {t('titulo-sesion')}
       </Typography>
       <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
         <TextField
           margin="normal"
           fullWidth
-          label="Nombre de Usuario"
+          label={t('Nombre-sesion')}
           autoFocus
-          {...register('nombre_usuario', { required: 'Se necesita el usuario' })}
+          {...register('nombre_usuario', { required: t('Nombre-error') })}
           error={!!errors.nombre_usuario}
           helperText={errors?.nombre_usuario?.message as string}
         />
         <TextField
           margin="normal"
           fullWidth
-          label="Contraseña"
+          label={t('Contraseña-sesion')}
           type="password"
-          {...register('contrasena', { required: 'Se necesita la contraseña' })}
+          {...register('contrasena', { required: t('Contraseña-error') })}
           error={!!errors.contrasena}
           helperText={errors?.contrasena?.message as string}
         />
@@ -99,26 +104,21 @@ export default function Login() {
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
         >
-          Iniciar Sesion
+          {t('Boton-sesion')}
         </LoadingButton>
         <Grid container>
           <Grid item xs>
             <Button variant="contained" color="primary" onClick={() => setOpenAddDialog(true)}>
-                Recuperar Contraseña
+              {t('Boton-correo')}
             </Button>
-          </Grid>
-          <Grid item>
-            <Link to="/register">
-              {"No tienes una cuenta? regístrate"}
-            </Link>
           </Grid>
         </Grid>
       </Box>
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-        <DialogTitle>Enviar Email de Recuperacion</DialogTitle>
+        <DialogTitle>{t('Dialog-correo-titulo')}</DialogTitle>
           <DialogContent>
             <TextField
-                label="Email de recuperacion"
+                label={t('Label-correo-titulo')}
                 value={newEmail.email}
                 onChange={(e) => setNewEmail({ ...newEmail, email: e.target.value })}
                 fullWidth
@@ -126,8 +126,8 @@ export default function Login() {
             />
           </DialogContent>
           <DialogActions>
-              <Button onClick={() => setOpenAddDialog(false)}>Cancelar</Button>
-              <Button onClick={handdleAddEmail}>Enviar</Button>
+              <Button onClick={() => setOpenAddDialog(false)}>{t('Label-boton-cancelar')}</Button>
+              <Button onClick={handdleAddEmail}>{t('Label-boton-enviar')}</Button>
           </DialogActions>
       </Dialog>
     </Container>
