@@ -20,6 +20,11 @@ import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import { Dataset } from "@mui/icons-material";
 
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import { Document, Packer, Paragraph, TextRun } from "docx";
+import { saveAs } from "file-saver";
+
 interface Props {
   newAssets: newAssetModels[];
   setNewAssets: React.Dispatch<React.SetStateAction<newAssetModels[]>>;
@@ -261,6 +266,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Numero Boleta</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Usuario</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Acciones</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Imprimir</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -338,6 +344,22 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                     }}
                   >
                     Eliminar
+                  </Button>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="contained"
+                    color="info"
+                    sx={{ margin: "5px" }}
+                  >
+                    Word
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    sx={{ margin: "5px" }}
+                  >
+                    PDF
                   </Button>
                 </TableCell>
               </TableRow>

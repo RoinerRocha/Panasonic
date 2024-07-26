@@ -57,6 +57,7 @@ const requests = {
   post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
   put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
   delete: (url: string) => axios.delete(url).then(responseBody),
+  download: (url: string) => axios.get(url, { responseType: 'blob' }).then((response) => response.data),
 };
 
 const TestErrors = {
@@ -135,6 +136,8 @@ const newAsset = {
   deleteNewAsset: (id: number) => requests.delete(`deleteNewAsset/${id}`), //reviar x si da algun problema ya que en el back esta comentado esta funcion
   getNewAssetById:(id: number) => requests.get(`/searchIdNewAsset/${id}`),
   getAssetByNumBoleta: (id: string) => requests.get(`/assetByNumBolet/boleta/${id}`),
+  generateWordFile: (id: number) => requests.download(`/generateWord/${id}`),
+  generatePDFFile: (id: number) => requests.download(`/generatePDF/${id}`),
 };
 
 const assetRetirement = {
