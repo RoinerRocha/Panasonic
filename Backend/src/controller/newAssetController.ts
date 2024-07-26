@@ -3,13 +3,16 @@
   import axios from 'axios';
   import FormData from 'form-data';
   import fs from 'fs';
+  import { writeFileSync, unlink } from "fs";
   import multer from 'multer';
   import { Op } from "sequelize";
   import { upload } from '../Middleware/multerConfig'
   import Joi from 'joi';
   import path from 'path';
+  import { Document, Packer, Paragraph, TextRun } from "docx";
+  import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
-
+  
   interface MulterFiles {
     Fotografia?: Express.Multer.File[];
     OrdenCompraImagen?: Express.Multer.File[];
@@ -25,6 +28,146 @@
       }
     });
   };
+
+
+  // Método para generar un archivo Word con los datos del activo
+export const generateWordFile = async (req: Request, res: Response) => {
+  const newAssetId = req.params.id;
+
+  try {
+    const asset = await NewAssetModel.findByPk(newAssetId);
+
+    if (!asset) {
+      return res.status(404).json({ message: "Asset not found" });
+    }
+
+    const doc = new Document({
+      sections: [
+        {
+          properties: {},
+          children: [
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: "Informacion del activo",
+                  bold: true,
+                  size: 32,
+                }),
+              ],
+            }),
+            new Paragraph(`Codigo Cuenta: ${asset.CodigoCuenta}`),
+            new Paragraph(`Zona: ${asset.Zona}`),
+            new Paragraph(`Tipo: ${asset.Tipo}`),
+            new Paragraph(`Estado: ${asset.Estado}`),
+            new Paragraph(`Descripcion: ${asset.Descripcion}`),
+            new Paragraph(`Numero Placa: ${asset.NumeroPlaca}`),
+            new Paragraph(`Valor Compra CRC: ${asset.ValorCompraCRC}`),
+            new Paragraph(`Valor Compra USD: ${asset.ValorCompraUSD}`),
+            new Paragraph(`Nombre Proveedor: ${asset.NombreProveedor}`),
+            new Paragraph(`Fecha Compra: ${asset.FechaCompra}`),
+            new Paragraph(`Factura Num: ${asset.FacturaNum}`),
+            new Paragraph(`Numero Asiento: ${asset.NumeroAsiento}`),
+            new Paragraph(`Numero Boleta: ${asset.NumeroBoleta}`),
+            new Paragraph(`Usuario: ${asset.Usuario}`),
+          ],
+        },
+      ],
+    });
+
+    const buffer = await Packer.toBuffer(doc);
+    const filePath = `./uploads/Asset_${asset.NumeroBoleta}.docx`;
+    writeFileSync(filePath, buffer);
+
+    res.download(filePath, `Asset_${asset.NumeroBoleta}.docx`, (err) => {
+      if (err) {
+        console.error("Error downloading file:", err);
+        res.status(500).json({ message: "Error downloading file" });
+      }
+
+      // Optionally delete the file after download
+      fs.unlink(filePath, (err) => {
+        if (err) console.error("Error deleting file:", err);
+      });
+    });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+  // Método para generar un archivo PDF con los datos del activo
+export const generatePDFFile = async (req: Request, res: Response) => {
+  const newAssetId = req.params.id;
+
+  try {
+    const asset = await NewAssetModel.findByPk(newAssetId);
+
+    if (!asset) {
+      return res.status(404).json({ message: "Asset not found" });
+    }
+
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage([600, 750]);
+    const { width, height } = page.getSize();
+    const fontSize = 20;
+
+    const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+
+    page.drawText('Asset Information', {
+      x: 50,
+      y: height - 4 * fontSize,
+      size: fontSize,
+      font: timesRomanFont,
+      color: rgb(0, 0, 0),
+    });
+
+    const assetData = [
+      `Codigo Cuenta: ${asset.CodigoCuenta}`,
+      `Zona: ${asset.Zona}`,
+      `Tipo: ${asset.Tipo}`,
+      `Estado: ${asset.Estado}`,
+      `Descripcion: ${asset.Descripcion}`,
+      `Numero Placa: ${asset.NumeroPlaca}`,
+      `Valor Compra CRC: ${asset.ValorCompraCRC}`,
+      `Valor Compra USD: ${asset.ValorCompraUSD}`,
+      `Nombre Proveedor: ${asset.NombreProveedor}`,
+      `Fecha Compra: ${asset.FechaCompra}`,
+      `Factura Num: ${asset.FacturaNum}`,
+      `Numero Asiento: ${asset.NumeroAsiento}`,
+      `Numero Boleta: ${asset.NumeroBoleta}`,
+      `Usuario: ${asset.Usuario}`,
+    ];
+
+    let yPosition = height - 5 * fontSize;
+    for (const line of assetData) {
+      page.drawText(line, {
+        x: 50,
+        y: yPosition,
+        size: fontSize,
+        font: timesRomanFont,
+        color: rgb(0, 0, 0),
+      });
+      yPosition -= fontSize + 10;
+    }
+
+    const pdfBytes = await pdfDoc.save();
+    const filePath = `./uploads/Asset_${asset.id}.pdf`;
+    writeFileSync(filePath, pdfBytes);
+
+    res.download(filePath, `Asset_${asset.id}.pdf`, (err) => {
+      if (err) {
+        console.error("Error downloading file:", err);
+        res.status(500).json({ message: "Error downloading file" });
+      }
+
+      // Optionally delete the file after download
+      unlink(filePath, (err) => {
+        if (err) console.error("Error deleting file:", err);
+      });
+    });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
   
   // Método para guardar un nuevo activo
   export const saveNewAsset = async (req: Request, res: Response) => {

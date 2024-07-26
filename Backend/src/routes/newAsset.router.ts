@@ -7,6 +7,8 @@ import {
   searchIdNewAsset,
   getAssetRetirementByNumeroBoleta,
   searchNewAssets,
+  generateWordFile,
+  generatePDFFile,
 } from "../controller/newAssetController";
 import { upload } from '../Middleware/multerConfig';
 
@@ -46,5 +48,7 @@ router.get("/searchIdNewAsset/:id", searchIdNewAsset);
 router.get("/assetByNumBolet/boleta/:NumeroBoleta", getAssetRetirementByNumeroBoleta);
 
 router.get("/searchNewAssets",  searchNewAssets);
+router.get("/generateWord/:id", generateWordFile);
+router.get("/generatePDF/:id", generatePDFFile);
 
 export default router;
