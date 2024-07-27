@@ -57,7 +57,7 @@ const requests = {
   post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
   put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
   delete: (url: string) => axios.delete(url).then(responseBody),
-  download: (url: string) => axios.get(url, { responseType: 'blob' }).then((response) => response.data),
+  download: (url: string) => axios.get(url, { responseType: 'arraybuffer' }).then((response) => response.data),
 };
 
 const TestErrors = {
