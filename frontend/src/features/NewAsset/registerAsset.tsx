@@ -15,6 +15,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import AssetRetirementFrm from "../assetRetirement/assetRetirementFrm";
 
 import { useAppDispatch, useAppSelector } from "../../store/configureStore";//ruta para obtener el usuario
+import { equal } from "assert";
 
 
 export default function RegisterAsset() {
@@ -329,23 +330,22 @@ async function getLastConsecutive(letra: string): Promise<number> {
                 label="Seleccionar Zona"
               >
                 {Array.isArray(zones) && zones.map((zone) => (
-                  <MenuItem key={zone.id} value={zone.id}>
+                  <MenuItem key={zone.id} value={zone.nombreZona}>
                     {zone.nombreZona}
                   </MenuItem>
                 ))}
               </Select>
-              {newAsset.Zona > 0 && (
-                <FormHelperText>
-                  <Card>
-                    <p>
-                      <strong>Numero Zona:</strong> {zones.find((zone) => zone.id === newAsset.Zona)?.numeroZona || ""}
-                    </p>
-                    <p>
-                      <strong>Responsable:</strong>{" "}
-                      {zones.find((zone) => zone.id === newAsset.Zona)?.responsableAreaNom_user || ""}
-                    </p>
-                  </Card>
-                </FormHelperText>
+              {newAsset.Zona.toString() && newAsset.Zona.toString() !== "0"  && (
+               <FormHelperText>
+                <Card>
+                 <p>
+                  <strong>Numero Zona:</strong> {zones.find((zone) => zone.nombreZona === newAsset.Zona.toString())?.numeroZona || ""}
+                 </p>
+                 <p>
+                  <strong>Responsable:</strong> {zones.find((zone) => zone.nombreZona === newAsset.Zona.toString())?.responsableAreaNom_user || ""}
+                 </p>
+                </Card>
+              </FormHelperText>
               )}
             </FormControl>
           </Grid>
@@ -361,16 +361,16 @@ async function getLastConsecutive(letra: string): Promise<number> {
                 label="Seleccionar Tipo"
               >
                 {Array.isArray(serviceLives) && serviceLives.map((serviceLife) => (
-                  <MenuItem key={serviceLife.id} value={serviceLife.id}>
+                  <MenuItem key={serviceLife.id} value={serviceLife.tipo}>
                     {serviceLife.tipo}
                   </MenuItem>
                 ))}
               </Select>
-              {newAsset.Tipo > 0 && (
+              {newAsset.Tipo.toString() && newAsset.Tipo.toString() !== "0" && (
                 <FormHelperText>
                   <Card>
                     <p>
-                      <strong>Vida Util(Años):</strong> {serviceLives.find((serviceLife) => serviceLife.id === newAsset.Tipo)?.añoUtil || ""}
+                      <strong>Vida Util(Años):</strong> {serviceLives.find((serviceLife) => serviceLife.tipo === newAsset.Tipo.toString())?.añoUtil || ""}
                     </p>
                   </Card>
                 </FormHelperText>

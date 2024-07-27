@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { FieldValues, useForm } from "react-hook-form";
 
 import { useAppDispatch, useAppSelector } from "../../store/configureStore";//ruta para obtener el usuario
+import NewAsset from "../NewAsset/newAsset";
+import assert from "assert";
 
 
 export default function RegisterAsset() {
@@ -189,7 +191,7 @@ async function getLastConsecutive(letra: string): Promise<number> {
           <Grid item xs={12}>
             <FormControl fullWidth>
               <InputLabel id="placa-activo-label">
-                Seleccionar Código de Cuenta
+                Seleccionar Placa del Activo
               </InputLabel>
               <Select
                 labelId="placa-activo-label"
@@ -197,15 +199,41 @@ async function getLastConsecutive(letra: string): Promise<number> {
                 name="PlacaActivo"
                 value={newAssetRetirement.PlacaActivo.toString() || ""}
                 onChange={handleSelectChange}
-                label="Seleccionar Código de Cuenta"
+                label="Seleccionar Placa del Activo"
               
               >
                 {Array.isArray(assets) && assets.map((account) => (
-                  <MenuItem key={account.id} value={account.id}>
+                  <MenuItem key={account.id} value={account.NumeroPlaca}>
                     {account.NumeroPlaca}
                   </MenuItem>
                 ))}
               </Select>
+              {newAssetRetirement.PlacaActivo > "0" && (
+                <FormHelperText>
+                  <Card>
+                    <p>
+                      <strong>Descripción:</strong>  {assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.Descripcion || ""}
+                    </p>
+                    <p>
+                      <strong>Cuenta Principal:</strong>{" "}
+                       {assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.CodigoCuenta || ""}
+                    </p>
+                    <p>
+                      <strong>Tipo de Activo:</strong> {assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.Tipo || ""}
+                    </p>
+                    <p>
+                      <strong>Zona:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.Zona || ""}
+                    </p>
+                    <p>
+                      <strong>Estado del Activo:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.Estado || ""}
+                    </p>
+                    <p>
+                      <strong>Numero Boleta:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.NumeroBoleta || ""}
+                    </p>
+                    
+                  </Card>
+                </FormHelperText>
+              )}
             </FormControl>
           </Grid>
             <Grid item xs={12}>
@@ -224,7 +252,7 @@ async function getLastConsecutive(letra: string): Promise<number> {
                 fullWidth
                 id="descripcion"
                 name="Descripcion"
-                label="Explicar la razon de la baja del activo"
+                label="Explicar Razón Baja del Activo"
                 value={newAssetRetirement.Descripcion || ""}
                 onChange={handleInputChange}
               />
@@ -234,7 +262,7 @@ async function getLastConsecutive(letra: string): Promise<number> {
                 fullWidth
                 id="destinoFinal"
                 name="DestinoFinal"
-                label="Explicar la razon de la baja del activo"
+                label="Explicar Destino Final del activo"
                 value={newAssetRetirement.DestinoFinal || ""}
                 onChange={handleInputChange}
               />
@@ -267,7 +295,7 @@ async function getLastConsecutive(letra: string): Promise<number> {
                 disabled
                 id="usuario"
                 name="Usuario"
-                label={user?.nombre_usuario}
+                label="Usuario"
                 value={user?.nombre_usuario} //revisar ya que no lo guarda en  la base de datos
                 onChange={handleInputChange}
               />

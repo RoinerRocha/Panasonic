@@ -196,11 +196,37 @@ async function getLastConsecutive(letra: string): Promise<number> {
                   label="Seleccionar Placa de Activo"
                 >
                   {Array.isArray(assets) && assets.map((account) => (
-                    <MenuItem key={account.id} value={account.id}>
+                    <MenuItem key={account.id} value={account.NumeroPlaca}>
                       {account.NumeroPlaca}
                     </MenuItem>
                   ))}
                 </Select>
+                {newAssetSale.PlacaActivo > "0" && (
+                <FormHelperText>
+                  <Card>
+                    <p>
+                      <strong>Descripción:</strong>  {assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.Descripcion || ""}
+                    </p>
+                    <p>
+                      <strong>Cuenta Principal:</strong>{" "}
+                       {assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.CodigoCuenta || ""}
+                    </p>
+                    <p>
+                      <strong>Tipo de Activo:</strong> {assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.Tipo || ""}
+                    </p>
+                    <p>
+                      <strong>Zona:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.Zona || ""}
+                    </p>
+                    <p>
+                      <strong>Estado del Activo:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.Estado || ""}
+                    </p>
+                    <p>
+                      <strong>Numero Boleta:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.NumeroBoleta || ""}
+                    </p>
+                    
+                  </Card>
+                </FormHelperText>
+              )}
               </FormControl>
             </Grid>
             <Grid item xs={12}>
