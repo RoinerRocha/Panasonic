@@ -233,21 +233,21 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
   });
   const [imageUrlMap1, setImageUrlMap1] = useState<Map<string, string>>(new Map());
 
-  const generatePDF = async (assetId: number) => {
+  const generatePDF = async (assetId: number, numBoleta: string) => {
     try {
       const response = await api.newAsset.generatePDFFile(assetId);
       const blob = new Blob([response], { type: 'application/pdf' });
-      saveAs(blob, `asset_${assetId}.pdf`);
+      saveAs(blob, `asset_${numBoleta}.pdf`);
     } catch (error) {
       console.error('Error generando PDF:', error);
       toast.error('Error generando PDF');
     }
   };
-  const generateWord = async (assetId: number) => {
+  const generateWord = async (assetId: number, numBoleta: string) => {
     try {
       const response = await api.newAsset.generateWordFile(assetId);
       const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-      saveAs(blob, `asset_${assetId}.docx`);
+      saveAs(blob, `asset_${numBoleta}.docx`);
     } catch (error) {
       console.error('Error generando Word:', error);
       toast.error('Error generando Word');
@@ -373,7 +373,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                     sx={{ margin: "5px" }}
                     onClick={(event) => {
                       event.stopPropagation();
-                      generateWord(newAsset.id);
+                      generateWord(newAsset.id, newAsset.NumeroBoleta);
                     }}
                   >
                     Word
@@ -384,7 +384,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                     sx={{ margin: "5px" }}
                     onClick={(event) => {
                       event.stopPropagation();
-                      generatePDF(newAsset.id);
+                      generatePDF(newAsset.id, newAsset.NumeroBoleta);
                     }}
                   >
                     PDF
