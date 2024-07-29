@@ -17,6 +17,7 @@ import api from '../../app/api/api';
 import { toast } from 'react-toastify';
 import { profileModels } from '../../app/models/profileModels'; 
 import { useTranslation } from "react-i18next";
+import { useLanguage } from '../../app/context/LanguageContext';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -94,6 +95,7 @@ export default function Register() {
   });
 
   const { t } = useTranslation();
+  const { changeLanguage, language } = useLanguage();
 
   return (
     <Container component={Paper} maxWidth="sm" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 4 }}>
@@ -107,60 +109,60 @@ export default function Register() {
         <TextField
           margin="normal"
           fullWidth
-          label="Nombre"
+          label={t('nombre-registro')}
           autoFocus
-          {...register('nombre', { required: 'Se necesita el nombre' })}
+          {...register('nombre', { required: t('nombre-registro-error')})}
           error={!!errors.nombre}
           helperText={errors?.nombre?.message as string}
         />
         <TextField
           margin="normal"
           fullWidth
-          label="Primer Apellido"
-          {...register('primer_apellido', { required: 'Se necesita el primer Apellido' })}
+          label={t('primer-apellido-registro')}
+          {...register('primer_apellido', { required: t('primer-apellido-registro-error') })}
           error={!!errors.primer_apellido}
           helperText={errors?.primer_apellido?.message as string}
         />
         <TextField
           margin="normal"
           fullWidth
-          label="Segundo Apellido"
-          {...register('segundo_apellido', { required: 'Se necesita el segundo Apellido' })}
+          label={t('segundo-apellido-registro')}
+          {...register('segundo_apellido', { required: t('segundo-apellido-registro-error') })}
           error={!!errors.segundo_apellido}
           helperText={errors?.segundo_apellido?.message as string}
         />
         <TextField
           margin="normal"
           fullWidth
-          label="Nombre del usuario"
-          {...register('nombre_usuario', { required: 'Se necesita el usuario' })}
+          label={t('usuario-registro')}
+          {...register('nombre_usuario', { required: t('usuario-registro-error') })}
           error={!!errors.nombre_usuario}
           helperText={errors?.nombre_usuario?.message as string}
         />
         <TextField
           margin="normal"
           fullWidth
-          label="correo Electronico"
-          {...register('correo_electronico', { required: 'Se necesita el correo' })}
+          label={t('email-registro')}
+          {...register('correo_electronico', { required: t('email-registro-error') })}
           error={!!errors.correo_electronico}
           helperText={errors?.correo_electronico?.message as string}
         />
         <TextField
           margin="normal"
           fullWidth
-          label="Contraseña"
+          label={t('password-registro')}
           type="password"
-          {...register('contrasena', { required: 'Se necesita la contraseña' })}
+          {...register('contrasena', { required: t('password-registro-error') })}
           error={!!errors.contrasena}
           helperText={errors?.contrasena?.message as string}
         />
         <FormControl fullWidth margin="normal" error={!!errors.perfil_asignado}>
-          <InputLabel id="perfil-asignado-label">Perfil Asignado</InputLabel>
+          <InputLabel id="perfil-asignado-label">{t('perfil-registro')}</InputLabel>
           <Select
             labelId="perfil-asignado-label"
             id="perfil_asignado"
             label="Perfil Asignado"
-            {...register('perfil_asignado', { required: 'Se necesita el perfil asignado' })}
+            {...register('perfil_asignado', { required: t('perfil-registro-error') })}
           >
             {profiles.map((profile) => (
               <MenuItem key={profile.id} value={profile.id}>
@@ -178,15 +180,8 @@ export default function Register() {
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
         >
-          Registrarse
+          {t('boton-registro')}
         </LoadingButton>
-        <Grid container>
-          <Grid item>
-            <Link to="/login">
-              {"Ya tienes una cuenta? Inicia Sesión"}
-            </Link>
-          </Grid>
-        </Grid>
       </Box>
     </Container>
   );

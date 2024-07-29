@@ -41,5 +41,32 @@
 
 
     "//": "registro idioma",
-    "titulo-registro": "Register"
+    "titulo-registro": "Register",
+    "nombre-registro": "Name",
+    "nombre-registro-error": "Name required",
+    "primer-apellido-registro": "First surname",
+    "primer-apellido-registro-error": "First surname is required",
+    "segundo-apellido-registro": "Second surname",
+    "segundo-apellido-registro-error": "Second surname is required",
+    "usuario-registro": "Username",
+    "usuario-registro-error": "Username is required",
+    "email-registro": "Email",
+    "email-registro-error": "Email is required",
+    "password-registro": "Password",
+    "password-registro-error": "Password is required",
+    "perfil-registro": "Profile",
+    "perfil-registro-error": "Profile is required",
+    "boton-registro": "Register user",
+
+    "//": "tabla usuarios idioma",
+    "nombre-tabla-usuarios": "Name",
+    "primer-apellido-tabla-usuarios": "First surname",
+    "segundo-apellido-tabla-usuarios": "Second surname",
+    "nomUsuario-tabla-usuario": "Username",
+    "correo-tabla-usuario": "Email",
+    "perfil-tabla-usuario": "Profile",
+    "acciones-tabla-usuario": "Configuration",
+    "boton-tabla-usuario": "Register users",
+    "botonEliminar-tabla-usuario": "Delete",
+    "botonEditar-tabla-usuario": "Edit"
 }

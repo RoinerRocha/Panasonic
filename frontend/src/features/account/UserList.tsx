@@ -16,6 +16,8 @@ import { User } from "../../app/models/user";
 import { Link } from 'react-router-dom';
 import { profileModels } from '../../app/models/profileModels'; 
 import { FieldValues } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from '../../app/context/LanguageContext';
 
 interface Props {
     users: User[];
@@ -106,23 +108,26 @@ export default function UserList({ users, setUsers }: Props){
             }
         }
     }
+
+    const { t } = useTranslation();
+    const { changeLanguage, language } = useLanguage();
     
     return(
         <Grid container spacing={1}>
             <Button variant="contained" color="primary" component={Link} to="/register">
-                Registrar Usuario
+                {t('boton-tabla-usuario')}
             </Button>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
                     <TableHead>
                     <TableRow>
-                            <TableCell align="center">Nombre</TableCell>
-                            <TableCell align="center">Primer Apellido</TableCell>
-                            <TableCell align="center">Segundo Apellido</TableCell>
-                            <TableCell align="center">Nombre de usuario</TableCell>
-                            <TableCell align="center">Correo electronico</TableCell>
-                            <TableCell align="center">Perfil Asignado</TableCell>
-                            <TableCell align="center">Configuración</TableCell>
+                            <TableCell align="center">{t('nombre-tabla-usuarios')}</TableCell>
+                            <TableCell align="center">{t('primer-apellido-tabla-usuarios')}</TableCell>
+                            <TableCell align="center">{t('segundo-apellido-tabla-usuarios')}</TableCell>
+                            <TableCell align="center">{t('nomUsuario-tabla-usuario')}</TableCell>
+                            <TableCell align="center">{t('correo-tabla-usuario')}</TableCell>
+                            <TableCell align="center">{t('perfil-tabla-usuario')}</TableCell>
+                            <TableCell align="center">{t('acciones-tabla-usuario')}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -141,7 +146,7 @@ export default function UserList({ users, setUsers }: Props){
                                         sx={{ margin: '0 8px' }} 
                                         onClick={() => handleEdit(users)}
                                     >
-                                        Editar
+                                        {t('botonEditar-tabla-usuario')}
                                     </Button>
                                     <Button 
                                         variant='contained' 
@@ -149,7 +154,7 @@ export default function UserList({ users, setUsers }: Props){
                                         sx={{ margin: '0 8px' }} 
                                         onClick={() => handleDelete(users.id)}
                                     >
-                                        Eliminar
+                                        {t('botonEliminar-tabla-usuario')}
                                     </Button>
                                 </TableCell>
                             </TableRow>
