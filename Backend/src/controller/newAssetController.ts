@@ -11,7 +11,7 @@
   import path from 'path';
   import { Document, Packer, Paragraph, TextRun } from "docx";
   import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
-
+  import ExcelJS from "exceljs";
   
   interface MulterFiles {
     Fotografia?: Express.Multer.File[];
@@ -28,6 +28,74 @@
       }
     });
   };
+
+  export const generateExcelFile = async (req: Request, res: Response) => {
+    const newAssetId = req.params.id;
+  
+    try {
+      const asset = await NewAssetModel.findByPk(newAssetId);
+  
+      if (!asset) {
+        return res.status(404).json({ message: "Asset not found" });
+      }
+  
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Asset Information");
+  
+      worksheet.columns = [
+        { header: "Codigo Cuenta", key: "code", width: 30 },
+        { header: "Zona", key: "zone", width: 30 },
+        { header: "Tipo", key: "type", width: 30 },
+        { header: "Estado", key: "state", width: 30 },
+        { header: "Descripcion", key: "description", width: 30 },
+        { header: "Numero Placa", key: "number", width: 30 },
+        { header: "Valor Compra CRC", key: "crc", width: 30 },
+        { header: "Valor Compra USD", key: "usd", width: 30 },
+        { header: "Nombre Proveedor", key: "provider", width: 30 },
+        { header: "Fecha Compra", key: "date", width: 30 },
+        { header: "Factura Num", key: "facture", width: 30 },
+        { header: "Numero Asiento", key: "seat", width: 30 },
+        { header: "Numero Boleta", key: "ballot", width: 30 },
+        { header: "Usuario", key: "user", width: 30 },
+      ];
+  
+      const assetData = {
+        code: asset.CodigoCuenta,
+        zone: asset.Zona,
+        type: asset.Tipo,
+        state: asset.Estado,
+        description: asset.Descripcion,
+        number: asset.NumeroPlaca,
+        crc: asset.ValorCompraCRC,
+        usd: asset.ValorCompraUSD,
+        provider: asset.NombreProveedor,
+        date: asset.FechaCompra,
+        facture: asset.FacturaNum,
+        seat: asset.NumeroAsiento,
+        ballot: asset.NumeroBoleta,
+        user: asset.Usuario,
+      };
+  
+      const row = worksheet.addRow(assetData);
+      row.alignment = { vertical: 'middle', horizontal: 'center' };
+  
+      const filePath = `./uploads/Asset_${asset.NumeroBoleta}.xlsx`;
+      await workbook.xlsx.writeFile(filePath);
+  
+      res.download(filePath, `Asset_${asset.NumeroBoleta}.xlsx`, (err) => {
+        if (err) {
+          console.error("Error downloading file:", err);
+          res.status(500).json({ message: "Error downloading file" });
+        }
+        unlink(filePath, (err) => {
+          if (err) console.error("Error deleting file:", err);
+        });
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+  
 
 
   // Método para generar un archivo Word con los datos del activo

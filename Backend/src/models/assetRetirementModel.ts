@@ -29,7 +29,7 @@ try {
         },
         DocumentoAprobado: {
           type: DataTypes.STRING(250),
-          allowNull: false,
+          allowNull: true,
         },
         Descripcion: {
           type: DataTypes.STRING(150),
