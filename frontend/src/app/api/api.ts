@@ -138,6 +138,7 @@ const newAsset = {
   getAssetByNumBoleta: (id: string) => requests.get(`/assetByNumBolet/boleta/${id}`),
   generateWordFile: (id: number) => requests.download(`/generateWord/${id}`),
   generatePDFFile: (id: number) => requests.download(`/generatePDF/${id}`),
+  generateExcelFile: (id: number) => requests.download(`/generateExcelFile/${id}`),
 };
 
 const assetRetirement = {

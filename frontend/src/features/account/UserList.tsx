@@ -163,41 +163,41 @@ export default function UserList({ users, setUsers }: Props){
                 </Table>
             </TableContainer>
             <Dialog open={openEditDialog} onClose={()=> setOpenEditDialog(false)}>
-                <DialogTitle>Editar Usuario</DialogTitle>
+                <DialogTitle>{t('dialog-titlo1-tablaUsuario')}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Editar el usuario seleccionado
+                        {t('dialog-titlo2-tablaUsuario')}
                     </DialogContentText>
                     <TextField
-                        label="Nombre"
+                        label={t('dialog-nombre-tablaUsuario')}
                         value={selectedUser?.nombre || ''}
                         onChange={(e) => setSelectedUser(selectedUser ? { ...selectedUser, nombre: e.target.value } : null)}
                         fullWidth
                         margin="dense"
                     />
                     <TextField
-                        label="Primer Apellido"
+                        label={t('dialog-primerApellido-tablaUsuario')}
                         value={selectedUser?.primer_apellido || ''}
                         onChange={(e) => setSelectedUser(selectedUser ? { ...selectedUser, primer_apellido: e.target.value } : null)}
                         fullWidth
                         margin="dense"
                     />
                     <TextField
-                        label="Segundo Apellido"
+                        label={t('dialog-segundoApellido-tablaUsuario')}
                         value={selectedUser?.segundo_apellido || ''}
                         onChange={(e) => setSelectedUser(selectedUser ? { ...selectedUser, segundo_apellido: e.target.value } : null)}
                         fullWidth
                         margin="dense"
                     />
                     <TextField
-                        label="Segundo Apellido"
+                        label={t('dialog-usuario-tablaUsuario')}
                         value={selectedUser?.nombre_usuario || ''}
                         onChange={(e) => setSelectedUser(selectedUser ? { ...selectedUser, nombre_usuario: e.target.value } : null)}
                         fullWidth
                         margin="dense"
                     />
                     <TextField
-                        label="Correo Electronico"
+                        label={t('dialog-correo-tablaUsuario')}
                         value={selectedUser?.correo_electronico || ''}
                         onChange={(e) => setSelectedUser(selectedUser ? { ...selectedUser, correo_electronico: e.target.value } : null)}
                         fullWidth
@@ -205,7 +205,7 @@ export default function UserList({ users, setUsers }: Props){
                     />
                   
                       <FormControl fullWidth margin="normal">
-                        <InputLabel id="perfil-asignado-label">Perfil Asignado</InputLabel>
+                        <InputLabel id="perfil-asignado-label">{t('dialog-perfil-tablaUsuario')}</InputLabel>
                         <Select
                            labelId="perfil-asignado-label"
                            id="perfil_asignado"
@@ -222,8 +222,8 @@ export default function UserList({ users, setUsers }: Props){
                       </FormControl>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenEditDialog(false)}>Cancelar</Button>
-                    <Button onClick={handleUpdate}>Actualizar</Button>
+                    <Button onClick={() => setOpenEditDialog(false)}>{t('dialog-Cancel-tablaUsuario')}</Button>
+                    <Button onClick={handleUpdate}>{t('dialog-Edit-tablaUsuario')}</Button>
                 </DialogActions>
             </Dialog>    
         </Grid>

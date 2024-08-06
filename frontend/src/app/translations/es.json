@@ -67,5 +67,15 @@
     "acciones-tabla-usuario": "Configuraciones",
     "boton-tabla-usuario": "Registrar usuarios",
     "botonEliminar-tabla-usuario": "Eliminar",
-    "botonEditar-tabla-usuario": "Editar"
+    "botonEditar-tabla-usuario": "Editar",
+    "dialog-titlo1-tablaUsuario": "Editar Usuario",
+    "dialog-titlo2-tablaUsuario": "Editar Informacion del usuario",
+    "dialog-nombre-tablaUsuario": "Nombre",
+    "dialog-primerApellido-tablaUsuario": "Primer apellido",
+    "dialog-segundoApellido-tablaUsuario": "Segundo apellido",
+    "dialog-usuario-tablaUsuario": "Usuario",
+    "dialog-correo-tablaUsuario": "Correo",
+    "dialog-perfil-tablaUsuario": "Perfil",
+    "dialog-Cancel-tablaUsuario": "Cancelar",
+    "dialog-Edit-tablaUsuario": "Editar"
 }

@@ -23,6 +23,7 @@ import { Dataset } from "@mui/icons-material";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Document, Packer, Paragraph, TextRun } from "docx";
+import * as XLSX from 'xlsx';
 import { saveAs } from "file-saver";
 
 interface Props {
@@ -254,6 +255,17 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
     }
   };
 
+  const generateExcel = async (assetId: number, numBoleta: string) => {
+    try {
+      const response = await api.newAsset.generateExcelFile(assetId);
+      const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, `asset_${numBoleta}.xlsx`);
+    } catch (error) {
+      console.error('Error generando Excel:', error);
+      toast.error('Error generando Excel');
+    }
+  };
+
   return (
     <div>
       <Button
@@ -323,7 +335,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                     >
                       Ver Factura
                     </a>
-                  ) : 'No Image'}
+                  ) : 'Sin Documento'}
                 </TableCell>
                 <TableCell>{newAsset.OrdenCompraNum}</TableCell>
                 <TableCell>
@@ -337,7 +349,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                       >
                         Ver Orden
                       </a>
-                  ) : 'No Image'}
+                  ) : 'Sin Documento'}
                 </TableCell>
                 <TableCell>{newAsset.NumeroAsiento}</TableCell>
                 <TableCell>{newAsset.NumeroBoleta}</TableCell>
@@ -369,17 +381,6 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                 <TableCell>
                   <Button
                     variant="contained"
-                    color="info"
-                    sx={{ margin: "5px" }}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      generateWord(newAsset.id, newAsset.NumeroBoleta);
-                    }}
-                  >
-                    Word
-                  </Button>
-                  <Button
-                    variant="contained"
                     color="error"
                     sx={{ margin: "5px" }}
                     onClick={(event) => {
@@ -388,6 +389,17 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                     }}
                   >
                     PDF
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    sx={{ margin: "5px" }}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      generateExcel(newAsset.id, newAsset.NumeroBoleta);
+                    }}
+                  >
+                    Excel
                   </Button>
                 </TableCell>
               </TableRow>
