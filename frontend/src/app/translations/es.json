@@ -77,5 +77,29 @@
     "dialog-correo-tablaUsuario": "Correo",
     "dialog-perfil-tablaUsuario": "Perfil",
     "dialog-Cancel-tablaUsuario": "Cancelar",
-    "dialog-Edit-tablaUsuario": "Editar"
+    "dialog-Edit-tablaUsuario": "Editar",
+
+    "//": "tabla zonas idioma",
+    "Numero-zona": "Numero",
+    "Nombre-zona": "Nombre",
+    "Encargado-zona": "Encargado",
+    "Configuracion-zona": "Configuracion",
+    "BotonEditar-zona": "Editar",
+    "BotonEliminar-zona": "Eliminar",
+    "BotonAgregar-zona": "Agregar zona",
+    "DialogTitulo-zona": "Edicion de zonas",
+    "DialogTitulo2-zona": "Editar la zona seleccionada",
+    "DialogNumero-zona": "Editar numero de la zona",
+    "DialogNombre-zona": "Editar el nombre de la zona",
+    "DialogEncargado-zona": "Editar el encargado de la zona",
+    "DialogBotonEditar-zona": "Editar",
+    "DialogBotonCancelar-zona": "Cancelar",
+    "AgregarTitulo1-zona": "Agregar zona",
+    "AgregarTitulo2-zona": "Datos de la nueva zona",
+    "AgregarNumero-zona": "Numero de la nueva zona",
+    "AgregarNombre-zona": "Nombre de la nueva zona",
+    "AgregarEncargado-zona": "Encargado de la nueva zona",
+    "AgregarBotonAñadir-zona": "Agregar",
+    "AgregarBotonCancelar-zona": "Cancelar"
+    
 }

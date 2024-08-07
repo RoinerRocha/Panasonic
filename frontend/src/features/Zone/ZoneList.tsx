@@ -3,6 +3,8 @@ import { Grid, TableContainer, Paper, Table, TableCell, TableHead, TableRow, Tab
 import { Zona } from "../../app/models/zone";
 import api from "../../app/api/api";
 import { toast } from 'react-toastify';
+import { useTranslation } from "react-i18next";
+import { useLanguage } from '../../app/context/LanguageContext';
 
 interface Props {
     zonas: Zona[];
@@ -81,19 +83,22 @@ export default function ZoneList({ zonas, setZonas }: Props) {
         }
     };
 
+    const { t } = useTranslation();
+    const { changeLanguage, language } = useLanguage();
+
     return (
         <Grid container spacing={1}>
             <Button variant="contained" color="primary" onClick={() => setOpenAddDialog(true)}>
-                Agregar Zona
+                {t('BotonAgregar-zona')}
             </Button>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
                     <TableHead>
                         <TableRow>
-                            <TableCell align="center">Número</TableCell>
-                            <TableCell align="center">Nombre</TableCell>
-                            <TableCell align="center">Encargado</TableCell>
-                            <TableCell align="center">Configuración</TableCell>
+                            <TableCell align="center">{t('Numero-zona')}</TableCell>
+                            <TableCell align="center">{t('Nombre-zona')}</TableCell>
+                            <TableCell align="center">{t('Encargado-zona')}</TableCell>
+                            <TableCell align="center">{t('Configuracion-zona')}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -109,7 +114,7 @@ export default function ZoneList({ zonas, setZonas }: Props) {
                                         sx={{ margin: '0 8px' }} 
                                         onClick={() => handleEdit(zona)}
                                     >
-                                        Editar
+                                        {t('BotonEditar-zona')}
                                     </Button>
                                     <Button 
                                         variant='contained' 
@@ -117,7 +122,7 @@ export default function ZoneList({ zonas, setZonas }: Props) {
                                         sx={{ margin: '0 8px' }} 
                                         onClick={() => handleDelete(zona.id)}
                                     >
-                                        Eliminar
+                                        {t('BotonEliminar-zona')}
                                     </Button>
                                 </TableCell>
                             </TableRow>
@@ -127,27 +132,27 @@ export default function ZoneList({ zonas, setZonas }: Props) {
             </TableContainer>
 
             <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
-                <DialogTitle>Editar Zona</DialogTitle>
+                <DialogTitle>{t('DialogTitulo-zona')}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Edita la zona seleccionada
+                        {t('DialogTitulo2-zona')}
                     </DialogContentText>
                     <TextField
-                        label="Número de Zona"
+                        label={t('DialogNumero-zona')}
                         value={selectedZona?.numeroZona || ''}
                         onChange={(e) => setSelectedZona(selectedZona ? { ...selectedZona, numeroZona: e.target.value } : null)}
                         fullWidth
                         margin="dense"
                     />
                     <TextField
-                        label="Nombre de Zona"
+                        label={t('DialogNombre-zona')}
                         value={selectedZona?.nombreZona || ''}
                         onChange={(e) => setSelectedZona(selectedZona ? { ...selectedZona, nombreZona: e.target.value } : null)}
                         fullWidth
                         margin="dense"
                     />
                     <TextField
-                        label="Encargado"
+                        label={t('DialogEncargado-zona')}
                         value={selectedZona?.responsableAreaNom_user || ''}
                         onChange={(e) => setSelectedZona(selectedZona ? { ...selectedZona, responsableAreaNom_user: e.target.value } : null)}
                         fullWidth
@@ -155,33 +160,33 @@ export default function ZoneList({ zonas, setZonas }: Props) {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenEditDialog(false)}>Cancelar</Button>
-                    <Button onClick={handleUpdate}>Actualizar</Button>
+                    <Button onClick={() => setOpenEditDialog(false)}>{t('DialogBotonCancelar-zona')}</Button>
+                    <Button onClick={handleUpdate}>{t('DialogBotonEditar-zona')}</Button>
                 </DialogActions>
             </Dialog>
 
             <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-                <DialogTitle>Agregar Zona</DialogTitle>
+                <DialogTitle>{t('AgregarTitulo1-zona')}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Agrega una nueva zona
+                        {t('AgregarTitulo2-zona')}
                     </DialogContentText>
                     <TextField
-                        label="Número de Zona"
+                        label={t('AgregarNumero-zona')}
                         value={newZona.numeroZona}
                         onChange={(e) => setNewZona({ ...newZona, numeroZona: e.target.value })}
                         fullWidth
                         margin="dense"
                     />
                     <TextField
-                        label="Nombre de Zona"
+                        label={t('AgregarNombre-zona')}
                         value={newZona.nombreZona}
                         onChange={(e) => setNewZona({ ...newZona, nombreZona: e.target.value })}
                         fullWidth
                         margin="dense"
                     />
                     <TextField
-                        label="Encargado"
+                        label={t('AgregarEncargado-zona')}
                         value={newZona.responsableAreaNom_user}
                         onChange={(e) => setNewZona({ ...newZona, responsableAreaNom_user: e.target.value })}
                         fullWidth
@@ -189,8 +194,8 @@ export default function ZoneList({ zonas, setZonas }: Props) {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenAddDialog(false)}>Cancelar</Button>
-                    <Button onClick={handleAdd}>Agregar</Button>
+                    <Button onClick={() => setOpenAddDialog(false)}>{t('AgregarBotonCancelar-zona')}</Button>
+                    <Button onClick={handleAdd}>{t('AgregarBotonAñadir-zona')}</Button>
                 </DialogActions>
             </Dialog>
         </Grid>
