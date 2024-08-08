@@ -18,6 +18,7 @@ import AssetRetirement from "../../features/assetRetirement/assetRetirementFrm";
 import AssetSales from "../../features/salesAssest/salesAssestFrm";
 import Depreciation from "../../features/depreciations/NewDepreciations";
 import Access from "../../features/Acces/NewAcces";
+import ProtectedRoute from "./PrivateRoute";
 
 export const router = createBrowserRouter([
   {
@@ -27,21 +28,31 @@ export const router = createBrowserRouter([
       { path: "", element: <HomePage /> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
-      { path: "users", element: <Users /> },
-      { path: "zonas", element: <Zone /> },
-      { path: "nuevaZona", element: <NewZone /> },
-      { path: "about", element: <AboutPage /> },
-      { path: "NewAccount", element: <AccountingAccounts /> },
-      { path: "NewStatusAssets", element: <StatusAssets /> },
-      { path: "NewProfiles", element: <Profiles /> },
-      { path: "NewServiceLife", element: <ServiceLife /> },
-      { path: "NewAsset", element: <NewAsset /> },
-      { path: "ResetPassword", element: <ResetPassword />},
-      { path: "RegisterAsset", element: <RegisterAssets/>},
-      { path: "AssetRetirement", element: <AssetRetirement/>},//frm
-      { path: "AssetSales", element: <AssetSales/>},//frm
-      { path: "Depreciation", element: <Depreciation/>},//frm
-      { path: "Access", element: < Access/>},
+      {
+        element: <ProtectedRoute />,  // Protege estas rutas
+        children: [
+          { path: "RegisterAsset", element: <RegisterAssets /> },
+          { path: "AssetSales", element: <AssetSales /> },
+          { path: "AssetRetirement", element: <AssetRetirement /> },
+          {
+            element: <ProtectedRoute requiredProfile="Maestro" />,  // Protege las rutas solo para "Maestro"
+            children: [
+              { path: "users", element: <Users /> },
+              { path: "zonas", element: <Zone /> },
+              { path: "nuevaZona", element: <NewZone /> },
+              { path: "NewAccount", element: <AccountingAccounts /> },
+              { path: "NewStatusAssets", element: <StatusAssets /> },
+              { path: "NewProfiles", element: <Profiles /> },
+              { path: "NewServiceLife", element: <ServiceLife /> },
+              { path: "NewAsset", element: <NewAsset /> },
+              { path: "AssetRetirement", element: <AssetRetirement /> },
+              { path: "AssetSales", element: <AssetSales /> },
+              { path: "Depreciation", element: <Depreciation /> },
+              { path: "Access", element: <Access /> },
+            ],
+          },
+        ],
+      },
     ],
   },
 ]);

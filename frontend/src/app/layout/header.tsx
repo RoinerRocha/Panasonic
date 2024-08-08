@@ -147,7 +147,8 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
         link.title === t('menu-ingreso-activos') || 
         link.title === t('menu-venta-activos') ||
         link.title === t('menu-reportes') ||
-        link.title === t('menu-lista-activos')
+        link.title === t('menu-lista-activos') ||
+        link.title === t('menu-baja-activos')
       );
 
   return (
