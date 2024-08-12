@@ -19,6 +19,8 @@ import { accountingAccount } from "../../app/models/accountingAccount";
 import { useState, useEffect } from "react";
 import api from "../../app/api/api";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from '../../app/context/LanguageContext';
 
 interface Props {
   accountingAccounts: accountingAccount[];
@@ -97,6 +99,9 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
     setOpenEditDialog(true);
   };
 
+  const { t } = useTranslation();
+  const { changeLanguage, language } = useLanguage();
+
   const handleUpdate = async () => {
     if (selectedAccountingAccount) {
       try {
@@ -146,32 +151,32 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
         color="primary"
         onClick={() => setOpenAddDialog(true)}
       >
-        Agregar Cuenta Contable
+        {t('Agregar_CuentaContable')}
       </Button>
       <TableContainer component={Paper}>
   <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
     <TableHead>
       <TableRow>
         <TableCell align="center" sx={{ fontWeight: 'bold', textTransform: 'uppercase' }}>
-          CÓDIGO CUENTA PRINCIPAL
+          {t('Codigo_CuentaContable')}
         </TableCell>
         <TableCell align="center" sx={{ fontWeight: 'bold', textTransform: 'uppercase' }}>
-          NOMBRE CUENTA
+          {t('Nombre_CuentaContable')}
         </TableCell>
         <TableCell align="center" sx={{ fontWeight: 'bold', textTransform: 'uppercase' }}>
-          GASTOS (D)
+          {t('Gastos_CuentaContable')}
         </TableCell>
         <TableCell align="center" sx={{ fontWeight: 'bold', textTransform: 'uppercase' }}>
-          NOMBRE CUENTA
+          {t('Nombre2_CuentaContable')}
         </TableCell>
         <TableCell align="center" sx={{ fontWeight: 'bold', textTransform: 'uppercase' }}>
-          DEPRECIACIÓN (H)
+          {t('DEPRECIACIÓN_CuentaContable')}
         </TableCell>
         <TableCell align="center" sx={{ fontWeight: 'bold', textTransform: 'uppercase' }}>
-          NOMBRE CUENTA
+          {t('Nombre3_CuentaContable')}
         </TableCell>
         <TableCell align="center" sx={{ fontWeight: 'bold', textTransform: 'uppercase' }}>
-          CONFIGURACIONES
+          {t('Configuracion_CuentaContable')}
         </TableCell>
       </TableRow>
     </TableHead>
@@ -201,7 +206,7 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
               sx={{ margin: "5px" }}
               onClick={() => handleEdit(accountingAccount)}
             >
-              Editar
+              {t('Editar_CuentaContable')}
             </Button>
             <Button
               variant="contained"
@@ -209,7 +214,7 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
               sx={{ margin: "5px" }}
               onClick={() => handleDelete(accountingAccount.id)}
             >
-              Eliminar
+              {t('Eliminar_CuentaContable')}
             </Button>
           </TableCell>
         </TableRow>
@@ -219,13 +224,13 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
 </TableContainer>
 
       <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
-        <DialogTitle>Editar Cuenta Contable</DialogTitle>
+        <DialogTitle>{t('titulo1_EditDialog_CuentaContable')}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Edita la Cuenta Contable seleccionada
+            {t('titulo2_EditDialog_CuentaContable')}
           </DialogContentText>
           <TextField
-            label="Codigo Cuenta"
+            label={t('codigo_EditDialog_CuentaContable')}
             value={selectedAccountingAccount?.codigoCuenta || null}
             onChange={(e) =>
               setSelectedAccountingAccount(
@@ -241,7 +246,7 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
             margin="dense"
           />
           <TextField
-            label="Nombre Cuenta Principal"
+            label={t('nombre_EditDialog_CuentaContable')}
             value={selectedAccountingAccount?.nombreCuentaPrincipal || ""}
             onChange={(e) =>
               setSelectedAccountingAccount(
@@ -257,7 +262,7 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
             margin="dense"
           />
           <TextField
-            label="Gastos"
+            label={t('gastos_EditDialog_CuentaContable')}
             value={selectedAccountingAccount?.gastos || ""}
             onChange={(e) =>
               setSelectedAccountingAccount(
@@ -273,7 +278,7 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
             margin="dense"
           />
           <TextField
-            label="Nombre Cuenta Gastos"
+            label={t('nombre2_EditDialog_CuentaContable')}
             value={selectedAccountingAccount?.nombreCuentaGastos || ""}
             onChange={(e) =>
               setSelectedAccountingAccount(
@@ -289,7 +294,7 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
             margin="dense"
           />
           <TextField
-            label="Depreciación"
+            label={t('depreciacion_EditDialog_CuentaContable')}
             value={selectedAccountingAccount?.depreciacion || ""}
             onChange={(e) =>
               setSelectedAccountingAccount(
@@ -305,7 +310,7 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
             margin="dense"
           />
           <TextField
-            label="Nombre Cuenta Depreciación"
+            label={t('nombre3_EditDialog_CuentaContable')}
             value={selectedAccountingAccount?.nombreCuentadDepreciacion || ""}
             onChange={(e) =>
               setSelectedAccountingAccount(
@@ -322,20 +327,20 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenEditDialog(false)}>Cancelar</Button>
-          <Button onClick={handleUpdate}>Actualizar</Button>
+          <Button onClick={() => setOpenEditDialog(false)}>{t('cancelar_EditDialog_CuentaContable')}</Button>
+          <Button onClick={handleUpdate}>{t('editar_EditDialog_CuentaContable')}</Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-        <DialogTitle>Agregar Cuenta Contable</DialogTitle>
+        <DialogTitle>{t('titulo1_AddDialog_CuentaContable')}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Agrega una Nueva Cuenta Contable
+            {t('titulo2_AddDialog_CuentaContable')}
           </DialogContentText>
 
           <TextField
-            label="Codigo Cuenta"
+            label={t('codigo_AddDialog_CuentaContable')}
             value={newAccountingAccount.codigoCuenta}
             onChange={(e) =>
               handleChange(e, setError, (val) =>
@@ -354,7 +359,7 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
             helperText={error}
           />
           <TextField
-            label="Nombre Cuenta Principal"
+            label={t('nombre_AddDialog_CuentaContable')}
             value={newAccountingAccount?.nombreCuentaPrincipal}
             onChange={(e) =>
               setNewAccountingAccount({
@@ -366,7 +371,7 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
             margin="dense"
           />
           <TextField
-            label="Gastos"
+            label={t('gastos_AddDialog_CuentaContable')}
             value={newAccountingAccount?.gastos}
             onChange={(e) =>
               handleChange(e, setError, (val) =>
@@ -385,7 +390,7 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
             helperText={error}
           />
           <TextField
-            label="Nombre Cuenta Gastos"
+            label={t('nombre2_AddDialog_CuentaContable')}
             value={newAccountingAccount.nombreCuentaGastos}
             onChange={(e) =>
               setNewAccountingAccount({
@@ -397,7 +402,7 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
             margin="dense"
           />
           <TextField
-            label="Depreciación"
+            label={t('depreciacion_AddDialog_CuentaContable')}
             value={newAccountingAccount.depreciacion}
             onChange={(e) =>
               handleChange(e, setError, (val) =>
@@ -416,7 +421,7 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
             helperText={error}
           />
           <TextField
-            label="Nombre Cuenta Depreciación"
+            label={t('nombre3_AddDialog_CuentaContable')}
             value={newAccountingAccount.nombreCuentadDepreciacion}
             onChange={(e) =>
               setNewAccountingAccount({
@@ -429,8 +434,8 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenAddDialog(false)}>Cancelar</Button>
-          <Button onClick={handleAdd}>Agregar</Button>
+          <Button onClick={() => setOpenAddDialog(false)}>{t('cancelar_AddDialog_CuentaContable')}</Button>
+          <Button onClick={handleAdd}>{t('agregar_AddDialog_CuentaContable')}</Button>
         </DialogActions>
       </Dialog>
     </Grid>

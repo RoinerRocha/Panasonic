@@ -101,5 +101,40 @@
     "AgregarNombre-zona": "Name of the new zone",
     "AgregarEncargado-zona": "Administrator of the new area",
     "AgregarBotonAñadir-zona": "Add",
-    "AgregarBotonCancelar-zona": "Cancel"
+    "AgregarBotonCancelar-zona": "Cancel",
+
+    "//": "tabla cuentas contables idioma",
+    "Codigo_CuentaContable": "Main Account Code",
+    "Nombre_CuentaContable": "Main account name",
+    "Nombre2_CuentaContable": "Expenses Account name",
+    "Nombre3_CuentaContable": "Depreciation Account name",
+    "Gastos_CuentaContable": "Expenses (D)",
+    "DEPRECIACIÓN_CuentaContable": "DEPRECIATION (H)",
+    "Configuracion_CuentaContable": "Configurations",
+    "Agregar_CuentaContable": "Add account",
+    "Editar_CuentaContable": "Edit",
+    "Eliminar_CuentaContable": "Delete",
+
+    "titulo1_EditDialog_CuentaContable": "Accounting account edition",
+    "titulo2_EditDialog_CuentaContable": "Edit the selected account",
+    "codigo_EditDialog_CuentaContable": "Account Code",
+    "nombre_EditDialog_CuentaContable": "Main account name",
+    "nombre2_EditDialog_CuentaContable": "Expenses account name",
+    "nombre3_EditDialog_CuentaContable": "Depreciation account name",
+    "gastos_EditDialog_CuentaContable": "Expenses",
+    "depreciacion_EditDialog_CuentaContable": "Depreciation",
+    "cancelar_EditDialog_CuentaContable": "Cancel",
+    "editar_EditDialog_CuentaContable": "Edit",
+
+    "titulo1_AddDialog_CuentaContable": "Accounting Account",
+    "titulo2_AddDialog_CuentaContable": "Add Accounting Account",
+    "codigo_AddDialog_CuentaContable": "Account Code",
+    "nombre_AddDialog_CuentaContable": "Main account name",
+    "nombre2_AddDialog_CuentaContable": "Expenses account name",
+    "nombre3_AddDialog_CuentaContable": "Depreciation account name",
+    "gastos_AddDialog_CuentaContable": "Expenses",
+    "depreciacion_AddDialog_CuentaContable": "Depreciation",
+    "cancelar_AddDialog_CuentaContable": "Cancel",
+    "agregar_AddDialog_CuentaContable": "Add"
+
 }

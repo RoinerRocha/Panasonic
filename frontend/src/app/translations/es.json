@@ -100,6 +100,41 @@
     "AgregarNombre-zona": "Nombre de la nueva zona",
     "AgregarEncargado-zona": "Encargado de la nueva zona",
     "AgregarBotonAñadir-zona": "Agregar",
-    "AgregarBotonCancelar-zona": "Cancelar"
+    "AgregarBotonCancelar-zona": "Cancelar",
+
+    "//": "tabla cuentas contables idioma",
+    "Codigo_CuentaContable": "Codigo Cuenta Principal",
+    "Nombre_CuentaContable": "Nombre cuenta principal",
+    "Nombre2_CuentaContable": "Nombre cuenta gastos",
+    "Nombre3_CuentaContable": "Nombre cuenta depreciacion",
+    "Gastos_CuentaContable": "Gastos (D)",
+    "DEPRECIACIÓN_CuentaContable": "DEPRECIACIÓN (H)",
+    "Configuracion_CuentaContable": "Configuraciones",
+    "Agregar_CuentaContable": "Agregar",
+    "Editar_CuentaContable": "Editar",
+    "Eliminar_CuentaContable": "Eliminar",
+
+    "titulo1_EditDialog_CuentaContable": "Edicion de cuenta contable",
+    "titulo2_EditDialog_CuentaContable": "Edita la cuenta seleccionada",
+    "codigo_EditDialog_CuentaContable": "Codigo de cuenta",
+    "nombre_EditDialog_CuentaContable": "Nombre de la cuenta principal",
+    "nombre2_EditDialog_CuentaContable": "Nombre de la cuenta de gastos",
+    "nombre3_EditDialog_CuentaContable": "Nombre de la cuenta de depreciacion",
+    "gastos_EditDialog_CuentaContable": "Gasto",
+    "depreciacion_EditDialog_CuentaContable": "Depreciacion",
+    "cancelar_EditDialog_CuentaContable": "cancelar",
+    "editar_EditDialog_CuentaContable": "editar",
+
+    "titulo1_AddtDialog_CuentaContable": "Cuenta Contable",
+    "titulo2_AddDialog_CuentaContable": "Agregar Cuenta Contable",
+    "codigo_AddDialog_CuentaContable": "Codigo de cuenta",
+    "nombre_AddDialog_CuentaContable": "Nombre de la cuenta principal",
+    "nombre2_AddDialog_CuentaContable": "Nombre de la cuenta de gastos",
+    "nombre3_AddDialog_CuentaContable": "Nombre de la cuenta de depreciacion",
+    "gastos_AddDialog_CuentaContable": "Gasto",
+    "depreciacion_AddDialog_CuentaContable": "Depreciacion",
+    "cancelar_AddDialog_CuentaContable": "Cancelar",
+    "agregar_AddDialog_CuentaContable": "Agregar"
+
     
 }
