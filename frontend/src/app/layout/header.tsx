@@ -24,6 +24,22 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import HistoryIcon from '@mui/icons-material/History';
+import MediationIcon from '@mui/icons-material/Mediation';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import KeyIcon from '@mui/icons-material/Key';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import RuleFolderIcon from '@mui/icons-material/RuleFolder';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import SummarizeIcon from '@mui/icons-material/Summarize';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import HelpIcon from '@mui/icons-material/Help';
+import FactCheckIcon from '@mui/icons-material/FactCheck';
+import HomeIcon from '@mui/icons-material/Home';
 import SignInMenu from "./SigninMenu";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from '../../app/context/LanguageContext';
@@ -242,7 +258,22 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
             <ListItem key={path} disablePadding>
               <ListItemButton component={NavLink} to={path} sx={navStyles}>
                 <ListItemIcon>
-                  {title === "Iniciar sesión" ? <Login /> : <InboxIcon />}
+                  {title === t('menu-dashboard') && <HomeIcon />}
+                  {title === t('menu-usuarios') && <PeopleAltIcon />}
+                  {title === t('menu-historial') && <HistoryIcon />}
+                  {title === t('menu-zonas') && <MediationIcon />}
+                  {title === t('menu-cuentas-contables') && <AccountBalanceIcon />}
+                  {title === t('menu-estado-activos') && <AssessmentIcon />}
+                  {title === t('menu-accesos') && <KeyIcon />}
+                  {title === t('menu-perfiles') && <AccountCircleIcon />}
+                  {title === t('menu-lista-activos') && <FormatListNumberedIcon />}
+                  {title === t('menu-ingreso-activos') && <AddCircleIcon />}
+                  {title === t('menu-baja-activos') && <RuleFolderIcon />}
+                  {title === t('menu-venta-activos') && <MonetizationOnIcon />}
+                  {title === t('menu-reportes') && <SummarizeIcon />}
+                  {title === t('menu-depreciacion-mensual') && <CalendarMonthIcon />}
+                  {title === t('menu-depreciacion-activos') && <FactCheckIcon />}
+                  {title === t('menu-ayuda') && <HelpIcon />}
                 </ListItemIcon>
                 <ListItemText primary={title} />
               </ListItemButton>
