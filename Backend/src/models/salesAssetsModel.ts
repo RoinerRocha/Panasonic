@@ -43,15 +43,15 @@ try {
         },
         CotizacionVentas: {
             type: DataTypes.STRING(250),
-            allowNull: true,
+            allowNull: false,
         },
         Fotografia: {
           type: DataTypes.STRING(250),
-          allowNull: true,
+          allowNull: false,
         },
         Comprobante: {
             type: DataTypes.STRING(250),
-            allowNull: true,
+            allowNull: false,
         },
         NumeroBoleta: {
           type: DataTypes.STRING(50),
