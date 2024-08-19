@@ -19,6 +19,7 @@ import AssetSales from "../../features/salesAssest/salesAssestFrm";
 import Depreciation from "../../features/depreciations/NewDepreciations";
 import Access from "../../features/Acces/NewAcces";
 import ProtectedRoute from "./PrivateRoute";
+import MapsRoute from "../../features/Maps/Map"
 
 export const router = createBrowserRouter([
   {
@@ -49,6 +50,7 @@ export const router = createBrowserRouter([
               { path: "AssetSales", element: <AssetSales /> },
               { path: "Depreciation", element: <Depreciation /> },
               { path: "Access", element: <Access /> },
+              { path: "Maps", element: <MapsRoute /> },
             ],
           },
         ],

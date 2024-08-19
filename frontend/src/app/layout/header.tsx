@@ -40,6 +40,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import HelpIcon from '@mui/icons-material/Help';
 import FactCheckIcon from '@mui/icons-material/FactCheck';
 import HomeIcon from '@mui/icons-material/Home';
+import MyLocationIcon from '@mui/icons-material/MyLocation';
 import SignInMenu from "./SigninMenu";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from '../../app/context/LanguageContext';
@@ -153,6 +154,7 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
     { title: t('menu-reportes'), path: "/" },
     { title: t('menu-depreciacion-mensual'), path: "/depreciation" },
     { title: t('menu-depreciacion-activos'), path: "/NewServiceLife" },
+    { title: t('menu-Mapas'), path: "/Maps" },
     { title: t('menu-ayuda'), path: "/" }, // Manual
   ];
 
@@ -273,6 +275,7 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
                   {title === t('menu-reportes') && <SummarizeIcon />}
                   {title === t('menu-depreciacion-mensual') && <CalendarMonthIcon />}
                   {title === t('menu-depreciacion-activos') && <FactCheckIcon />}
+                  {title === t('menu-Mapas') && <MyLocationIcon />}
                   {title === t('menu-ayuda') && <HelpIcon />}
                 </ListItemIcon>
                 <ListItemText primary={title} />
