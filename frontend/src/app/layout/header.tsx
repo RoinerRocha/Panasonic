@@ -18,7 +18,7 @@ import {
 import { NavLink } from "react-router-dom";
 import { useAppSelector } from "../../store/configureStore";
 import * as React from "react";
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import AppBar from "@mui/material/AppBar"; // Usa AppBar en lugar de MuiAppBar
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -47,32 +47,9 @@ import { useLanguage } from '../../app/context/LanguageContext';
 
 const drawerWidth = 240;
 
-const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
-  open?: boolean;
-}>(({ theme, open }) => ({
-  flexGrow: 1,
-  padding: theme.spacing(3),
-  transition: theme.transitions.create("margin", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  marginLeft: `-${drawerWidth}px`,
-  ...(open && {
-    transition: theme.transitions.create("margin", {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    marginLeft: 0,
-  }),
-}));
-
-interface AppBarProps extends MuiAppBarProps {
-  open?: boolean;
-}
-
-const AppBar = styled(MuiAppBar, {
+const AppBarStyled = styled(AppBar, {
   shouldForwardProp: (prop) => prop !== "open",
-})<AppBarProps>(({ theme, open }) => ({
+})<{ open?: boolean }>(({ theme, open }) => ({
   transition: theme.transitions.create(["margin", "width"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -95,8 +72,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
   justifyContent: "flex-end",
 }));
-
-
 
 const navStyles = {
   color: "inherit",
@@ -149,8 +124,8 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
     { title: t('menu-perfiles'), path: "/NewProfiles" },
     { title: t('menu-lista-activos'), path: "/NewAsset" },
     { title: t('menu-ingreso-activos'), path: "/RegisterAsset" },
-    { title: t('menu-baja-activos'), path: "/AssetRetirement" },//frm
-    { title: t('menu-venta-activos'), path: "/AssetSales" },//frm
+    { title: t('menu-baja-activos'), path: "/AssetRetirement" }, // frm
+    { title: t('menu-venta-activos'), path: "/AssetSales" }, // frm
     { title: t('menu-reportes'), path: "/" },
     { title: t('menu-depreciacion-mensual'), path: "/depreciation" },
     { title: t('menu-depreciacion-activos'), path: "/NewServiceLife" },
@@ -162,7 +137,7 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
   const filteredMidLinks = user?.perfil_asignado === "Maestro"
     ? midLinks
     : midLinks.filter(link =>
-        link.title === t('menu-ingreso-activos') || 
+        link.title === t('menu-ingreso-activos') ||
         link.title === t('menu-venta-activos') ||
         link.title === t('menu-reportes') ||
         link.title === t('menu-lista-activos') ||
@@ -171,7 +146,7 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
 
   return (
     <Box>
-      <AppBar position="static" sx={{ mb: 4 }} open={open}>
+      <AppBarStyled position="static" sx={{ mb: 4 }} open={open}>
         <Toolbar
           sx={{
             display: "flex",
@@ -191,7 +166,6 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
               <MenuIcon />
             </IconButton>
             <Typography variant="h4" component={NavLink} to="/" sx={navStyles}>
-              
               {t('titulo')}
             </Typography>
             <Switch checked={darkMode} onChange={handleThemeChange} />
@@ -231,7 +205,7 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
             )}
           </Box>
         </Toolbar>
-      </AppBar>
+      </AppBarStyled>
       <Drawer
         sx={{
           width: drawerWidth,
@@ -260,23 +234,46 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
             <ListItem key={path} disablePadding>
               <ListItemButton component={NavLink} to={path} sx={navStyles}>
                 <ListItemIcon>
-                  {title === t('menu-dashboard') && <HomeIcon />}
-                  {title === t('menu-usuarios') && <PeopleAltIcon />}
-                  {title === t('menu-historial') && <HistoryIcon />}
-                  {title === t('menu-zonas') && <MediationIcon />}
-                  {title === t('menu-cuentas-contables') && <AccountBalanceIcon />}
-                  {title === t('menu-estado-activos') && <AssessmentIcon />}
-                  {title === t('menu-accesos') && <KeyIcon />}
-                  {title === t('menu-perfiles') && <AccountCircleIcon />}
-                  {title === t('menu-lista-activos') && <FormatListNumberedIcon />}
-                  {title === t('menu-ingreso-activos') && <AddCircleIcon />}
-                  {title === t('menu-baja-activos') && <RuleFolderIcon />}
-                  {title === t('menu-venta-activos') && <MonetizationOnIcon />}
-                  {title === t('menu-reportes') && <SummarizeIcon />}
-                  {title === t('menu-depreciacion-mensual') && <CalendarMonthIcon />}
-                  {title === t('menu-depreciacion-activos') && <FactCheckIcon />}
-                  {title === t('menu-Mapas') && <MyLocationIcon />}
-                  {title === t('menu-ayuda') && <HelpIcon />}
+                  {(() => {
+                    switch (title) {
+                      case t("menu-dashboard"):
+                        return <HomeIcon />;
+                      case t("menu-usuarios"):
+                        return <PeopleAltIcon />;
+                      case t("menu-historial"):
+                        return <HistoryIcon />;
+                      case t("menu-zonas"):
+                        return <MediationIcon />;
+                      case t("menu-cuentas-contables"):
+                        return <AccountBalanceIcon />;
+                      case t("menu-estado-activos"):
+                        return <AssessmentIcon />;
+                      case t("menu-accesos"):
+                        return <KeyIcon />;
+                      case t("menu-perfiles"):
+                        return <AccountCircleIcon />;
+                      case t("menu-lista-activos"):
+                        return <FormatListNumberedIcon />;
+                      case t("menu-ingreso-activos"):
+                        return <AddCircleIcon />;
+                      case t("menu-baja-activos"):
+                        return <RuleFolderIcon />;
+                      case t("menu-venta-activos"):
+                        return <MonetizationOnIcon />;
+                      case t("menu-reportes"):
+                        return <SummarizeIcon />;
+                      case t("menu-depreciacion-mensual"):
+                        return <CalendarMonthIcon />;
+                      case t("menu-depreciacion-activos"):
+                        return <FactCheckIcon />;
+                      case t("menu-Mapas"):
+                        return <MyLocationIcon />;
+                      case t("menu-ayuda"):
+                        return <HelpIcon />;
+                      default:
+                        return null;
+                    }
+                  })()}
                 </ListItemIcon>
                 <ListItemText primary={title} />
               </ListItemButton>
