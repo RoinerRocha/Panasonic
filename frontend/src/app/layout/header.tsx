@@ -140,7 +140,7 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
 
   const midLinks = [
     { title: t('menu-dashboard'), path: "/" },
-    { title: t('menu-historial'), path: "/" },
+    { title: t('menu-historial'), path: "/history" },
     { title: t('menu-zonas'), path: "/zonas" },
     { title: t('menu-usuarios'), path: "/users" },
     { title: t('menu-cuentas-contables'), path: "/NewAccount" },

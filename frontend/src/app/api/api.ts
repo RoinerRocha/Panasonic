@@ -174,6 +174,9 @@ const access = {
   deleteAccess: (id: number) => requests.delete(`deleteAccess/${id}`),
 }
 
+const history ={
+  getHistory: ()=> requests.get("/getHistorial")
+}
 const api = {
   Account,
   TestErrors,
@@ -187,6 +190,7 @@ const api = {
   salesAssest,
   depreciations,
   access,
+  history,
 };
 
 export default api;

@@ -20,6 +20,7 @@ import Depreciation from "../../features/depreciations/NewDepreciations";
 import Access from "../../features/Acces/NewAcces";
 import ProtectedRoute from "./PrivateRoute";
 import MapsRoute from "../../features/Maps/Map"
+import History from "../../features/history/History";
 
 export const router = createBrowserRouter([
   {
@@ -51,6 +52,7 @@ export const router = createBrowserRouter([
               { path: "Depreciation", element: <Depreciation /> },
               { path: "Access", element: <Access /> },
               { path: "Maps", element: <MapsRoute /> },
+              { path: "history", element: < History/>},
             ],
           },
         ],
