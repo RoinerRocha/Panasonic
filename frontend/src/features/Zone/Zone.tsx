@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import api from "../../app/api/api"
 import { Zona } from "../../app/models/zone"
 import ZoneList from "./ZoneList";
+import MapList from "../Maps/MapList";
 
 export default function Zone() {
     const [zonas, setZonas] = useState<Zona[]>([]);
@@ -27,7 +28,7 @@ export default function Zone() {
 
     return (
         <>
-           <ZoneList zonas={zonas} setZonas={setZonas}/> 
+           <ZoneList zonas={zonas} setZonas={setZonas}/>
         </>
     )
 }
