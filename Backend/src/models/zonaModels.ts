@@ -6,6 +6,7 @@ class ZonaModels extends Model {
   public numeroZona!: string;
   public nombreZona!: string;
   public responsableAreaNom_user!: string;
+  public ImagenMapa!: string | null;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -31,10 +32,13 @@ try {
         type: DataTypes.STRING(60),
         allowNull: false,
       },
+      ImagenMapa: {
+        type: DataTypes.STRING(250),
+        allowNull: false,
+      }
     },
     {
       sequelize,
-
       tableName: "Zonas",
       schema: "panasonic",
     }
