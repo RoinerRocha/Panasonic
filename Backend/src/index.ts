@@ -3,7 +3,7 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import cors from "cors";
 import sequelize from "./Services/Postgresql";
-import path from "path";
+import path, { dirname } from "path";
 //import {connection} from "./Services/Postgresql";
 
 //routes
@@ -48,6 +48,7 @@ app.use('/uploads/Fotografias', express.static(path.join(__dirname, '../uploads/
 app.use('/uploads/FotografiasBajas', express.static(path.join(__dirname, '../uploads/FotografiasBajas')));
 app.use('/uploads/FotogreafiasVentas', express.static(path.join(__dirname, '../uploads/FotogreafiasVentas')));
 app.use('/uploads/Ordenes', express.static(path.join(__dirname, '../uploads/Ordenes')));
+app.use('/uploads/Mapas', express.static(path.join(__dirname, '../uploads/Mapas')));
 //const PORT = 3000;
 const PORT = process.env.PORT || 5000;
 
