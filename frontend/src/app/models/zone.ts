@@ -3,4 +3,5 @@ export interface Zona {
     numeroZona: string;
     nombreZona: string;
     responsableAreaNom_user: string;
+    ImagenMapa: string;
 }

@@ -85,6 +85,7 @@
     "Numero-zona": "Number",
     "Nombre-zona": "Name",
     "Encargado-zona": "Administrator",
+    "Image-zona": "Map",
     "Configuracion-zona": "Configuration",
     "BotonEditar-zona": "Edit",
     "BotonEliminar-zona": "Delete",
