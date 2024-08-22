@@ -1,7 +1,8 @@
 import { Router } from "express";
 import {
     getHistory,
-    searchHistoryByUserName
+    searchHistoryByUserName,
+    getHistoryForTipeUser
 } from "../controller/assetHistoryController"
 
 const router = Router();
@@ -13,6 +14,7 @@ router.get("/", (req, res) => {
   
   router.get("/getHistorial", getHistory);
 
-  router.get("/searchHistoryByUserName/:user", searchHistoryByUserName);
+  router.get("/searchHistoryByUserName/:usuario", searchHistoryByUserName);
+  router.get("/getHistoryForTipeUser/", getHistoryForTipeUser);
 
   export default router;
