@@ -1,9 +1,9 @@
 export interface newAssetModels {
   id: number;
   CodigoCuenta: number;
-  Zona: number;
-  Tipo: number;
-  Estado: number;
+  Zona: string | number;
+  Tipo: string | number;
+  Estado: string | number;
   Descripcion: string;
   NumeroPlaca: number;
   ValorCompraCRC: string;

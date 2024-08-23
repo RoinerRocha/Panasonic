@@ -13,9 +13,11 @@ import { useState, useEffect } from "react";
 import api from "../../app/api/api";
 import { toast } from "react-toastify";
 import RegisterAsset from "./registerAsset";
-import { SelectChangeEvent } from "@mui/material/Select";
+import { Zona } from "../../app/models/zone"; // Zonas
+import { serviceLifeModels } from "../../app/models/serviceLifeModels"; // Tipos
+import { statusAssets } from "../../app/models/statusAsset"; // Estados
 import { accountingAccount } from "../../app/models/accountingAccount";
-import { useAppDispatch, useAppSelector } from "../../store/configureStore";
+import { useAppSelector } from "../../store/configureStore";
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import { Dataset } from "@mui/icons-material";
@@ -33,6 +35,10 @@ interface Props {
 
 function NewAssetsList({ newAssets, setNewAssets }: Props) {
   const [accountingAccounts, setAccountingAccounts] = useState<accountingAccount[]>([]);
+  const [zones, setZones] = useState<Zona[]>([]);
+  const [serviceLives, setServiceLives] = useState<serviceLifeModels[]>([]);
+  const [statuses, setStatuses] = useState<statusAssets[]>([]);
+
   const [selectedNewAsset, setSelectedNewAsset] = useState<newAssetModels | null>(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openAddDialog, setOpenAddDialog] = useState(false);
@@ -62,7 +68,49 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
   const { user } = useAppSelector(state => state.account);
 
   useEffect(() => {
-    loadNewAsset()
+    loadNewAsset();
+
+    const fetchData = async () => {
+      try {
+        const [zonesData, accountsData, serviceLifeData, statusData] = await Promise.all([
+          api.Zones.getZona(),
+          api.AcountingAccounts.getAccountingAccounts(),
+          api.serviceLife.getServiceLifes(),
+          api.statusAssets.getStatusAssets()
+        ]);
+        
+               // Se verifica que las respuestas sean arrays antes de actualizar el estado
+               if (zonesData && Array.isArray(zonesData.data)) {
+                setZones(zonesData.data);
+              } else {
+                console.error("Zones data is not an array", zonesData);
+              }
+          
+              if (accountsData && Array.isArray(accountsData.data)) {
+                setAccountingAccounts(accountsData.data);
+              } else {
+                console.error("Accounting accounts data is not an array", accountsData);
+              }
+       
+               if (serviceLifeData && Array.isArray(serviceLifeData.data)) {
+                setServiceLives(serviceLifeData.data);
+              } else {
+                console.error("Service life data is not an array", serviceLifeData);
+              }
+       
+               if (statusData && Array.isArray(statusData.data)) {
+                setStatuses(statusData.data);
+              } else {
+                console.error("Status data is not an array", statusData);
+              }
+       
+             } catch (error) {
+               console.error("Error fetching data:", error);
+               toast.error("Error al cargar datos");
+             }
+           };
+       
+    fetchData();
   }, []);
 
   const loadNewAsset: () => Promise<void> = async () => {
@@ -430,34 +478,70 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
       <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
         <DialogTitle>Editar Activo</DialogTitle>
         <DialogContent>
-          <TextField
-            label="Código Cuenta"
-            value={newAsset.CodigoCuenta}
-            onChange={(e) => setNewAsset({ ...newAsset, CodigoCuenta: +e.target.value })}
-            fullWidth
-            margin="dense"
-          />
-          <TextField
-            label="Zona"
-            value={newAsset.Zona}
-            onChange={(e) => setNewAsset({ ...newAsset, Zona: +e.target.value })}
-            fullWidth
-            margin="dense"
-          />
-          <TextField
-            label="Tipo"
-            value={newAsset.Tipo}
-            onChange={(e) => setNewAsset({ ...newAsset, Tipo: +e.target.value })}
-            fullWidth
-            margin="dense"
-          />
-          <TextField
-            label="Estado"
-            value={newAsset.Estado}
-            onChange={(e) => setNewAsset({ ...newAsset, Estado: +e.target.value })}
-            fullWidth
-            margin="dense"
-          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="codigo-label">Codigo Cuenta</InputLabel>
+            <Select
+              labelId="codigo-label"
+              id="codigo"
+              label="Codigo Cuenta"
+              value={newAsset.CodigoCuenta}
+              onChange={(e) =>  setNewAsset({ ...newAsset, CodigoCuenta: +e.target.value})}
+            >
+            {accountingAccounts.map((account) => (
+              <MenuItem key={account.id} value={account.codigoCuenta}>
+                {account.codigoCuenta}
+              </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="Zona-label">Zona</InputLabel>
+            <Select
+              labelId="Zona-label"
+              id="zona"
+              label="Zona"
+              value={newAsset.Zona}
+              onChange={(e) =>  setNewAsset({ ...newAsset, Zona: e.target.value})}
+            >
+            {zones.map((zone) => (
+              <MenuItem key={zone.id} value={zone.nombreZona}>
+                {zone.nombreZona}
+              </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="tipo-label">Tipo</InputLabel>
+            <Select
+              labelId="tipo-label"
+              id="tipo"
+              label="Tipo"
+              value={newAsset.Tipo}
+              onChange={(e) =>  setNewAsset({ ...newAsset, Tipo: e.target.value})}
+            >
+            {serviceLives.map((service) => (
+              <MenuItem key={service.id} value={service.tipo}>
+                {service.tipo}
+              </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="Estado-label">Estado</InputLabel>
+            <Select
+              labelId="Estado-label"
+              id="estado"
+              label="Tipo"
+              value={newAsset.Estado}
+              onChange={(e) =>  setNewAsset({ ...newAsset, Estado: e.target.value})}
+            >
+            {statuses.map((status) => (
+              <MenuItem key={status.id} value={status.status}>
+                {status.status}
+              </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <TextField
             label="Descripción"
             value={newAsset.Descripcion}

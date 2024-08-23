@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Grid, TableContainer, 
     Paper, Table, TableCell, TableHead, TableRow, TableBody, Button, 
     TextField, Dialog, DialogActions, DialogContent, DialogContentText, 
-    DialogTitle, styled, FormControl,  InputLabel, Select, MenuItem
+    DialogTitle, styled, FormControl,  InputLabel, Select, MenuItem,
+    FormHelperText
 } from "@mui/material";
 import { Zona } from "../../app/models/zone";
 import api from "../../app/api/api";
@@ -10,6 +11,8 @@ import { User } from "../../app/models/user";
 import { toast } from 'react-toastify';
 import { useTranslation } from "react-i18next";
 import { useLanguage } from '../../app/context/LanguageContext';
+import { FieldValues } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
     zonas: Zona[];
@@ -25,9 +28,11 @@ export default function ZoneList({ zonas, setZonas }: Props) {
     const [newZona, setNewZona] = useState<Partial<Zona>>({
         numeroZona: '',
         nombreZona: '',
-        responsableAreaNom_user: ''
+        responsableAreaNom_user: '',
+        ImagenMapa: null,
     });
     const [imageUrlMap, setImageUrlMap] = useState<Map<number, Map<string, string>>>(new Map());
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Cargar las zonas al montar el componente
@@ -114,17 +119,38 @@ export default function ZoneList({ zonas, setZonas }: Props) {
         }
     };
 
-    const handleAdd = async () => {
+    const onSubmit = async (data: FieldValues) =>{
         try {
-            const addedZona = await api.Zones.saveZona(newZona);
-            toast.success('Zona Agregada');
+            await api.Zones.saveZona(data);
+            toast.success("Zona agregada exitosamente");
             setOpenAddDialog(false);
-            // Recargar las zonas después de agregar
             loadZonas();
         } catch (error) {
-            console.error("Error al agregar la zona:", error);
+            console.error(error);
+            toast.error("Error registrando la zona");
         }
+    }
+
+    const handleAdd = (data: FieldValues) => {
+        const formData = new FormData();
+        formData.append("numeroZona", newZona.numeroZona?.toString() ?? '');
+        formData.append("nombreZona", newZona.nombreZona?.toString() ?? '');
+        formData.append("responsableAreaNom_user", newZona.responsableAreaNom_user?.toString() ?? '');
+        if (newZona.ImagenMapa) {
+            formData.append("ImagenMapa", newZona.ImagenMapa);
+        }
+        onSubmit(formData);
     };
+
+    const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, files } = event.target;
+        if (files && files.length > 0) {
+          setNewZona((prevAsset) => ({
+            ...prevAsset,
+            [name]: files[0],
+          }));
+        }
+      };
 
     const { t } = useTranslation();
     const { changeLanguage, language } = useLanguage();
@@ -228,13 +254,6 @@ export default function ZoneList({ zonas, setZonas }: Props) {
                         fullWidth
                         margin="dense"
                     />
-                    {/* <TextField
-                        label={t('DialogEncargado-zona')}
-                        value={newZona?.responsableAreaNom_user || ''}
-                        onChange={(e) => setNewZona({ ...newZona, responsableAreaNom_user: e.target.value})}
-                        fullWidth
-                        margin="dense"
-                    /> */}
                     <FormControl fullWidth margin="normal">
                         <InputLabel id="encargado-label">{t('DialogEncargado-zona')}</InputLabel>
                         <Select
@@ -251,6 +270,30 @@ export default function ZoneList({ zonas, setZonas }: Props) {
                         ))}
                         </Select>
                     </FormControl>
+                    <Grid item xs={6}>
+                        {newZona.ImagenMapa && (
+                            <img src={imageUrlMap.get(newZona.id || 0)?.get('ImagenMapa')} alt="ImagenMapa" style={{ width: '100px', height: '100px', objectFit: 'cover' }}/>
+                        )}
+                        <Button variant="contained" component="label" fullWidth>
+                            {newZona.ImagenMapa? 'Cambiar Imagen de mapa' : 'Subir Imagen de mapa'}
+                            <VisuallyHiddenInput 
+                                 type="file"
+                                 name="ImagenMapa"
+                                 onChange={(e) => {
+                                   const file = e.target.files?.[0];  // Obtener el primer archivo seleccionado
+                                   if (file) {
+                                        const fileUrl = URL.createObjectURL(file);
+                                        setNewZona({...newZona, ImagenMapa: file});
+                                        setImageUrlMap1(prevMap => new Map(prevMap).set(file.name, fileUrl));
+                                    }
+                                 }}
+                            />
+                        </Button>
+                        {newZona.ImagenMapa && <FormHelperText>Archivo cargado: {newZona.ImagenMapa.name}</FormHelperText>}
+                        {imageUrlMap1.get(newZona.ImagenMapa?.name || '') && (
+                            <img src={imageUrlMap1.get(newZona.ImagenMapa?.name || '')} alt="ImagenMapa" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+                        )}
+                    </Grid>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpenEditDialog(false)}>{t('DialogBotonCancelar-zona')}</Button>
@@ -278,13 +321,34 @@ export default function ZoneList({ zonas, setZonas }: Props) {
                         fullWidth
                         margin="dense"
                     />
-                    <TextField
-                        label={t('AgregarEncargado-zona')}
-                        value={newZona.responsableAreaNom_user}
-                        onChange={(e) => setNewZona({ ...newZona, responsableAreaNom_user: e.target.value })}
-                        fullWidth
-                        margin="dense"
-                    />
+                    <FormControl fullWidth margin="normal">
+                        <InputLabel id="encargado-label">{t('DialogEncargado-zona')}</InputLabel>
+                        <Select
+                            labelId="encargado-label"
+                            id="encargado"
+                            label={t('DialogEncargado-zona')}
+                            value={newZona?.responsableAreaNom_user || ''}
+                            onChange={(e) => setNewZona({ ...newZona, responsableAreaNom_user: e.target.value})}
+                        >
+                        {users.map((user) => (
+                            <MenuItem key={user.id} value={user.nombre_usuario}>
+                                {user.nombre_usuario}
+                            </MenuItem>
+                        ))}
+                        </Select>
+                    </FormControl>
+                    <Grid item xs={12}>
+                        <Button variant="contained" component="label" fullWidth>
+                            Subir Imagen de Fotografia
+                            <VisuallyHiddenInput
+                            type="file"
+                            name="ImagenMapa"
+                            onChange={handleFileInputChange}
+                            />
+                        </Button>
+                        {newZona.ImagenMapa && <FormHelperText>Archivo cargado: {newZona.ImagenMapa.name}</FormHelperText>}
+                    </Grid>
+
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpenAddDialog(false)}>{t('AgregarBotonCancelar-zona')}</Button>
