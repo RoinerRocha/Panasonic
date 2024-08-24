@@ -725,7 +725,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                 <img
                   src={imageUrlMap.get(selectedNewAsset?.id || 0)?.get('Fotografia')}
                   alt="Fotografía del Activo"
-                  style={{ width: 600, height: 600 }}
+                  style={{ width: 550, height: 550 }}
                 />
               </p>
             )}
@@ -735,23 +735,23 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
             <p><strong>Número Factura:</strong> {selectedNewAsset?.FacturaNum}</p>
             {imageUrlMap.get(selectedNewAsset?.id || 0)?.get('FacturaImagen') && (
               <p>
-                <strong>Imagen de Factura:</strong>
+                <strong>Factura:</strong>
                 <img
                   src={imageUrlMap.get(selectedNewAsset?.id || 0)?.get('FacturaImagen')}
-                  alt="Imagen de Factura"
-                  style={{ width: 600, height: 600 }}
+                  alt="Factura"
+                  style={{ width: 550, height: 550 }}
                 />
               </p>
             )}
             <p><strong>Número Orden de Compra:</strong> {selectedNewAsset?.OrdenCompraNum}</p>
             {imageUrlMap.get(selectedNewAsset?.id || 0)?.get('OrdenCompraImagen') && (
               <p>
-                <strong>Imagen de Orden de Compra:</strong>
+                <strong>Orden de Compra:</strong>
                 
                 <img
                   src={imageUrlMap.get(selectedNewAsset?.id || 0)?.get('OrdenCompraImagen')}
                   alt="Imagen de Orden de Compra"
-                  style={{ width: 600, height: 600 }}
+                  style={{ width: 550, height: 550 }}
                 />
               </p>
             )}

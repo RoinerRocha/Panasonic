@@ -3,7 +3,7 @@ import { Grid, TableContainer,
     Paper, Table, TableCell, TableHead, TableRow, TableBody, Button, 
     TextField, Dialog, DialogActions, DialogContent, DialogContentText, 
     DialogTitle, styled, FormControl,  InputLabel, Select, MenuItem,
-    FormHelperText
+    FormHelperText, TablePagination
 } from "@mui/material";
 import { Zona } from "../../app/models/zone";
 import api from "../../app/api/api";
@@ -160,10 +160,19 @@ export default function ZoneList({ zonas, setZonas }: Props) {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
 
-    const handleRowClick = (newZona: Zona) =>{
-        setSelectedZona(newZona);
+    const handleRowClick = (zona: Zona) =>{
+        setSelectedZona(zona);
         setOpenDetailDialog(true);
     }
+
+    const handleChangePage = (event: unknown, newPage: number) => {
+        setPage(newPage);
+      };
+
+      const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+      };
 
     const VisuallyHiddenInput = styled("input")({
         clip: "rect(0 0 0 0)",
@@ -197,7 +206,7 @@ export default function ZoneList({ zonas, setZonas }: Props) {
                     </TableHead>
                     <TableBody>
                         {zonas.slice(startIndex, endIndex).map((zona) => (
-                            <TableRow key={zona.id}>
+                            <TableRow key={zona.id} onClick={() => handleRowClick(zona)} style={{ cursor: "pointer" }}>
                                 <TableCell align="center">{zona.numeroZona}</TableCell>
                                 <TableCell align="center">{zona.nombreZona}</TableCell>
                                 <TableCell align="center">{zona.responsableAreaNom_user}</TableCell>
@@ -211,27 +220,42 @@ export default function ZoneList({ zonas, setZonas }: Props) {
                                     ): 'sin imagen'}
                                 </TableCell>
                                 <TableCell align='center'>
-                                    <Button 
-                                        variant='contained' 
-                                        color='info' 
-                                        sx={{ margin: '0 8px' }} 
-                                        onClick={() => handleEdit(zona)}
-                                    >
-                                        {t('BotonEditar-zona')}
-                                    </Button>
-                                    <Button 
-                                        variant='contained' 
-                                        color='error' 
-                                        sx={{ margin: '0 8px' }} 
-                                        onClick={() => handleDelete(zona.id)}
-                                    >
-                                        {t('BotonEliminar-zona')}
-                                    </Button>
+                                <Button 
+                                    variant='contained' 
+                                    color='info' 
+                                    sx={{ margin: '0 8px' }} 
+                                    onClick={(e) => {
+                                        e.stopPropagation(); // Detiene la propagación del evento
+                                        handleEdit(zona);
+                                    }}
+                                >
+                                    {t('BotonEditar-zona')}
+                                </Button>
+                                <Button 
+                                    variant='contained' 
+                                    color='error' 
+                                    sx={{ margin: '0 8px' }} 
+                                    onClick={(e) => {
+                                        e.stopPropagation(); // Detiene la propagación del evento
+                                        handleDelete(zona.id);
+                                    }}
+                                >
+                                    {t('BotonEliminar-zona')}
+                                </Button>
                                 </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
+                <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={zonas.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                />
             </TableContainer>
 
             <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
@@ -353,6 +377,29 @@ export default function ZoneList({ zonas, setZonas }: Props) {
                 <DialogActions>
                     <Button onClick={() => setOpenAddDialog(false)}>{t('AgregarBotonCancelar-zona')}</Button>
                     <Button onClick={handleAdd}>{t('AgregarBotonAñadir-zona')}</Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog  open={openDetailDialog} onClose={() => setOpenDetailDialog(false)}>
+                <DialogTitle>Detalles de la zona</DialogTitle>
+                <DialogContent>
+                    <div>
+                        <p><strong>Numero de zona:</strong> {selectedZona?.numeroZona}</p>
+                        <p><strong>Nombre de la zona:</strong> {selectedZona?.nombreZona}</p>
+                        <p><strong>Responsable de la zona:</strong> {selectedZona?.responsableAreaNom_user}</p>
+                        {imageUrlMap.get(selectedZona?.id || 0)?.get('ImagenMapa') && (
+                        <p>
+                            <strong>Mapa:</strong>
+                            <img
+                            src={imageUrlMap.get(selectedZona?.id || 0)?.get('ImagenMapa')}
+                            alt="Mapa"
+                            style={{ width: 550, height: 550 }}
+                            />
+                        </p>
+                        )}
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenDetailDialog(false)}>Cerrar</Button>
                 </DialogActions>
             </Dialog>
         </Grid>
