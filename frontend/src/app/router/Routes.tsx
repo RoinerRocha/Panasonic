@@ -21,6 +21,7 @@ import Access from "../../features/Acces/NewAcces";
 import ProtectedRoute from "./PrivateRoute";
 import MapsRoute from "../../features/Maps/Map"
 import History from "../../features/history/History";
+import MapDetails from "../../features/Maps/MapDetails";
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +37,7 @@ export const router = createBrowserRouter([
           { path: "RegisterAsset", element: <RegisterAssets /> },
           { path: "AssetSales", element: <AssetSales /> },
           { path: "AssetRetirement", element: <AssetRetirement /> },
+          { path: "history", element: < History/>},
           {
             element: <ProtectedRoute requiredProfile="Maestro" />,  // Protege las rutas solo para "Maestro"
             children: [
@@ -53,6 +55,7 @@ export const router = createBrowserRouter([
               { path: "Access", element: <Access /> },
               { path: "Maps", element: <MapsRoute /> },
               { path: "history", element: < History/>},
+              { path: "Details/:id", element: < MapDetails/>},
             ],
           },
         ],

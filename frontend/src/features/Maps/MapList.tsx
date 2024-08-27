@@ -1,5 +1,6 @@
-import { Typography } from "@mui/material";
+import { Grid, List, Typography } from "@mui/material";
 import { Zona } from "../../app/models/zone"
+import ProductCard from "./MapCard";
 
 interface Props {
     zonas: Zona[];
@@ -8,12 +9,12 @@ interface Props {
 
 export default function MapList({zonas, setZonas}: Props) {
     return (
-        <>
-            <ul>
-                {zonas.map(zona => (
-                    <li key={zona.id}> {zona.nombreZona} - {zona.numeroZona}</li>
-                ))}
-            </ul>
-        </>
+        <Grid container spacing={4}>
+            {zonas.map(zona => (
+                <Grid item xs={3} key={zona.id}>
+                    <ProductCard zona={zona}  setZona={setZonas} />
+                </Grid>
+            ))}
+        </Grid>
     )
 }

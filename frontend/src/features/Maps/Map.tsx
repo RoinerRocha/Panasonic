@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import api from "../../app/api/api"
 import { Zona } from "../../app/models/zone"
 import MapList from "../Maps/MapList"
+import { Grid } from "@mui/material";
 
 export default function Map() {
     const [zonas, setZonas] = useState<Zona[]>([]);
