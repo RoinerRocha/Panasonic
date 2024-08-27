@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   saveZona,
   getZona,
+  getZonaById,
   deleteZona,
   updateZona,
 } from "../controller/zonaController";
@@ -20,6 +21,8 @@ router.post(
   ]), saveZona
 );
 router.get("/getZona", getZona);
+
+router.get("/zonas/:id", getZonaById);
 
 router.put(
   "/zonas/:id", 

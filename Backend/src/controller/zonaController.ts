@@ -49,6 +49,23 @@ export const getZona = async (req: Request, res: Response) => {
   }
 };
 
+// metodo para obtener zonas por id
+export const getZonaById = async (req: Request, res: Response) => {
+  const zonaId = req.params.id;
+
+  try {
+    const zona = await ZonaModels.findByPk(zonaId);
+    
+    if (!zona) {
+      return res.status(404).json({ message: "Zona not found" });
+    }
+
+    res.status(200).json({ message: "Zona fetched successfully", data: zona });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Método para eliminar una zona por ID
 export const deleteZona = async (req: Request, res: Response) => {
   const zonaId = req.params.id;
@@ -76,6 +93,7 @@ export const deleteZona = async (req: Request, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 //Metodo para actualizar zona
 export const updateZona = async (req: Request, res: Response) => {

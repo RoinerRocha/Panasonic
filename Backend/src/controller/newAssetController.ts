@@ -300,6 +300,31 @@ export const generatePDFFile = async (req: Request, res: Response) => {
       res.status(500).json({ error: error.message });
     }
   };
+
+  // Método para buscar activos por nombre de la zona
+  export const searchAssetsByZona = async (req: Request, res: Response) => {
+    const { Zona } = req.query;
+
+    try {
+      const assets = await NewAssetModel.findAll({
+        where: {
+          Zona: {
+            [Op.like]: `%${Zona}%`
+          }
+        }
+      });
+
+      if (assets.length === 0) {
+        return res.status(404).json({ message: "No assets found for the specified zone." });
+      }
+
+      res.status(200).json({ message: "Assets fetched successfully", data: assets });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+
+
   // Método para obtener todos los nuevos activos
   export const getNewAssets = async (req: Request, res: Response) => {
     try {

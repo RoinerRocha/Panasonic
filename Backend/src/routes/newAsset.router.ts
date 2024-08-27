@@ -10,6 +10,7 @@ import {
   generateWordFile,
   generatePDFFile,
   generateExcelFile,
+  searchAssetsByZona,
 } from "../controller/newAssetController";
 import { upload } from '../Middleware/multerConfig';
 
@@ -31,6 +32,8 @@ router.post(
 );
 
 router.get("/getNewAssets", getNewAssets);
+
+router.get("/searchAssetsByZona", searchAssetsByZona);
 
 
 router.put(
