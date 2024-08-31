@@ -86,6 +86,7 @@ const Zones = {
   updateZona: (zonaId: any, zonaData: any) =>
     requests.put(`/zonas/${zonaId}`, zonaData),
   deleteZona: (id: number) => requests.delete(`deleteZona/${id}`),
+  getZonaById: (id: number) => requests.get(`/zonas/${id}`),
 };
 
 const AcountingAccounts = {
@@ -135,6 +136,7 @@ const newAsset = {
     requests.put(`/newAssets/${NewAssetId}`, NewAssetData),
   deleteNewAsset: (id: number) => requests.delete(`deleteNewAsset/${id}`), //reviar x si da algun problema ya que en el back esta comentado esta funcion
   getNewAssetById:(id: number) => requests.get(`/searchIdNewAsset/${id}`),
+  searchAssetsByZona: (zonaNombre: string) => requests.get(`/searchAssetsByZona?zonaNombre=${zonaNombre}`),  // Cambiado aquí
   getAssetByNumBoleta: (id: string) => requests.get(`/assetByNumBolet/boleta/${id}`),
   generateWordFile: (id: number) => requests.download(`/generateWord/${id}`),
   generatePDFFile: (id: number) => requests.download(`/generatePDF/${id}`),
