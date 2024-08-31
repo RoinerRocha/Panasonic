@@ -76,6 +76,9 @@ import {
                   DESCRIPCIÓN
                 </TableCell>
                 <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>
+                  Estado Documento Aprobación
+                </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>
                   ID
                 </TableCell>
                 <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>
@@ -96,6 +99,7 @@ import {
                   <TableCell align="center">{profile.NumeroBoleta}</TableCell>
                   <TableCell align="center">{profile.Usuario}</TableCell>
                   <TableCell align="center">{profile.Descripcion}</TableCell>
+                  <TableCell align="center">{"Pendiente"}</TableCell>
                   <TableCell align="center">{profile.id}</TableCell>
                   <TableCell align="center">{profile.Tipo}</TableCell>
                   <TableCell align="center">{profile.Zona}</TableCell>
