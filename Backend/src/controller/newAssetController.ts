@@ -303,21 +303,26 @@ export const generatePDFFile = async (req: Request, res: Response) => {
 
   // Método para buscar activos por nombre de la zona
   export const searchAssetsByZona = async (req: Request, res: Response) => {
-    const { Zona } = req.query;
-
+    const { zonaNombre } = req.query;  // Asegúrate de usar el nombre correcto para el parámetro de consulta
+  
+    if (typeof zonaNombre !== 'string') {
+      return res.status(400).json({ message: "Invalid query parameter." });
+    }
+  
     try {
+      // Asegúrate de que 'Zona' es el nombre correcto del campo en la base de datos
       const assets = await NewAssetModel.findAll({
         where: {
           Zona: {
-            [Op.like]: `%${Zona}%`
+            [Op.like]: `%${zonaNombre}%`
           }
         }
       });
-
+  
       if (assets.length === 0) {
         return res.status(404).json({ message: "No assets found for the specified zone." });
       }
-
+  
       res.status(200).json({ message: "Assets fetched successfully", data: assets });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
