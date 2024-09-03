@@ -6,7 +6,7 @@ import {
   TextField,
   FormHelperText,
   Grid,
-  styled
+  styled, Box
 } from "@mui/material";
 import { newAssetModels } from "../../app/models/newAssetModels";
 import { useState, useEffect } from "react";
@@ -28,6 +28,8 @@ import { Document, Packer, Paragraph, TextRun } from "docx";
 import * as XLSX from 'xlsx';
 import { saveAs } from "file-saver";
 
+import { SelectChangeEvent } from "@mui/material";
+
 interface Props {
   newAssets: newAssetModels[];
   setNewAssets: React.Dispatch<React.SetStateAction<newAssetModels[]>>;
@@ -38,6 +40,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
   const [zones, setZones] = useState<Zona[]>([]);
   const [serviceLives, setServiceLives] = useState<serviceLifeModels[]>([]);
   const [statuses, setStatuses] = useState<statusAssets[]>([]);
+  const [filteredAssets, setFilteredAssets] = useState<newAssetModels[]>(newAssets);
 
   const [selectedNewAsset, setSelectedNewAsset] = useState<newAssetModels | null>(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -154,6 +157,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
       }
     });
   };
+
   const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = event.target;
     if (files && files.length > 0) {
@@ -238,17 +242,24 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
     }
   };
 
-  const handleAddNewAsset = async (newAsset: newAssetModels) => {
-    try {
-      await api.newAsset.saveNewAsset(newAsset);
-      toast.success("Nuevo Activo Agregado");
-      setOpenAddDialog(false);
-      loadNewAsset();
-    } catch (error) {
-      console.error("Error al agregar nuevo activo:", error);
-      toast.error("Error al intentar agregar nuevo activo");
+  const handleZonaChange = (event: SelectChangeEvent<string | number>) => {
+    const selectedZonaName = event.target.value as string;
+
+    if (selectedZonaName === "Mostrar todo") {
+        // Si no se selecciona ninguna zona, mostrar todos los activos
+        setFilteredAssets(newAssets);
+    } else {
+        // Filtrar activos por zona seleccionada
+        const filtered = newAssets.filter(asset => asset.Zona === selectedZonaName);
+        setFilteredAssets(filtered);
     }
-  };
+
+    // También asegúrate de actualizar el estado del nuevo activo
+    setNewAsset(prev => ({
+        ...prev,
+        Zona: selectedZonaName
+    }));
+};
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -292,16 +303,6 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
       toast.error('Error generando PDF');
     }
   };
-  const generateWord = async (assetId: number, numBoleta: string) => {
-    try {
-      const response = await api.newAsset.generateWordFile(assetId);
-      const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-      saveAs(blob, `asset_${numBoleta}.docx`);
-    } catch (error) {
-      console.error('Error generando Word:', error);
-      toast.error('Error generando Word');
-    }
-  };
 
   const generateExcel = async (assetId: number, numBoleta: string) => {
     try {
@@ -316,13 +317,36 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
 
   return (
     <div>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setOpenAddDialog(true)}
-      >
-        Agregar Nuevo Activo
-      </Button>
+      <Box sx={{ mb: 2 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setOpenAddDialog(true)}
+        >
+          Agregar Nuevo Activo
+        </Button>
+      </Box>
+      <FormControl fullWidth>
+        <InputLabel id="zona-label">Zona</InputLabel>
+        <Select
+            labelId="zona-label"
+            id="zona"
+            value={newAsset.Zona || ""}
+            onChange={handleZonaChange}
+            name="Zona"
+            label="Zona"
+        >
+            <MenuItem value="Mostrar todo">
+                <em>Mostrar todos</em>
+            </MenuItem>
+            {zones.map((zona) => (
+                <MenuItem key={zona.id} value={zona.nombreZona}>
+                    {zona.nombreZona} 
+                </MenuItem>
+            ))}
+        </Select>
+        <FormHelperText>Seleccione una zona para filtrar los activos</FormHelperText>
+      </FormControl>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>
@@ -350,7 +374,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {newAssets.slice(startIndex, endIndex).map((newAsset) => (
+            {filteredAssets.slice(startIndex, endIndex).map((newAsset) => (
               <TableRow key={newAsset.id} onClick={() => handleRowClick(newAsset)} style={{ cursor: "pointer" }}>
                 <TableCell>{newAsset.CodigoCuenta}</TableCell>
                 <TableCell>{newAsset.Zona}</TableCell>
