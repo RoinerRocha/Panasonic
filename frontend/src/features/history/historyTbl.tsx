@@ -8,6 +8,12 @@ import {
   TableRow,
   TableBody,
   TablePagination,
+  CircularProgress,
+  Typography,
+  Button,
+  DialogContent,
+  Dialog,
+  DialogActions,
 } from "@mui/material";
 import { assetRetirementModel } from "../../app/models/assetRetirementModel";
 import { assetSaleModel } from "../../app/models/assetSaleModel";
@@ -16,11 +22,15 @@ import { useState, useEffect } from "react";
 import api from "../../app/api/api";
 import { toast } from "react-toastify";
 
+import RegisterAsset from "../assetRetirement/assetRetirementFrm";
+
 interface Props {
   newAssetModels: newAssetModels[];
   setNewAssetModels: React.Dispatch<React.SetStateAction<newAssetModels[]>>;
   assetRetirementModels: assetRetirementModel[];
-  setAssetRetirementModels: React.Dispatch<React.SetStateAction<assetRetirementModel[]>>;
+  setAssetRetirementModels: React.Dispatch<
+    React.SetStateAction<assetRetirementModel[]>
+  >;
   assetSaleModels: assetSaleModel[];
   setAssetSaleModels: React.Dispatch<React.SetStateAction<assetSaleModel[]>>;
 }
@@ -35,12 +45,23 @@ export default function HistoryTbl({
 }: Props) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [loading, setLoading] = useState(true); // Estado de carga
 
   useEffect(() => {
     loadHistory();
   }, []);
 
+  //para abrir el dialog
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const loadHistory = async () => {
+    setLoading(true);
     try {
       const response = await api.history.getHistory();
       setNewAssetModels(response.data.newAssets || []);
@@ -49,13 +70,22 @@ export default function HistoryTbl({
     } catch (error) {
       console.error("Error al cargar el historial de activos:", error);
       toast.error("Error al cargar el historial de activos");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handlePageChange = (event: unknown, newPage: number) => setPage(newPage);
-  const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => setRowsPerPage(parseInt(event.target.value, 10));
+  const handlePageChange = (event: unknown, newPage: number) =>
+    setPage(newPage);
+  const handleRowsPerPageChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => setRowsPerPage(parseInt(event.target.value, 10));
 
-  const combinedProfiles = [...newAssetModels, ...assetRetirementModels, ...assetSaleModels];
+  const combinedProfiles = [
+    ...newAssetModels,
+    ...assetRetirementModels,
+    ...assetSaleModels,
+  ];
 
   // Eliminación de duplicados basados en el 'id'
   const uniqueProfiles = combinedProfiles.reduce((acc, current) => {
@@ -68,54 +98,139 @@ export default function HistoryTbl({
   }, [] as (newAssetModels | assetRetirementModel | assetSaleModel)[]);
 
   // Método para verificar el estado de DocumentoAprobado
-  const verificarDocumentoAprobado = (profile: assetRetirementModel | assetSaleModel): string => {
+  const verificarDocumentoAprobado = (
+    profile: assetRetirementModel | assetSaleModel
+  ): string => {
     return profile.DocumentoAprobado ? "Aprobado" : "Pendiente";
   };
 
-  const paginatedProfiles = uniqueProfiles.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const paginatedProfiles = uniqueProfiles.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   return (
     <Grid container spacing={1}>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-          <TableHead>
-            <TableRow>
-              {["N°", "N° BOLETA", "N° PLACA", "USUARIO", "DESCRIPCIÓN", "Estado Documento Aprobación", "ID", "TIPO", "ZONA", "ESTADO"].map((header) => (
-                <TableCell key={header} align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>
-                  {header}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginatedProfiles.map((profile, index) => (
-              <TableRow key={profile.id}>
-                <TableCell align="center">{page * rowsPerPage + index + 1}</TableCell>
-                <TableCell align="center">{profile.NumeroBoleta}</TableCell>
-                <TableCell align="center">{"NumeroPlaca" in profile ? (profile as newAssetModels).NumeroPlaca:"N/A"}</TableCell>
-                <TableCell align="center">{profile.Usuario}</TableCell>
-                <TableCell align="center">{profile.Descripcion}</TableCell>
-                <TableCell align="center">
-                  {"DocumentoAprobado" in profile ? verificarDocumentoAprobado(profile as assetRetirementModel | assetSaleModel) : "N/A"}
-                </TableCell>
-                <TableCell align="center">{profile.id}</TableCell>
-                <TableCell align="center">{'Tipo' in profile ? (profile as newAssetModels).Tipo : "N/A"}</TableCell>
-                <TableCell align="center">{'Zona' in profile ? (profile as newAssetModels).Zona : "N/A"}</TableCell>
-                <TableCell align="center">{'Estado' in profile ? (profile as newAssetModels).Estado : "N/A"}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 15]}
-        component="div"
-        count={uniqueProfiles.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handlePageChange}
-        onRowsPerPageChange={handleRowsPerPageChange}
-      />
+      {loading ? (
+        <Grid item xs={12} style={{ textAlign: "center" }}>
+          <CircularProgress />
+          <Typography variant="h6">Cargando datos...</Typography>
+        </Grid>
+      ) : (
+        <Grid item xs={12}>
+          <TableContainer component={Paper}>
+            <Table
+              sx={{ minWidth: 650 }}
+              size="small"
+              aria-label="a dense table"
+            >
+              <TableHead>
+                <TableRow>
+                  {[
+                    "N°",
+                    "N° BOLETA",
+                    "N° PLACA",
+                    "USUARIO",
+                    "DESCRIPCIÓN",
+                    "Estado Documento Aprobación",
+                    "ID",
+                    "TIPO",
+                    "ZONA",
+                    "ESTADO",
+                  ].map((header) => (
+                    <TableCell
+                      key={header}
+                      align="center"
+                      sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+                    >
+                      {header}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paginatedProfiles.map((profile, index) => (
+                  <TableRow key={profile.id}>
+                    <TableCell align="center">
+                      {page * rowsPerPage + index + 1}
+                    </TableCell>
+                    <TableCell align="center">{profile.NumeroBoleta}</TableCell>
+                    <TableCell align="center">
+                      {"NumeroPlaca" in profile
+                        ? (profile as newAssetModels).NumeroPlaca
+                        : "N/A" || "PlacaActivo" in profile
+                        ? (profile as assetRetirementModel).PlacaActivo
+                        : "N/A" || "PlacaActivo" in profile
+                        ? (profile as assetSaleModel).PlacaActivo
+                        : "N/A"}{" "}
+                    </TableCell>{" "}
+                    {/*revisar, ya que sale prueba en vez de numPlaca*/}
+                    <TableCell align="center">{profile.Usuario}</TableCell>
+                    <TableCell align="center">{profile.Descripcion}</TableCell>
+                    <TableCell align="center">
+                      {"DocumentoAprobado" in profile ? (
+                        verificarDocumentoAprobado(
+                          profile as assetRetirementModel | assetSaleModel
+                        ) === "Pendiente" ? (
+                          <>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={handleClickOpen}//falta terminalo, creo que seria mejor mostar el boton de agregar el doc directamente a la base de datos
+                            >
+                              Pendiente Agregar Doc
+                            </Button>
+
+                            <Dialog open={open} onClose={handleClose}>
+                              <DialogContent>
+                                <RegisterAsset />
+                              </DialogContent>
+                              <DialogActions>
+                                <Button onClick={handleClose} color="primary">
+                                  Cerrar
+                                </Button>
+                              </DialogActions>
+                            </Dialog>
+                          </>
+                        ) : (
+                          "Aprobado"
+                        )
+                      ) : (
+                        "N/A"
+                      )}
+                    </TableCell>
+                    <TableCell align="center">{profile.id}</TableCell>
+                    <TableCell align="center">
+                      {"Tipo" in profile
+                        ? (profile as newAssetModels).Tipo
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell align="center">
+                      {"Zona" in profile
+                        ? (profile as newAssetModels).Zona
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell align="center">
+                      {"Estado" in profile
+                        ? (profile as newAssetModels).Estado
+                        : "N/A"}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 15]}
+            component="div"
+            count={uniqueProfiles.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handlePageChange}
+            onRowsPerPageChange={handleRowsPerPageChange}
+          />
+        </Grid>
+      )}
     </Grid>
   );
 }
