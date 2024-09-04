@@ -3,7 +3,8 @@ import {
   saveSalesAsset,
    getSalesAssets,
     getAssetSaleByNumeroBoleta,
-    searchSalesAssets
+    searchSalesAssets,
+ //   totalVentas
 //   deleteSalesAsset,
 //   updateSalesAsset,
 } from "../controller/salesAssetsController";
@@ -31,6 +32,7 @@ router.post("/saveSalesAsset", saveSalesAsset);
 router.get("/getSalesAssets", getSalesAssets);
 router.get("/salesAssets/boleta/:NumeroBoleta", getAssetSaleByNumeroBoleta);
 router.get("/searchSalesAssets", searchSalesAssets);
+//router.get("/totalSalesAssets", totalVentas);
 
 // router.put("/salesAssets/:id", updateSalesAsset);
 

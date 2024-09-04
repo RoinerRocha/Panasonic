@@ -11,6 +11,27 @@ interface MulterFiles {
   Comprobante?: Express.Multer.File[];
 }
 
+/*export const totalVentas = async (req: Request, res: Response) => { //revisar y terminarlo
+  try {
+    const salesAssets = await SalesAssetsModel.findAll();
+
+    // Calcula el total de activos vendidos
+    const totalAmountSold = salesAssets.reduce((total, asset) => total + asset.amount, 0);
+
+    res.status(200).json({
+      message: "List of sales assets successful",
+      data: salesAssets,
+      kpi: {
+        totalAmountSold,
+        totalAssetsSold: salesAssets.length,
+      },
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+*/
+
 // Método para guardar la venta de un activo
 export const saveSalesAsset = async (req: Request, res: Response) => {
   const { 
