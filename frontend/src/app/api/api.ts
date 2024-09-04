@@ -141,6 +141,7 @@ const newAsset = {
   generateWordFile: (id: number) => requests.download(`/generateWord/${id}`),
   generatePDFFile: (id: number) => requests.download(`/generatePDF/${id}`),
   generateExcelFile: (id: number) => requests.download(`/generateExcelFile/${id}`),
+  generateExcelFileForMultipleAssets: (ids: number[]) => requests.download(`/generateExcelFileMultipleAssets?ids=${ids.join(',')}`),
 };
 
 const assetRetirement = {

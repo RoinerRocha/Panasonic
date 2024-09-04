@@ -304,6 +304,44 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
     }
   };
 
+  const generateExcelForAll = async () => {
+    try {
+        const data = filteredAssets.map(asset => ({
+            "Codigo Cuenta": asset.CodigoCuenta,
+            "Zona": asset.Zona,
+            "Tipo": asset.Tipo,
+            "Estado": asset.Estado,
+            "Descripción": asset.Descripcion,
+            "Numero Placa": asset.NumeroPlaca,
+            "Valor Compra CRC": asset.ValorCompraCRC,
+            "Valor Compra USD": asset.ValorCompraUSD,
+            "Fotografía": asset.Fotografia ? 'Con Imagen' : 'Sin Imagen',
+            "Nombre Proveedor": asset.NombreProveedor,
+            "Fecha Compra": new Date(asset.FechaCompra).toLocaleDateString(),
+            "Numero Factura": asset.FacturaNum,
+            "Factura Imagen": asset.FacturaImagen ? 'Con documento' : 'Sin Documento',
+            "Orden Compra Numero": asset.OrdenCompraNum,
+            "Orden Compra Imagen": asset.OrdenCompraImagen ? 'Con documento' : 'Sin Documento',
+            "Numero Asiento": asset.NumeroAsiento,
+            "Numero Boleta": asset.NumeroBoleta,
+            "Usuario": asset.Usuario
+        }));
+
+        const ws = XLSX.utils.json_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Assets");
+
+        const currentDate = new Date().toISOString().split('T')[0];
+
+        const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+        const blob = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        saveAs(blob, `Assets_${currentDate}.xlsx`);
+    } catch (error) {
+        console.error("Error generando Excel:", error);
+        toast.error("Error generando Excel");
+    }
+};
+
   const generateExcel = async (assetId: number, numBoleta: string) => {
     try {
       const response = await api.newAsset.generateExcelFile(assetId);
@@ -488,6 +526,17 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </TableContainer>
+      <Button
+          variant="contained"
+          color="success"
+          sx={{ margin: "10px" }}
+          onClick={(event) => {
+              event.stopPropagation();
+              generateExcelForAll(); 
+          }}
+      >
+          Descargar todos los datos en excel
+      </Button>
 
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
         <DialogTitle>Agregar Nuevo Activo</DialogTitle>
