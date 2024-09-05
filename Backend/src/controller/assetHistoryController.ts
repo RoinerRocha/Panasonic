@@ -3,6 +3,7 @@ import SalesAssetsModel from "../models/salesAssetsModel";
 import AssetRetirementModel from "../models/assetRetirementModel";
 import { Request, Response } from "express";
 import User from "../models/user";
+import path from "path";
 
 /**
  * Método para obtener la lista/historial de la base de datos de ventas, bajas y nuevos activos
@@ -73,5 +74,47 @@ export const getHistoryForTipeUser = async (req: Request, res: Response) => {//f
   } catch (error: any) {
     console.error("Error in getHistoryForTipeUser:", error, " more details of error:",error.message);
     res.status(500).json({ message: "An error occurred while searching history for getHistoryForTipeUser", error: error.message });
+  }
+};
+
+// Método para subir un documento asociado a un NumeroBoleta
+export const uploadDocumentByBoleta = async (req: Request, res: Response) => {
+  const { NumeroBoleta } = req.params; 
+  const file = req.file; 
+
+  if (!NumeroBoleta) {
+    return res.status(400).json({ message: "NumeroBoleta is required" });
+  }
+
+  if (!file) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+
+  try {
+    
+    const assetRetirement = await AssetRetirementModel.findOne({ where: { NumeroBoleta } });
+    const salesAsset = await SalesAssetsModel.findOne({ where: { NumeroBoleta } });
+
+    if (!assetRetirement && !salesAsset) {
+      return res.status(404).json({ message: "No asset found with that NumeroBoleta" });
+    }
+
+    
+    if (assetRetirement) {
+      assetRetirement.DocumentoAprobado = file.filename;
+      await assetRetirement.save();
+      return res.status(200).json({ message: "Document uploaded successfully", data: assetRetirement });
+    }
+
+   
+    if (salesAsset) {
+      salesAsset.DocumentoAprobado = file.filename;
+      await salesAsset.save();
+      return res.status(200).json({ message: "Document uploaded successfully", data: salesAsset });
+    }
+
+  } catch (error: unknown) {
+    console.error("Error uploading document by NumeroBoleta:", (error as Error).message);
+    res.status(500).json({ message: "An error occurred while uploading the document", error: (error as Error).message });
   }
 };
