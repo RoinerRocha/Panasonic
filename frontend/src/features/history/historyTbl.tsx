@@ -14,6 +14,8 @@ import {
   DialogContent,
   Dialog,
   DialogActions,
+  DialogTitle,
+  TextField,
 } from "@mui/material";
 import { assetRetirementModel } from "../../app/models/assetRetirementModel";
 import { assetSaleModel } from "../../app/models/assetSaleModel";
@@ -46,18 +48,24 @@ export default function HistoryTbl({
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [loading, setLoading] = useState(true); // Estado de carga
+  const [selectedBoleta, setSelectedBoleta] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  //para abrir el dialog
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     loadHistory();
   }, []);
 
-  //para abrir el dialog
-  const [open, setOpen] = useState(false);
-  const handleClickOpen = () => {
+  const handleClickOpen = (NumeroBoleta: string) => {
+    setSelectedBoleta(NumeroBoleta);
     setOpen(true);
   };
+
   const handleClose = () => {
     setOpen(false);
+    setSelectedBoleta(null);
+    setSelectedFile(null);
   };
 
   const loadHistory = async () => {
@@ -72,6 +80,29 @@ export default function HistoryTbl({
       toast.error("Error al cargar el historial de activos");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedBoleta || !selectedFile) return;
+
+    const formData = new FormData();
+    formData.append("DocumentoAprobado", selectedFile);
+
+    try {
+      await api.history.uploadDocumentByBoleta(selectedBoleta, formData);
+      toast.success("Documento subido exitosamente");
+      handleClose();
+      loadHistory();
+    } catch (error) {
+      console.error("Error al subir el documento:", error);
+      toast.error("Error al subir el documento");
     }
   };
 
@@ -173,21 +204,29 @@ export default function HistoryTbl({
                           profile as assetRetirementModel | assetSaleModel
                         ) === "Pendiente" ? (
                           <>
-                            <Button
+                             <Button
                               variant="contained"
                               color="primary"
-                              onClick={handleClickOpen}//falta terminalo, creo que seria mejor mostar el boton de agregar el doc directamente a la base de datos
+                              onClick={() => handleClickOpen(profile.NumeroBoleta)}
                             >
                               Pendiente Agregar Doc
                             </Button>
 
                             <Dialog open={open} onClose={handleClose}>
+                              <DialogTitle>Subir Documento Aprobado</DialogTitle>
                               <DialogContent>
-                                <RegisterAsset />
+                                <TextField
+                                  type="file"
+                                  onChange={handleFileChange}
+                                  fullWidth
+                                />
                               </DialogContent>
                               <DialogActions>
                                 <Button onClick={handleClose} color="primary">
-                                  Cerrar
+                                  Cancelar
+                                </Button>
+                                <Button onClick={handleUpload} color="primary">
+                                  Subir
                                 </Button>
                               </DialogActions>
                             </Dialog>

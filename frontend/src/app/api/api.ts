@@ -178,7 +178,10 @@ const access = {
 }
 
 const history ={
-  getHistory: ()=> requests.get("/getHistorial")
+  getHistory: ()=> requests.get("/getHistorial"),
+  uploadDocumentByBoleta: (NumeroBoleta: string, formData: FormData) =>
+    requests.post(`/uploadDocumentByBoleta/${NumeroBoleta}`, formData),
+  
 }
 const api = {
   Account,
