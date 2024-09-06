@@ -1,21 +1,8 @@
 import {
-  Grid,
-  TableContainer,
-  Paper,
-  Table,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableBody,
-  TablePagination,
-  CircularProgress,
-  Typography,
-  Button,
-  DialogContent,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  TextField,
+  Grid, TableContainer, Paper, Table, TableCell, TableHead, TableRow, TableBody,
+  TablePagination, CircularProgress, Typography, Button, DialogContent, Dialog,
+  DialogActions, DialogTitle, TextField, FormControl, InputLabel, Select, MenuItem,
+  FormHelperText, SelectChangeEvent
 } from "@mui/material";
 import { assetRetirementModel } from "../../app/models/assetRetirementModel";
 import { assetSaleModel } from "../../app/models/assetSaleModel";
@@ -50,12 +37,14 @@ export default function HistoryTbl({
   const [loading, setLoading] = useState(true); // Estado de carga
   const [selectedBoleta, setSelectedBoleta] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [filterLetter, setFilterLetter] = useState<string>("Mostrar todo");
+  const [data, setData] = useState<(newAssetModels | assetRetirementModel | assetSaleModel)[]>([]);
   //para abrir el dialog
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    loadHistory();
-  }, []);
+    loadHistory(filterLetter);
+  }, [filterLetter]);
 
   const handleClickOpen = (NumeroBoleta: string) => {
     setSelectedBoleta(NumeroBoleta);
@@ -68,14 +57,21 @@ export default function HistoryTbl({
     setSelectedFile(null);
   };
 
-  const loadHistory = async () => {
+  const loadHistory = async (filter: string) => {
     setLoading(true);
     try {
-      const response = await api.history.getHistory();
-      console.log("Historial de activos cargado:", response.data);
-      setNewAssetModels(response.data.newAssets || []);
-      setAssetSaleModels(response.data.assetSales || []);
-      setAssetRetirementModels(response.data.assetRetirements || []);
+      let response;
+      if (filter === "Mostrar todo") {
+        response = await api.history.getHistory();
+      } else {
+        response = await api.history.searchHistoryByNumeroBoleta(filter);
+      }
+      console.log("Datos cargados:", response.data); // Verifica la estructura de los datos
+      setData([
+        ...(response.data.newAssets || []),
+        ...(response.data.assetSales || []),
+        ...(response.data.assetRetirements || [])
+      ]);
     } catch (error) {
       console.error("Error al cargar el historial de activos:", error);
       toast.error("Error al cargar el historial de activos");
@@ -100,7 +96,7 @@ export default function HistoryTbl({
       await api.history.uploadDocumentByBoleta(selectedBoleta, formData);
       toast.success("Documento subido exitosamente");
       handleClose();
-      loadHistory();
+      loadHistory(filterLetter);
     } catch (error) {
       console.error("Error al subir el documento:", error);
       toast.error("Error al subir el documento");
@@ -136,10 +132,16 @@ export default function HistoryTbl({
     return profile.DocumentoAprobado ? "Aprobado" : "Pendiente";
   };
 
-  const paginatedProfiles = uniqueProfiles.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
+  
+
+  const filteredProfiles = filterLetter === "Mostrar todo"
+    ? combinedProfiles
+    : combinedProfiles.filter(profile => profile.NumeroBoleta.startsWith(filterLetter));
+
+    const paginatedProfiles = filteredProfiles.slice(
+      page * rowsPerPage,
+      page * rowsPerPage + rowsPerPage
+    );
 
   return (
     <Grid container spacing={1}>
@@ -150,6 +152,25 @@ export default function HistoryTbl({
         </Grid>
       ) : (
         <Grid item xs={12}>
+          <FormControl fullWidth>
+            <InputLabel id="filter-letter-label">Filtro por Letra</InputLabel>
+            <Select
+              labelId="filter-letter-label"
+              id="filter-letter"
+              value={filterLetter}
+              onChange={(e: SelectChangeEvent<string>) => setFilterLetter(e.target.value)}
+              name="filterLetter"
+              label="Filtro por Letra"
+            >
+              <MenuItem value="Mostrar todo">
+                <em>Mostrar todo</em>
+              </MenuItem>
+              <MenuItem value="S">S</MenuItem>
+              <MenuItem value="C">C</MenuItem>
+              <MenuItem value="B">B</MenuItem>
+            </Select>
+            <FormHelperText>Seleccione una letra para filtrar los activos</FormHelperText>
+          </FormControl>
           <TableContainer component={Paper}>
             <Table
               sx={{ minWidth: 650 }}
@@ -261,7 +282,7 @@ export default function HistoryTbl({
           <TablePagination
             rowsPerPageOptions={[5, 10, 15]}
             component="div"
-            count={uniqueProfiles.length}
+            count={filteredProfiles.length} // Cambia el conteo a la cantidad filtrada
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handlePageChange}
