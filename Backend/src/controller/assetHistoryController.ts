@@ -4,6 +4,7 @@ import AssetRetirementModel from "../models/assetRetirementModel";
 import { Request, Response } from "express";
 import User from "../models/user";
 import path from "path";
+import { Op } from "sequelize";
 
 /**
  * Método para obtener la lista/historial de la base de datos de ventas, bajas y nuevos activos
@@ -116,5 +117,38 @@ export const uploadDocumentByBoleta = async (req: Request, res: Response) => {
   } catch (error: unknown) {
     console.error("Error uploading document by NumeroBoleta:", (error as Error).message);
     res.status(500).json({ message: "An error occurred while uploading the document", error: (error as Error).message });
+  }
+};
+
+export const searchHistoryByNumeroBoleta = async (req: Request, res: Response) => {
+  const { NumeroBoleta } = req.params;
+
+  if (!NumeroBoleta) {
+    return res.status(400).json({ message: "NumeroBoleta is required" });
+  }
+
+  try {
+    const newAssets = await NewAssetModel.findAll({
+      where: { NumeroBoleta: { [Op.like]: `%${NumeroBoleta}%` } }
+    });
+
+    const salesAssets = await SalesAssetsModel.findAll({
+      where: { NumeroBoleta: { [Op.like]: `%${NumeroBoleta}%` } }
+    });
+
+    const assetRetirements = await AssetRetirementModel.findAll({
+      where: { NumeroBoleta: { [Op.like]: `%${NumeroBoleta}%` } }
+    });
+
+    const history = [...newAssets, ...salesAssets, ...assetRetirements];
+
+    if (history.length === 0) {
+      return res.status(404).json({ message: "No history found for the provided NumeroBoleta fragment" });
+    }
+
+    res.status(200).json({ message: "Search by NumeroBoleta fragment successful", data: history });
+  } catch (error: any) {
+    console.error("Error searching history by NumeroBoleta:", error);
+    res.status(500).json({ message: "An error occurred while searching history", error: error.message });
   }
 };
