@@ -72,6 +72,7 @@ export default function HistoryTbl({
     setLoading(true);
     try {
       const response = await api.history.getHistory();
+      console.log("Historial de activos cargado:", response.data);
       setNewAssetModels(response.data.newAssets || []);
       setAssetSaleModels(response.data.assetSales || []);
       setAssetRetirementModels(response.data.assetRetirements || []);
@@ -187,14 +188,12 @@ export default function HistoryTbl({
                     </TableCell>
                     <TableCell align="center">{profile.NumeroBoleta}</TableCell>
                     <TableCell align="center">
-                      {"NumeroPlaca" in profile
+                      {profile.hasOwnProperty("NumeroPlaca")
                         ? (profile as newAssetModels).NumeroPlaca
-                        : "N/A" || "PlacaActivo" in profile
-                        ? (profile as assetRetirementModel).PlacaActivo
-                        : "N/A" || "PlacaActivo" in profile
-                        ? (profile as assetSaleModel).PlacaActivo
-                        : "N/A"}{" "}
-                    </TableCell>{" "}
+                        : profile.hasOwnProperty("PlacaActivo")
+                        ? (profile as assetRetirementModel | assetSaleModel).PlacaActivo
+                        : "N/A"}
+                    </TableCell>
                     {/*revisar, ya que sale prueba en vez de numPlaca*/}
                     <TableCell align="center">{profile.Usuario}</TableCell>
                     <TableCell align="center">{profile.Descripcion}</TableCell>
