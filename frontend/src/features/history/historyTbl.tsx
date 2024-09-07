@@ -43,8 +43,9 @@ export default function HistoryTbl({
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    setPage(0);
     loadHistory(filterLetter);
-  }, [filterLetter]);
+  }, [filterLetter, open]);
 
   const handleClickOpen = (NumeroBoleta: string) => {
     setSelectedBoleta(NumeroBoleta);
@@ -85,6 +86,7 @@ export default function HistoryTbl({
       setSelectedFile(event.target.files[0]);
     }
   };
+  
 
   const handleUpload = async () => {
     if (!selectedBoleta || !selectedFile) return;
@@ -105,9 +107,14 @@ export default function HistoryTbl({
 
   const handlePageChange = (event: unknown, newPage: number) =>
     setPage(newPage);
+
+
   const handleRowsPerPageChange = (
     event: React.ChangeEvent<HTMLInputElement>
-  ) => setRowsPerPage(parseInt(event.target.value, 10));
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);  // Resetear la página al cambiar la cantidad de filas por página
+  };
 
   const combinedProfiles = [
     ...newAssetModels,
@@ -135,13 +142,13 @@ export default function HistoryTbl({
   
 
   const filteredProfiles = filterLetter === "Mostrar todo"
-    ? combinedProfiles
-    : combinedProfiles.filter(profile => profile.NumeroBoleta.startsWith(filterLetter));
+  ? uniqueProfiles
+  : uniqueProfiles.filter(profile => profile.NumeroBoleta.startsWith(filterLetter));
 
-    const paginatedProfiles = filteredProfiles.slice(
-      page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage
-    );
+  const paginatedProfiles = filteredProfiles.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   return (
     <Grid container spacing={1}>
