@@ -5,7 +5,8 @@ import { Request, Response } from "express";
 import User from "../models/user";
 import path from "path";
 import { Op } from "sequelize";
-
+import { unlink } from "fs/promises";
+import ExcelJS from "exceljs";
 /**
  * Método para obtener la lista/historial de la base de datos de ventas, bajas y nuevos activos
  * @param req 
@@ -150,5 +151,85 @@ export const searchHistoryByNumeroBoleta = async (req: Request, res: Response) =
   } catch (error: any) {
     console.error("Error searching history by NumeroBoleta:", error);
     res.status(500).json({ message: "An error occurred while searching history", error: error.message });
+  }
+};
+
+
+
+export const generateExcelFileByBoleta = async (req: Request, res: Response) => {
+  const { NumeroBoleta } = req.params; 
+  const boletaList = NumeroBoleta.split(","); 
+
+  try {
+    const assetRetirements = await AssetRetirementModel.findAll({
+      where: {
+        NumeroBoleta: {
+          [Op.in]: boletaList
+        }
+      }
+    });
+
+    const salesAssets = await SalesAssetsModel.findAll({
+      where: {
+        NumeroBoleta: {
+          [Op.in]: boletaList
+        }
+      }
+    });
+
+    if (assetRetirements.length === 0 && salesAssets.length === 0) {
+      return res.status(404).json({ message: "No se encontro el NumeroBoleta" });
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Asset Information");
+
+    worksheet.columns = [
+      { header: "Placa", key: "placa", width: 30 },
+      { header: "Descripción", key: "description", width: 30 },
+      { header: "Numero de boleta", key: "ballotNumber", width: 30 },
+      { header: "Destino final", key: "destination", width: 30 },
+      { header: "Usuario", key: "user", width: 30 },
+      { header: "Monto Ventas", key: "amount", width: 30 },
+    ];
+
+    // Preparar los datos y agregarlos a la hoja de Excel
+    assetRetirements.forEach((assetRetirement) => {
+      worksheet.addRow({
+        placa: assetRetirement.PlacaActivo,
+        description: assetRetirement.Descripcion,
+        ballotNumber: assetRetirement.NumeroBoleta,
+        destination: assetRetirement.DestinoFinal,
+        user: assetRetirement.Usuario,
+      });
+    });
+
+    salesAssets.forEach((salesAsset) => {
+      worksheet.addRow({
+        placa: salesAsset.PlacaActivo,
+        description: salesAsset.Descripcion,
+        ballotNumber: salesAsset.NumeroBoleta,
+        user: salesAsset.Usuario,
+        amount: salesAsset.MontoVentas,
+      });
+    });
+
+    const filePath = `./uploads/Asset_${NumeroBoleta}.xlsx`;
+    await workbook.xlsx.writeFile(filePath);
+
+    res.download(filePath, `Asset_${NumeroBoleta}.xlsx`, async (err) => {
+      if (err) {
+        console.error("Error downloading file:", err);
+        return res.status(500).json({ message: "Error downloading file" });
+      }
+
+      try {
+        await unlink(filePath);
+      } catch (err) {
+        console.error("Error deleting file:", err);
+      }
+    });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 };

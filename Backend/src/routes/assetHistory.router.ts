@@ -5,6 +5,7 @@ import {
     getHistoryForTipeUser,
     uploadDocumentByBoleta,
     searchHistoryByNumeroBoleta,
+    generateExcelFileByBoleta
 } from "../controller/assetHistoryController"
 
 import { uploadAssetRetirement } from "../Middleware/multerConfigAssetRetirement";
@@ -21,6 +22,7 @@ router.get("/", (req, res) => {
   router.get("/searchHistoryByUserName/:usuario", searchHistoryByUserName);
   router.get("/getHistoryForTipeUser/", getHistoryForTipeUser);
   router.get("/searchHistoryByNumeroBoleta/:NumeroBoleta", searchHistoryByNumeroBoleta);
+  router.get("/generateExcelByBoleta/:NumeroBoleta", generateExcelFileByBoleta);
 
   router.post(
     "/uploadDocumentByBoleta/:NumeroBoleta",
