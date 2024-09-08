@@ -144,7 +144,7 @@ async function getLastConsecutive(letra: string): Promise<number> {
   const handleFormSubmit = (data: FieldValues) => {
     // Ajustar datos antes de enviar al backend
     const formData = new FormData();
-    formData.append("PlacaActivo", newAssetSale.Descripcion);
+    formData.append("PlacaActivo", newAssetSale.PlacaActivo);
     if (newAssetSale.DocumentoAprobado) {
       formData.append("DocumentoAprobado", newAssetSale.DocumentoAprobado);
     }
@@ -191,7 +191,7 @@ async function getLastConsecutive(letra: string): Promise<number> {
                   labelId="placa-activo-label"
                   id="placa-activo"
                   name="PlacaActivo"
-                  value={newAssetSale.PlacaActivo.toString() || ""}
+                  value={newAssetSale.PlacaActivo}
                   onChange={handleSelectChange}
                   label="Seleccionar Placa de Activo"
                 >

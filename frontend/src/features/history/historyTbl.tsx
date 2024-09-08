@@ -10,6 +10,7 @@ import { newAssetModels } from "../../app/models/newAssetModels";
 import { useState, useEffect } from "react";
 import api from "../../app/api/api";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 import RegisterAsset from "../assetRetirement/assetRetirementFrm";
 
@@ -46,6 +47,8 @@ export default function HistoryTbl({
     setPage(0);
     loadHistory(filterLetter);
   }, [filterLetter, open]);
+
+  const navigate = useNavigate();
 
   const handleClickOpen = (NumeroBoleta: string) => {
     setSelectedBoleta(NumeroBoleta);
@@ -99,6 +102,7 @@ export default function HistoryTbl({
       toast.success("Documento subido exitosamente");
       handleClose();
       loadHistory(filterLetter);
+      navigate('/');
     } catch (error) {
       console.error("Error al subir el documento:", error);
       toast.error("Error al subir el documento");
