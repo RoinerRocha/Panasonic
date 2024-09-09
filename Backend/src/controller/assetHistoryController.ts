@@ -178,7 +178,7 @@ export const generateExcelFileByBoleta = async (req: Request, res: Response) => 
     });
 
     if (assetRetirements.length === 0 && salesAssets.length === 0) {
-      return res.status(404).json({ message: "No se encontro el NumeroBoleta" });
+      return res.status(404).json({ message: "No se encontró el NumeroBoleta" });
     }
 
     const workbook = new ExcelJS.Workbook();
@@ -188,48 +188,51 @@ export const generateExcelFileByBoleta = async (req: Request, res: Response) => 
       { header: "Placa", key: "placa", width: 30 },
       { header: "Descripción", key: "description", width: 30 },
       { header: "Numero de boleta", key: "ballotNumber", width: 30 },
-      { header: "Destino final", key: "destination", width: 30 },
+      { header: "Estado de Aprobación", key: "approvalStatus", width: 30 },
       { header: "Usuario", key: "user", width: 30 },
+      { header: "Fecha", key: "date", width: 20 },
+      { header: "Destino final", key: "destination", width: 30 },
       { header: "Monto Ventas", key: "amount", width: 30 },
+     
     ];
+
+    const currentDate = new Date().toLocaleDateString(); // Obtener la fecha actual en formato corto
 
     // Preparar los datos y agregarlos a la hoja de Excel
     assetRetirements.forEach((assetRetirement) => {
       worksheet.addRow({
-        placa: assetRetirement.PlacaActivo,
-        description: assetRetirement.Descripcion,
-        ballotNumber: assetRetirement.NumeroBoleta,
-        destination: assetRetirement.DestinoFinal,
-        user: assetRetirement.Usuario,
+        placa: assetRetirement.PlacaActivo || 'N/A',
+        description: assetRetirement.Descripcion || 'N/A',
+        ballotNumber: assetRetirement.NumeroBoleta || 'N/A',
+        destination: assetRetirement.DestinoFinal || 'N/A',
+        user: assetRetirement.Usuario || 'N/A',
+        amount: 'N/A',
+        date: currentDate,
+        approvalStatus: assetRetirement.DocumentoAprobado ? "Con Aprobacion" : "Sin Aprobacion"
       });
     });
 
     salesAssets.forEach((salesAsset) => {
       worksheet.addRow({
-        placa: salesAsset.PlacaActivo,
-        description: salesAsset.Descripcion,
-        ballotNumber: salesAsset.NumeroBoleta,
-        user: salesAsset.Usuario,
-        amount: salesAsset.MontoVentas,
+        placa: salesAsset.PlacaActivo || 'N/A',
+        description: salesAsset.Descripcion || 'N/A',
+        ballotNumber: salesAsset.NumeroBoleta || 'N/A',
+        destination: 'N/A',
+        user: salesAsset.Usuario || 'N/A',
+        amount: salesAsset.MontoVentas || 'N/A',
+        date: currentDate,
+        approvalStatus: salesAsset.DocumentoAprobado ? "Con Aprobacion" : "Sin Aprobacion"
       });
     });
 
-    const filePath = `./uploads/Asset_${NumeroBoleta}.xlsx`;
-    await workbook.xlsx.writeFile(filePath);
+    // Enviar el archivo como respuesta
+    const fileBuffer = await workbook.xlsx.writeBuffer();
 
-    res.download(filePath, `Asset_${NumeroBoleta}.xlsx`, async (err) => {
-      if (err) {
-        console.error("Error downloading file:", err);
-        return res.status(500).json({ message: "Error downloading file" });
-      }
-
-      try {
-        await unlink(filePath);
-      } catch (err) {
-        console.error("Error deleting file:", err);
-      }
-    });
+    res.setHeader('Content-Disposition', 'attachment; filename=Boletas.xlsx');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.send(fileBuffer);
   } catch (error: any) {
+    console.error("Error al generar el archivo Excel:", error.message);
     res.status(500).json({ message: error.message });
   }
 };

@@ -22,7 +22,7 @@ router.get("/", (req, res) => {
   router.get("/searchHistoryByUserName/:usuario", searchHistoryByUserName);
   router.get("/getHistoryForTipeUser/", getHistoryForTipeUser);
   router.get("/searchHistoryByNumeroBoleta/:NumeroBoleta", searchHistoryByNumeroBoleta);
-  router.get("/generateExcelByBoleta/:NumeroBoleta", generateExcelFileByBoleta);
+  router.get("/generateExcelByBoleta/:NumeroBoleta", generateExcelFileByBoleta); // Añadido
 
   router.post(
     "/uploadDocumentByBoleta/:NumeroBoleta",
