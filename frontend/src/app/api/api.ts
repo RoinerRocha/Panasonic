@@ -183,6 +183,12 @@ const history ={
     requests.post(`/uploadDocumentByBoleta/${NumeroBoleta}`, formData),
   searchHistoryByNumeroBoleta: (NumeroBoleta: string) =>
     requests.get(`/searchHistoryByNumeroBoleta/${NumeroBoleta}`),
+  generateExcelFileByBoletas: async (boletas: string[]) => {
+    const response = await axios.get(`/generateExcelByBoleta/${boletas.join(',')}`, {
+      responseType: 'blob' // Esto asegura que la respuesta sea tratada como un archivo binario
+    });
+    return response.data; // Devuelve el archivo blob
+  },
 }
 const api = {
   Account,

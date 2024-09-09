@@ -531,9 +531,9 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
           color="success"
           sx={{ margin: "10px" }}
           onClick={(event) => {
-              event.stopPropagation();
-              generateExcelForAll(); 
-          }}
+            event.stopPropagation();
+            generateExcelForAll(); 
+        }}
       >
           Descargar todos los datos en excel
       </Button>

@@ -12,6 +12,9 @@ import api from "../../app/api/api";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
+import * as XLSX from 'xlsx';
+import { saveAs } from "file-saver";
+
 import RegisterAsset from "../assetRetirement/assetRetirementFrm";
 
 interface Props {
@@ -42,6 +45,7 @@ export default function HistoryTbl({
   const [data, setData] = useState<(newAssetModels | assetRetirementModel | assetSaleModel)[]>([]);
   //para abrir el dialog
   const [open, setOpen] = useState(false);
+  
 
   useEffect(() => {
     setPage(0);
@@ -153,6 +157,27 @@ export default function HistoryTbl({
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
+
+  // Función para descargar el archivo Excel
+  
+const downloadExcelFile = async (boletas: string[]) => {
+  try {
+    // Usa la función correcta para generar el archivo
+    const fileBlob = await api.history.generateExcelFileByBoletas(boletas);
+    const url = window.URL.createObjectURL(new Blob([fileBlob]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'Boletas.xlsx'); // El nombre del archivo que se descargará
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (error) {
+    console.error('Error downloading the Excel file:', error);
+    toast.error("Error al descargar el Excel(Los datos con las boletas C deben descargarse en la tabla de activos)");
+  }
+};
+
+  
 
   return (
     <Grid container spacing={1}>
@@ -289,16 +314,30 @@ export default function HistoryTbl({
                 ))}
               </TableBody>
             </Table>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 15]}
+              component="div"
+              count={filteredProfiles.length} // Cambia el conteo a la cantidad filtrada
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handlePageChange}
+              onRowsPerPageChange={handleRowsPerPageChange}
+            />
           </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 15]}
-            component="div"
-            count={filteredProfiles.length} // Cambia el conteo a la cantidad filtrada
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handlePageChange}
-            onRowsPerPageChange={handleRowsPerPageChange}
-          />
+          
+          <Button
+            variant="contained"
+            color="success"
+            sx={{ margin: "10px" }}
+            onClick={(event) => {
+              event.stopPropagation();
+              // Obtén las boletas de los perfiles paginados
+              const boletas = paginatedProfiles.map(profile => profile.NumeroBoleta).filter(boleta => boleta !== undefined);
+              downloadExcelFile(boletas);
+            }}
+          >
+            Descargar datos visibles en excel
+          </Button>
         </Grid>
       )}
     </Grid>
