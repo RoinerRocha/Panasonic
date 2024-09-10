@@ -1,6 +1,6 @@
 {
     "//": "header idioma",
-    "select_language": "Select language",
+    "select_language": "Language",
     "english": "English",
     "spanish": "Spanish",
     "titulo": "Panasonic-Fixed assets system",
@@ -26,6 +26,30 @@
     "//": "idioma signMenu",
     "logout": "Logout",
     "signMenu-registro": "Register",
+
+    "//": "historial idioma",
+    "cargar-datos":"Loading Data...",
+    "filtro-titulo":"Filter by letter",
+    "texto-secundario":"Select an option",
+    "mostrar-todo":"Show All",
+    "NumeroBoleta":"Ballot No.",
+    "NumeroPlaca":"Plate No.",
+    "Usuario":"User",
+    "Descripcion":"Description",
+    "Aprobacion":"Approval document",
+    "Tipo":"Type",
+    "Zona":"Zone",
+    "Estado":"State",
+    "Boton-Historial":"Download visible data in excel",
+    "Boton-Documento":"Add approval document",
+
+    "Titulo-documento":"Upload Approved Document",
+    "Titulo-documento-seleccionar":"Select document",
+    "Titulo-documento-seleccionado":"No Document selected",
+    "Boton-documento-cancelar":"Cancel",
+    "Boton-documento-agregar":"Upload",
+
+    "Tables-rows":"Rows per page:",
 
     "//": "idiomas inicio sesion",
     "titulo-sesion": "Login",

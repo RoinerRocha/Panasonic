@@ -1,6 +1,6 @@
 {
     "//": "header idioma",
-    "select_language": "Seleccionar Idioma",
+    "select_language": "Idioma",
     "english": "Inglés",
     "spanish": "Español",
     "titulo": "Panasonic-Sistema de activos fijos",
@@ -57,6 +57,30 @@
     "perfil-registro": "Perfil asignado",
     "perfil-registro-error": "Se requiere el perfil",
     "boton-registro": "Registrar usuario",
+
+    "//": "historial idioma",
+    "cargar-datos":"Cargando Datos..",
+    "filtro-titulo":"Filtrar por letra",
+    "mostrar-todo":"Mostrar Todo",
+    "texto-secundario":"Seleccione una opcion",
+    "NumeroBoleta":"N° Boleta",
+    "NumeroPlaca":"N° Placa",
+    "Usuario":"Usuario",
+    "Descripcion":"Descripcion",
+    "Aprobacion":"Documento de aprobacion",
+    "Tipo":"Tipo",
+    "Zona":"Zona",
+    "Estado":"Estado",
+    "Boton-Historial":"Descargar datos visibles en excel",
+    "Boton-Documento":"Agregar documento de aprobacion",
+
+    "Titulo-documento":"Subir Documento Aprobado",
+    "Titulo-documento-seleccionar":"Seleccionar documento",
+    "Titulo-documento-seleccionado":"Ningun Documento seleccionado",
+    "Boton-documento-cancelar":"Cancelar",
+    "Boton-documento-agregar":"Subir",
+
+    "Tables-rows":"Filas por página:",
 
     "//": "tabla usuarios idioma",
     "nombre-tabla-usuarios": "Nombre",

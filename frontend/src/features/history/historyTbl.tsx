@@ -11,6 +11,9 @@ import { useState, useEffect } from "react";
 import api from "../../app/api/api";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../store/configureStore";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from '../../app/context/LanguageContext';
 
 import * as XLSX from 'xlsx';
 import { saveAs } from "file-saver";
@@ -36,21 +39,26 @@ export default function HistoryTbl({
   assetSaleModels,
   setAssetSaleModels,
 }: Props) {
+  const { t } = useTranslation();
+  const { changeLanguage, language } = useLanguage();
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [loading, setLoading] = useState(true); // Estado de carga
   const [selectedBoleta, setSelectedBoleta] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [filterLetter, setFilterLetter] = useState<string>("Mostrar todo");
+  const [filterLetter, setFilterLetter] = useState<string>(t('mostrar-todo'));
   const [data, setData] = useState<(newAssetModels | assetRetirementModel | assetSaleModel)[]>([]);
   //para abrir el dialog
   const [open, setOpen] = useState(false);
+  const userProfile = useAppSelector((state) => state.account.user?.perfil_asignado);
+  const userName = useAppSelector((state) => state.account.user?.nombre_usuario);
   
 
   useEffect(() => {
     setPage(0);
     loadHistory(filterLetter);
-  }, [filterLetter, open]);
+  }, [filterLetter]);
 
   const navigate = useNavigate();
 
@@ -65,21 +73,32 @@ export default function HistoryTbl({
     setSelectedFile(null);
   };
 
+  // antes del cambio
+
   const loadHistory = async (filter: string) => {
     setLoading(true);
     try {
       let response;
-      if (filter === "Mostrar todo") {
+      
+      if (filter === t('mostrar-todo')) {
         response = await api.history.getHistory();
       } else {
         response = await api.history.searchHistoryByNumeroBoleta(filter);
       }
-      console.log("Datos cargados:", response.data); // Verifica la estructura de los datos
-      setData([
+      
+      // Combinar los datos
+      let allData = [
         ...(response.data.newAssets || []),
         ...(response.data.assetSales || []),
         ...(response.data.assetRetirements || [])
-      ]);
+      ];
+  
+      // Aplicar el filtro de usuario solo si el perfil no es 'Maestro'
+      if (userProfile !== 'Maestro') {
+        allData = allData.filter(profile => profile.Usuario === userName);
+      }
+    
+      setData(allData);
     } catch (error) {
       console.error("Error al cargar el historial de activos:", error);
       toast.error("Error al cargar el historial de activos");
@@ -87,6 +106,7 @@ export default function HistoryTbl({
       setLoading(false);
     }
   };
+  
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -131,14 +151,9 @@ export default function HistoryTbl({
   ];
 
   // Eliminación de duplicados basados en el 'id'
-  const uniqueProfiles = combinedProfiles.reduce((acc, current) => {
-    const x = acc.find((item) => item.id === current.id);
-    if (!x) {
-      return acc.concat([current]);
-    } else {
-      return acc;
-    }
-  }, [] as (newAssetModels | assetRetirementModel | assetSaleModel)[]);
+  const uniqueProfiles = combinedProfiles.filter(
+    (value, index, self) => index === self.findIndex((t) => t.id === value.id)
+  );
 
   // Método para verificar el estado de DocumentoAprobado
   const verificarDocumentoAprobado = (
@@ -149,11 +164,16 @@ export default function HistoryTbl({
 
   
 
-  const filteredProfiles = filterLetter === "Mostrar todo"
+  const filteredProfiles = filterLetter === t('mostrar-todo')
   ? uniqueProfiles
   : uniqueProfiles.filter(profile => profile.NumeroBoleta.startsWith(filterLetter));
 
-  const paginatedProfiles = filteredProfiles.slice(
+  const finalProfiles = userProfile === 'Maestro' 
+  ? filteredProfiles // Si es Maestro, no aplicamos ningún filtro adicional
+  : filteredProfiles.filter(profile => profile.Usuario === userName);
+
+
+  const paginatedProfiles = finalProfiles.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
@@ -177,7 +197,7 @@ const downloadExcelFile = async (boletas: string[]) => {
   }
 };
 
-  
+
 
   return (
     <Grid container spacing={1}>
@@ -189,7 +209,7 @@ const downloadExcelFile = async (boletas: string[]) => {
       ) : (
         <Grid item xs={12}>
           <FormControl fullWidth>
-            <InputLabel id="filter-letter-label">Filtro por Letra</InputLabel>
+            <InputLabel id="filter-letter-label">{t('filtro-titulo')}</InputLabel>
             <Select
               labelId="filter-letter-label"
               id="filter-letter"
@@ -198,14 +218,14 @@ const downloadExcelFile = async (boletas: string[]) => {
               name="filterLetter"
               label="Filtro por Letra"
             >
-              <MenuItem value="Mostrar todo">
-                <em>Mostrar todo</em>
+              <MenuItem value={t('mostrar-todo')}>
+                <em>{t('mostrar-todo')}</em>
               </MenuItem>
               <MenuItem value="S">S</MenuItem>
               <MenuItem value="C">C</MenuItem>
               <MenuItem value="B">B</MenuItem>
             </Select>
-            <FormHelperText>Seleccione una letra para filtrar los activos</FormHelperText>
+            <FormHelperText>{t('texto-secundario')}</FormHelperText>
           </FormControl>
           <TableContainer component={Paper}>
             <Table
@@ -217,15 +237,14 @@ const downloadExcelFile = async (boletas: string[]) => {
                 <TableRow>
                   {[
                     "N°",
-                    "N° BOLETA",
-                    "N° PLACA",
-                    "USUARIO",
-                    "DESCRIPCIÓN",
-                    "Estado Documento Aprobación",
-                    "ID",
-                    "TIPO",
-                    "ZONA",
-                    "ESTADO",
+                    t('NumeroBoleta'),
+                    t('NumeroPlaca'),
+                    t('Usuario'),
+                    t('Descripcion'),
+                    t('Aprobacion'),
+                    t('Tipo'),
+                    t('Zona'),
+                    t('Estado'),
                   ].map((header) => (
                     <TableCell
                       key={header}
@@ -265,11 +284,11 @@ const downloadExcelFile = async (boletas: string[]) => {
                               color="primary"
                               onClick={() => handleClickOpen(profile.NumeroBoleta)}
                             >
-                              Pendiente Agregar Doc
+                              {t('Boton-Documento')}
                             </Button>
 
                             <Dialog open={open} onClose={handleClose}>
-                              <DialogTitle>Subir Documento Aprobado</DialogTitle>
+                              <DialogTitle>{t('Titulo-documento')}</DialogTitle>
                               <DialogContent>
                                 <TextField
                                   type="file"
@@ -279,10 +298,10 @@ const downloadExcelFile = async (boletas: string[]) => {
                               </DialogContent>
                               <DialogActions>
                                 <Button onClick={handleClose} color="primary">
-                                  Cancelar
+                                  {t('Boton-documento-cancelar')}
                                 </Button>
                                 <Button onClick={handleUpload} color="primary">
-                                  Subir
+                                  {t('Boton-documento-agregar')}
                                 </Button>
                               </DialogActions>
                             </Dialog>
@@ -294,7 +313,6 @@ const downloadExcelFile = async (boletas: string[]) => {
                         "N/A"
                       )}
                     </TableCell>
-                    <TableCell align="center">{profile.id}</TableCell>
                     <TableCell align="center">
                       {"Tipo" in profile
                         ? (profile as newAssetModels).Tipo
@@ -336,7 +354,7 @@ const downloadExcelFile = async (boletas: string[]) => {
               downloadExcelFile(boletas);
             }}
           >
-            Descargar datos visibles en excel
+            {t('Boton-Historial')}
           </Button>
         </Grid>
       )}

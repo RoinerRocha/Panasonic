@@ -14,6 +14,10 @@ import {
   Toolbar,
   Typography,
   Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import { useAppSelector } from "../../store/configureStore";
@@ -138,6 +142,7 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
     ? midLinks
     : midLinks.filter(link =>
         link.title === t('menu-ingreso-activos') ||
+        link.title === t('menu-historial') ||
         link.title === t('menu-venta-activos') ||
         link.title === t('menu-reportes') ||
         link.title === t('menu-lista-activos') ||
@@ -169,10 +174,51 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
               {t('titulo')}
             </Typography>
             <Switch checked={darkMode} onChange={handleThemeChange} />
-            <select id="language-select" value={language} onChange={handleChangeLanguage}>
-              <option value="en">{t('english')}</option>
-              <option value="es">{t('spanish')}</option>
-            </select>
+            <FormControl
+              variant="outlined"
+              size="small"
+              sx={{
+                minWidth: 100,
+                ml: 2,
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor: "transparent", // Sin fondo
+                  color: (theme) => theme.palette.text.secondary, // Texto en color text.secondary
+                  "& fieldset": {
+                    borderColor: "white", // Borde blanco
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "white", // Borde blanco al pasar el ratón
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "white", // Borde blanco cuando está enfocado
+                  },
+                },
+                "& .MuiSvgIcon-root": {
+                  color: (theme) => theme.palette.text.secondary, // Ícono en color text.secondary
+                },
+              }}
+            >
+              <InputLabel
+                id="language-select-label"
+                sx={{ color: (theme) => theme.palette.text.secondary }} // Etiqueta en color text.secondary
+              >
+                {t('select_language')}
+              </InputLabel>
+              <Select
+                labelId="language-select-label"
+                id="language-select"
+                value={language}
+                onChange={(event) => changeLanguage(event.target.value)}
+                label={t('language')}
+              >
+                <MenuItem value="en" sx={{ color: (theme) => theme.palette.text.secondary }}>
+                  {t('english')}
+                </MenuItem>
+                <MenuItem value="es" sx={{ color: (theme) => theme.palette.text.secondary }}>
+                  {t('spanish')}
+                </MenuItem>
+              </Select>
+            </FormControl>
           </Box>
 
           <Box display="flex" alignItems="center">
