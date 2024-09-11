@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { router } from "../router/Routes";
 import { config } from "process";
 import { store } from "../../store/configureStore";
+import { NumericLiteral } from "typescript";
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -142,6 +143,9 @@ const newAsset = {
   generatePDFFile: (id: number) => requests.download(`/generatePDF/${id}`),
   generateExcelFile: (id: number) => requests.download(`/generateExcelFile/${id}`),
   generateExcelFileForMultipleAssets: (ids: number[]) => requests.download(`/generateExcelFileMultipleAssets?ids=${ids.join(',')}`),
+
+  getAssetPositions:(zonaNombre: string) => requests.get(`getAssetPositions/${zonaNombre}`), //devuelve las posiciones de los activo poo zona
+  saveAssetPositions:(values: any) => requests.post("/saveAssetPositions", values),//posicion del activo en el mapa
 };
 
 const assetRetirement = {

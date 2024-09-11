@@ -14,6 +14,7 @@ import {
   Grid,
   Box,
   CircularProgress,
+  Button,
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { Zona } from '../../app/models/zone';
@@ -47,9 +48,9 @@ export default function MapDetails() {
 
         const assetsResponse = await api.newAsset.searchAssetsByZona(response.data.nombreZona);
         setAssets(assetsResponse.data);
-        console.log("Activos obtenidos por zona:", response.data);
+      //  console.log("Activos obtenidos por zona:", response.data);
       } catch (error) {
-        console.error('Error al cargar los datos:', error);
+       // console.error('Error al cargar los datos:', error);
       } finally {
         setLoading(false);
       }
@@ -66,8 +67,8 @@ export default function MapDetails() {
           const mapaZona = prevMap.get(zona.id) || new Map();
           const imageUrl = `http://localhost:5000/${zona.ImagenMapa}`;
 
-          console.log("URLMAP: "+imageUrl);
-          console.log("mapaZona: "+mapaZona.get('ImagenMapa'));
+         // console.log("URLMAP: "+imageUrl);
+         // console.log("mapaZona: "+mapaZona.get('ImagenMapa'));
 
           mapaZona.set('ImagenMapa', imageUrl);
           return new Map(prevMap).set(zona.id, mapaZona);
@@ -95,7 +96,7 @@ export default function MapDetails() {
     );
   }
 
-  const AssetIcon = ({ asset }: { asset: newAssetModels }) => {
+  const AssetIcon = ({ asset, index }: { asset: newAssetModels; index: number }) => {
     const [{ isDragging }, drag] = useDrag(() => ({
       type: 'asset',
       item: { id: asset.id },
@@ -104,26 +105,62 @@ export default function MapDetails() {
       }),
     }));
     
-    return (
-      <div
-        ref={drag}
-        style={{
-          position: 'absolute',
-          left: assetPositions[asset.id]?.x || 0,
-          top: assetPositions[asset.id]?.y || 0,
-          opacity: isDragging ? 0.5 : 1,
-          cursor: 'move',
-        }}
-      >   
-        {/* Muestra la imagen del activo  */}
+    
+  return (
+    <div
+      ref={drag}
+      style={{
+        position: 'absolute',
+        left: assetPositions[asset.id]?.x || 0,
+        top: assetPositions[asset.id]?.y || 0,
+        opacity: isDragging ? 0.5 : 1,
+        cursor: 'move',
+        textAlign: 'center',
+      }}
+    >
+      {/* Contenedor de la imagen del activo con número de placa y N° */}
+      <div style={{ position: 'relative', display: 'inline-block' }}>
+        {/* Imagen del activo */}
         <img
-         src={`http://localhost:5000/${asset.Fotografia}`}
-         alt={`Imagen del activo ${asset.NumeroPlaca}`}
-         style={{ width: '50px', height: '50px' }}
+          src={`http://localhost:5000/${asset.Fotografia}`}
+          alt={`Imagen del activo ${asset.NumeroPlaca}`}
+          style={{ width: '50px', height: '50px', display: 'block' }}
         />
+        {/* Número de placa sobre la imagen */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '-20px', // Posición justo debajo de la imagen
+            left: '50%',
+            transform: 'translateX(-50%)',
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            color: 'white',
+            padding: '2px 5px',
+            fontSize: '10px',
+            borderRadius: '3px',
+          }}
+        >
+          {`Placa: ${asset.NumeroPlaca}`}
+        </div>
+        {/* Número de la lista en la esquina superior izquierda */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '0',
+            left: '0',
+            backgroundColor: 'rgba(255, 0, 0, 0.7)',
+            color: 'white',
+            padding: '2px 5px',
+            fontSize: '10px',
+            borderRadius: '3px',
+          }}
+        >
+          {`#${index + 1}`}
+        </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
   type DraggedItem = {
     id: number;
@@ -137,21 +174,30 @@ export default function MapDetails() {
 
     return (
       <div
-        ref={drop}
-        style={{
-          position: 'relative',
-          width: '100%',
-          height: '500px',
-          backgroundImage: zona && imageUrlMap && imageUrlMap.get(zona.id)?.get('ImagenMapa') 
-            ? `url(http://localhost:5000/uploads/Mapas/1725857631333-zona1.png)` : 'http://localhost:5000/uploads/Mapas/1725857631333-zona1.png',  //datos quemados, 
-            //`url(${imageUrlMap.get(zona.id)?.get('ImagenMapa')})`: "none", // Verifica si 'zona' no es null y si la imagen está cargada, esto no me lo esta mostrando 
-          backgroundSize: 'contain',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
+      ref={drop}
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '500px',
+      }}
       >
-        {assets.map((asset) => (
-          <AssetIcon key={asset.id} asset={asset} />
+        {/* Verificar si hay una URL de imagen válida y mostrar la imagen */}
+  {zona && imageUrlMap && imageUrlMap.get(zona.id)?.get('ImagenMapa') && (
+    <img 
+      src={imageUrlMap.get(zona.id)?.get('ImagenMapa') || ''} 
+      alt="Mapa de la Zona" 
+      style={{
+        width: '100%',
+        height: '100%',
+        objectFit: 'contain', 
+        position: 'absolute', 
+        top: 0,
+        left: 0
+      }}
+    />
+  )}
+        {assets.map((asset, index) => (
+           <AssetIcon key={asset.id} asset={asset} index={index} />
         ))}
       </div>
     );
@@ -217,6 +263,15 @@ export default function MapDetails() {
             Mapa de la Zona:
           </Typography>
           <MapDropArea />
+          {/* Botón para guardar las posiciones de los activos */}
+          <Button
+            variant="contained"
+            color="primary"
+           // onClick={saveAssetPositions}
+            style={{ marginTop: '16px' }}
+          >
+            Guardar Posiciones de los Activos
+          </Button>
         </Grid>
       </Grid>
     </DndProvider>
