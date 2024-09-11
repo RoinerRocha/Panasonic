@@ -20,6 +20,8 @@ import { statusAssets } from "../../app/models/statusAsset";
 import { useState, useEffect } from "react";
 import api from "../../app/api/api";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from '../../app/context/LanguageContext';
 
 interface Props {
   statusAssets: statusAssets[];
@@ -65,6 +67,8 @@ export default function StatusAssetList({
   const [newSatatusAsset, setNewStatusAsset] = useState<Partial<statusAssets>>({
     status: "",
   });
+  const { t } = useTranslation();
+  const { changeLanguage, language } = useLanguage();
 
   useEffect(() => {
     // Cargar los Estado Activos al montar el componente
@@ -147,7 +151,7 @@ export default function StatusAssetList({
         color="primary"
         onClick={() => setOpenAddDialog(true)}
       >
-        Agregar Estado de ActivoS
+        {t('EstadoActivos-BotonAgregar')}
       </Button>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -157,13 +161,13 @@ export default function StatusAssetList({
                 align="center"
                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
               >
-                ESTADO
+                {t('EstadoActivos-ColumnaEstado')}
               </TableCell>
               <TableCell
                 align="center"
                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
               >
-                CONFIGURACIÓN
+                {t('EstadoActivos-ConlumnaConfiguracion')}
               </TableCell>
             </TableRow>
           </TableHead>
@@ -178,7 +182,7 @@ export default function StatusAssetList({
                     sx={{ margin: "5px" }}
                     onClick={() => handleEdit(statusAsset)}
                   >
-                    Editar
+                    {t('EstadoActivos-BotonEditar')}
                   </Button>
                   <Button
                     variant="contained"
@@ -186,7 +190,7 @@ export default function StatusAssetList({
                     sx={{ margin: "5px" }}
                     onClick={() => handleDelete(statusAsset.id)}
                   >
-                    Eliminar
+                    {t('EstadoActivos-BotonEliminar')}
                   </Button>
                 </TableCell>
               </TableRow>
@@ -207,13 +211,13 @@ export default function StatusAssetList({
       </TableContainer>
 
       <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
-        <DialogTitle>Editar Estado de Activos</DialogTitle>
+        <DialogTitle>{t('EstadoActivos-tituloEditar')}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Edita el Estado de Activos seleccionado
+            {t('EstadoActivos-SubtituloEditar')}
           </DialogContentText>
           <TextField
-            label="Estado"
+            label={t('EstadoActivos-tituloEstado')}
             value={selectedStatusAsset?.status || null}
             onChange={(e) =>
               setSelectedStatusAsset(
@@ -230,19 +234,19 @@ export default function StatusAssetList({
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenEditDialog(false)}>Cancelar</Button>
-          <Button onClick={handleUpdate}>Actualizar</Button>
+          <Button onClick={() => setOpenEditDialog(false)}>{t('EstadoActivos-botonCancelar')}</Button>
+          <Button onClick={handleUpdate}>{t('EstadoActivos-botonEditar')}</Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-        <DialogTitle>Agregar Estado de Activos</DialogTitle>
+        <DialogTitle>{t('EstadoActivos-TituloAgregar')}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Agrega un Nuevo Estado de Activos
+            {t('EstadoActivos-SubTituloAgregar')}
           </DialogContentText>
           <TextField
-            label="Estado"
+            label={t('EstadoActivos-tituloEstado')}
             value={newSatatusAsset?.status}
             onChange={(e) =>
               setNewStatusAsset({
@@ -255,8 +259,8 @@ export default function StatusAssetList({
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenAddDialog(false)}>Cancelar</Button>
-          <Button onClick={handleAdd}>Agregar</Button>
+          <Button onClick={() => setOpenAddDialog(false)}>{t('EstadoActivos-BotonCancelarEstado')}</Button>
+          <Button onClick={handleAdd}>{t('EstadoActivos-BotonAgregarEstado')}</Button>
         </DialogActions>
       </Dialog>
     </Grid>

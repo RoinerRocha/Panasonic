@@ -21,6 +21,8 @@ import { useState, useEffect } from "react";
 
 import api from "../../app/api/api";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from '../../app/context/LanguageContext';
 
 interface Props {
     accesses: accessModel[];
@@ -40,6 +42,8 @@ export default function AccessList({
         // id: 0,
         Acceso: "",
     });
+    const { t } = useTranslation();
+    const { changeLanguage, language } = useLanguage();
 
     useEffect(() => {
         // Cargar los accesos al montar el componente
@@ -112,7 +116,7 @@ export default function AccessList({
                 color="primary"
                 onClick={() => setOpenAddDialog(true)}
             >
-                Agregar Acceso
+                {t('Control-BotonAgregar')}
             </Button>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -122,13 +126,13 @@ export default function AccessList({
                                 align="center"
                                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
                             >
-                                Permisos de acceso
+                                {t('Control-ColumnaAcceso')}
                             </TableCell>
                             <TableCell
                                 align="center"
                                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
                             >
-                                CONFIGURACIÓN
+                                {t('Control-ColumnaConfiguracion')}
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -143,7 +147,7 @@ export default function AccessList({
                                         sx={{ margin: "5px" }}
                                         onClick={() => handleEdit(access)}
                                     >
-                                        Editar
+                                        {t('Control-BotonEditar')}
                                     </Button>
                                     <Button
                                         variant="contained"
@@ -151,7 +155,7 @@ export default function AccessList({
                                         sx={{ margin: "5px" }}
                                         onClick={() => handleDelete(access.id)}
                                     >
-                                        Eliminar
+                                        {t('Control-BotonEliminar')}
                                     </Button>
                                 </TableCell>
                             </TableRow>      
@@ -172,10 +176,10 @@ export default function AccessList({
             />
 
             <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
-                <DialogTitle>Editar Perfil </DialogTitle>
+                <DialogTitle>{t('ControlEdit-titulo')} </DialogTitle>
                 <DialogContent>
                     <TextField
-                        label="Nuevo nombre de Acceso"
+                        label={t('ControlEdit-Subtitulo')}
                         value={selectedAccess?.Acceso || null}
                         onChange={(e) =>
                         setSelectedAccess(
@@ -192,15 +196,15 @@ export default function AccessList({
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenEditDialog(false)}>Cancelar</Button>
-                    <Button onClick={handleUpdate}>Actualizar</Button>
+                    <Button onClick={() => setOpenEditDialog(false)}>{t('ControlEdit-BotonCancelar')}</Button>
+                    <Button onClick={handleUpdate}>{t('ControlEdit-BotonActualizar')}</Button>
                 </DialogActions>
             </Dialog>
             <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-                <DialogTitle>Agregar Acceso</DialogTitle>
+                <DialogTitle>{t('ControlAgregar-titulo')}</DialogTitle>
                 <DialogContent>
                 <TextField
-                    label="Nuevo Acceso"
+                    label={t('ControlAgregar-Subtitulo')}
                     value={newAccess?.Acceso}
                     onChange={(e) =>
                     setNewAccess({
@@ -213,8 +217,8 @@ export default function AccessList({
                 />
                 </DialogContent>
                 <DialogActions>
-                <Button onClick={() => setOpenAddDialog(false)}>Cancelar</Button>
-                <Button onClick={handleAdd}>Agregar</Button>
+                <Button onClick={() => setOpenAddDialog(false)}>{t('ControlAgregar-BotonCancelar')}</Button>
+                <Button onClick={handleAdd}>{t('ControlAgregar-BotonActualizar')}</Button>
                 </DialogActions>
             </Dialog>
         </Grid>

@@ -299,7 +299,7 @@ export default function ZoneList({ zonas, setZonas }: Props) {
                             <img src={imageUrlMap.get(newZona.id || 0)?.get('ImagenMapa')} alt="ImagenMapa" style={{ width: '100px', height: '100px', objectFit: 'cover' }}/>
                         )}
                         <Button variant="contained" component="label" fullWidth>
-                            {newZona.ImagenMapa? 'Cambiar Imagen de mapa' : 'Subir Imagen de mapa'}
+                            {newZona.ImagenMapa? t('DialogBotonImagen-zona') : t('DialogBotonImagen2-zona') }
                             <VisuallyHiddenInput 
                                  type="file"
                                  name="ImagenMapa"
@@ -313,7 +313,7 @@ export default function ZoneList({ zonas, setZonas }: Props) {
                                  }}
                             />
                         </Button>
-                        {newZona.ImagenMapa && <FormHelperText>Archivo cargado: {newZona.ImagenMapa.name}</FormHelperText>}
+                        {newZona.ImagenMapa && <FormHelperText>{t('DialogImagenTexto-zona')} {newZona.ImagenMapa.name}</FormHelperText>}
                         {imageUrlMap1.get(newZona.ImagenMapa?.name || '') && (
                             <img src={imageUrlMap1.get(newZona.ImagenMapa?.name || '')} alt="ImagenMapa" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
                         )}
@@ -363,14 +363,14 @@ export default function ZoneList({ zonas, setZonas }: Props) {
                     </FormControl>
                     <Grid item xs={12}>
                         <Button variant="contained" component="label" fullWidth>
-                            Subir Imagen de Fotografia
+                                {t('AgregarBotonImagen-zona')}
                             <VisuallyHiddenInput
                             type="file"
                             name="ImagenMapa"
                             onChange={handleFileInputChange}
                             />
                         </Button>
-                        {newZona.ImagenMapa && <FormHelperText>Archivo cargado: {newZona.ImagenMapa.name}</FormHelperText>}
+                        {newZona.ImagenMapa && <FormHelperText>{t('AgregarTituloImagen-zona')} {newZona.ImagenMapa.name}</FormHelperText>}
                     </Grid>
 
                 </DialogContent>
@@ -380,15 +380,15 @@ export default function ZoneList({ zonas, setZonas }: Props) {
                 </DialogActions>
             </Dialog>
             <Dialog  open={openDetailDialog} onClose={() => setOpenDetailDialog(false)}>
-                <DialogTitle>Detalles de la zona</DialogTitle>
+                <DialogTitle>{t('DetallesZona-titulo')}</DialogTitle>
                 <DialogContent>
                     <div>
-                        <p><strong>Numero de zona:</strong> {selectedZona?.numeroZona}</p>
-                        <p><strong>Nombre de la zona:</strong> {selectedZona?.nombreZona}</p>
-                        <p><strong>Responsable de la zona:</strong> {selectedZona?.responsableAreaNom_user}</p>
+                        <p><strong>{t('DetallesZona-Numero')}</strong> {selectedZona?.numeroZona}</p>
+                        <p><strong>{t('DetallesZona-Nombre')}</strong> {selectedZona?.nombreZona}</p>
+                        <p><strong>{t('DetallesZona-Responsable')}</strong> {selectedZona?.responsableAreaNom_user}</p>
                         {imageUrlMap.get(selectedZona?.id || 0)?.get('ImagenMapa') && (
                         <p>
-                            <strong>Mapa:</strong>
+                            <strong>{t('DetallesZona-Mapa')}</strong>
                             <img
                             src={imageUrlMap.get(selectedZona?.id || 0)?.get('ImagenMapa')}
                             alt="Mapa"
@@ -399,7 +399,7 @@ export default function ZoneList({ zonas, setZonas }: Props) {
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenDetailDialog(false)}>Cerrar</Button>
+                    <Button onClick={() => setOpenDetailDialog(false)}>{t('DetallesZona-Boton')}</Button>
                 </DialogActions>
             </Dialog>
         </Grid>
