@@ -1,5 +1,6 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../Services/Postgresql";
+import { float } from "aws-sdk/clients/cloudfront";
 
 class NewAssetModel extends Model {
     public id!: number;
@@ -21,6 +22,8 @@ class NewAssetModel extends Model {
     public NumeroAsiento!: number;
     public NumeroBoleta!: string;
     public Usuario!: string;
+    public posX!: float;  // Coordenada X en el mapa
+    public posY!: float;  // Coordenada Y en el mapa
   
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -107,6 +110,14 @@ try {
         Usuario: {
             type: DataTypes.STRING(50),
             allowNull: false,
+        },
+        posX: {
+          type: DataTypes.FLOAT,
+          allowNull: true,
+        },
+        posY: {
+          type: DataTypes.FLOAT,
+          allowNull: true,
         },
         
     },

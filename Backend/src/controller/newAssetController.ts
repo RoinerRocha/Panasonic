@@ -12,6 +12,7 @@
   import { Document, Packer, Paragraph, TextRun } from "docx";
   import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
   import ExcelJS from "exceljs";
+import NewAccesModel from "../models/accessModel";
   
   interface MulterFiles {
     Fotografia?: Express.Multer.File[];
@@ -619,5 +620,35 @@ export const searchNewAssets = async (req: Request, res: Response) => {
     res.status(200).json({ message: "Search results fetched successfully", data: newAsset });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+// Función para actualizar las posiciones de los activos
+export const saveAssetPositions = async (req: Request, res: Response) => {
+  const { assetPositions } = req.body; // Se Obtiene las posiciones del body
+
+  if (!assetPositions) {
+    return res.status(400).json({ error: 'Las posiciones de los activos son requeridas.' });
+  }
+
+  // Iterar sobre cada activo y actualizar su posición en la base de datos
+  try {
+    const queries = Object.keys(assetPositions).map((assetId) => {
+      const { x, y } = assetPositions[assetId];
+      
+      // Actualizar la posición del activo usando el método `update` de Sequelize
+      return NewAssetModel.update(
+        { posX: x, posY: y },  // Campos a actualizar
+        { where: { id: assetId } }  // Condición de actualización
+      );
+    });
+
+    // Ejecutar todas las actualizaciones en paralelo
+    await Promise.all(queries);
+
+    return res.status(200).json({ message: 'Posiciones actualizadas correctamente.' });
+  } catch (error) {
+    console.error('Error al actualizar las posiciones:', error);
+    return res.status(500).json({ error: 'Error al actualizar las posiciones.' });
   }
 };

@@ -12,6 +12,7 @@ import {
   generateExcelFile,
   generateMultipleExcelFiles,
   searchAssetsByZona,
+  saveAssetPositions,
 } from "../controller/newAssetController";
 import { upload } from '../Middleware/multerConfig';
 
@@ -57,5 +58,7 @@ router.get("/generateWord/:id", generateWordFile);
 router.get("/generatePDF/:id", generatePDFFile);
 router.get("/generateExcelFile/:id", generateExcelFile);
 router.post("/generateMultipleExcel", generateMultipleExcelFiles);
+
+router.post("/saveAssetPositions",saveAssetPositions);//posision de la img del activo en el mapa
 
 export default router;
