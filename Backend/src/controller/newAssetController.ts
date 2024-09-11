@@ -652,3 +652,26 @@ export const saveAssetPositions = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Error al actualizar las posiciones.' });
   }
 };
+
+// Método para obtener las posiciones de los activos según la zona
+export const getAssetPositions = async (req: Request, res: Response) => {
+  const { zona } = req.params;  // Obtener el nombre de la zona desde los parámetros
+
+  try {
+    // Consultar los activos que pertenecen a la zona especificada
+    const assets = await NewAssetModel.findAll({
+      where: { zona },  // Filtrar por zona
+      attributes: ['id', 'posX', 'posY']  // Solo devolver el id, posX y posY
+    });
+
+    if (assets.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron activos para la zona especificada.' });
+    }
+
+    // Devolver las posiciones de los activos
+    res.json(assets);
+  } catch (error) {
+    console.error('Error al obtener las posiciones de los activos:', error);
+    res.status(500).json({ message: 'Error al obtener las posiciones de los activos.' });
+  }
+};
