@@ -204,7 +204,7 @@ const downloadExcelFile = async (boletas: string[]) => {
       {loading ? (
         <Grid item xs={12} style={{ textAlign: "center" }}>
           <CircularProgress />
-          <Typography variant="h6">Cargando datos...</Typography>
+          <Typography variant="h6">{t('cargar-datos')}</Typography>
         </Grid>
       ) : (
         <Grid item xs={12}>

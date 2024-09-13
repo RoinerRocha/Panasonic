@@ -1,5 +1,7 @@
 import {Grid,Button,TextField,Card,Select,FormControl,FormHelperText,
   InputLabel,MenuItem,styled,
+  Box,
+  Typography,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
@@ -9,6 +11,8 @@ import { assetRetirementModel } from "../../app/models/assetRetirementModel";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { useNavigate } from "react-router-dom";
 import { FieldValues, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from '../../app/context/LanguageContext';
 
 import { useAppDispatch, useAppSelector } from "../../store/configureStore";//ruta para obtener el usuario
 import NewAsset from "../NewAsset/newAsset";
@@ -17,6 +21,8 @@ import assert from "assert";
 
 export default function RegisterAsset() {
 
+  const { t } = useTranslation();
+  const { changeLanguage, language } = useLanguage();
   const navigate = useNavigate();
   const [numeroBoleta, setNumeroBoleta] = useState<string>("");
 
@@ -186,125 +192,116 @@ async function getLastConsecutive(letra: string): Promise<number> {
 
   return (
     <Card>
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <FormControl fullWidth>
-              <InputLabel id="placa-activo-label">
-                Seleccionar Placa del Activo
-              </InputLabel>
-              <Select
-                labelId="placa-activo-label"
-                id="placa-activo"
-                name="PlacaActivo"
-                value={newAssetRetirement.PlacaActivo.toString() || ""}
-                onChange={handleSelectChange}
-                label="Seleccionar Placa del Activo"
-              
-              >
-                {Array.isArray(assets) && assets.map((account) => (
-                  <MenuItem key={account.id} value={account.NumeroPlaca}>
-                    {account.NumeroPlaca}
-                  </MenuItem>
-                ))}
-              </Select>
-              {newAssetRetirement.PlacaActivo > "0" && (
-                <FormHelperText>
-                  <Card>
-                    <p>
-                      <strong>Descripción:</strong>  {assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.Descripcion || ""}
-                    </p>
-                    <p>
-                      <strong>Cuenta Principal:</strong>{" "}
-                       {assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.CodigoCuenta || ""}
-                    </p>
-                    <p>
-                      <strong>Tipo de Activo:</strong> {assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.Tipo || ""}
-                    </p>
-                    <p>
-                      <strong>Zona:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.Zona || ""}
-                    </p>
-                    <p>
-                      <strong>Estado del Activo:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.Estado || ""}
-                    </p>
-                    <p>
-                      <strong>Numero Boleta:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.NumeroBoleta || ""}
-                    </p>
-                    
-                  </Card>
-                </FormHelperText>
-              )}
-            </FormControl>
+      <Box p={2}>
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel id="placa-activo-label">
+                  {t('Baja-Placa')}
+                </InputLabel>
+                <Select
+                  labelId="placa-activo-label"
+                  id="placa-activo"
+                  name="PlacaActivo"
+                  value={newAssetRetirement.PlacaActivo.toString() || ""}
+                  onChange={handleSelectChange}
+                  label="Seleccionar Placa del Activo"
+                
+                >
+                  {Array.isArray(assets) && assets.map((account) => (
+                    <MenuItem key={account.id} value={account.NumeroPlaca}>
+                      {account.NumeroPlaca}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {newAssetRetirement.PlacaActivo > "0" && (
+                  <FormHelperText>
+                    <Card>
+                      <p>
+                        <strong>{t('Placa-Descripcion')}:</strong>  {assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.Descripcion || ""}
+                      </p>
+                      <p>
+                        <strong>{t('Placa-CuentaPrincipal')}:</strong>{" "}
+                        {assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.CodigoCuenta || ""}
+                      </p>
+                      <p>
+                        <strong>{t('Placa-Tipo')}:</strong> {assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.Tipo || ""}
+                      </p>
+                      <p>
+                        <strong>{t('Placa-Zona')}:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.Zona || ""}
+                      </p>
+                      <p>
+                        <strong>{t('Placa-Estado')}:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.Estado || ""}
+                      </p>
+                      <p>
+                        <strong>{t('Placa-Boleta')}:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetRetirement.PlacaActivo.toString())?.NumeroBoleta || ""}
+                      </p>
+                      
+                    </Card>
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  id="descripcion"
+                  name="Descripcion"
+                  label={t('Baja-Razon')}
+                  value={newAssetRetirement.Descripcion || ""}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  id="destinoFinal"
+                  name="DestinoFinal"
+                  label={t('Baja-Destino')}
+                  value={newAssetRetirement.DestinoFinal || ""}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Button variant="contained" component="label" fullWidth>
+                  {t('Baja-BotonFotografia')}
+                  <VisuallyHiddenInput
+                    type="file"
+                    name="Fotografia"
+                    onChange={handleFileInputChange}
+                  />
+                </Button>
+                {newAssetRetirement.Fotografia && <FormHelperText>Archivo cargado: {newAssetRetirement.Fotografia.name}</FormHelperText>}
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  disabled
+                  id="numero-boleta"
+                  name="NumeroBoleta"
+                  label={t('Baja-Boleta')}
+                  value={numeroBoleta} //revisar ya que no lo guarda en la base de datos
+                  onChange={handleInputChange}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  disabled
+                  id="usuario"
+                  name="Usuario"
+                  label={t('Baja-Usuario')}
+                  value={user?.nombre_usuario} //revisar ya que no lo guarda en  la base de datos
+                  onChange={handleInputChange}
+                />
+              </Grid>
           </Grid>
-            <Grid item xs={12}>
-              <Button variant="contained" component="label" fullWidth>
-                Adjuntar documento Aprobatorio
-                <VisuallyHiddenInput
-                  type="file"
-                  name="DocumentoAprobado"
-                  onChange={handleFileInputChange}
-                />
-              </Button>
-              {newAssetRetirement.DocumentoAprobado && <FormHelperText>Archivo cargado: {newAssetRetirement.DocumentoAprobado.name}</FormHelperText>}
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                id="descripcion"
-                name="Descripcion"
-                label="Explicar Razón Baja del Activo"
-                value={newAssetRetirement.Descripcion || ""}
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                id="destinoFinal"
-                name="DestinoFinal"
-                label="Explicar Destino Final del activo"
-                value={newAssetRetirement.DestinoFinal || ""}
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Button variant="contained" component="label" fullWidth>
-                Subir Fotografia
-                <VisuallyHiddenInput
-                  type="file"
-                  name="Fotografia"
-                  onChange={handleFileInputChange}
-                />
-              </Button>
-              {newAssetRetirement.Fotografia && <FormHelperText>Archivo cargado: {newAssetRetirement.Fotografia.name}</FormHelperText>}
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                disabled
-                id="numero-boleta"
-                name="NumeroBoleta"
-                label="Numero de Boleta"
-                value={numeroBoleta} //revisar ya que no lo guarda en la base de datos
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                disabled
-                id="usuario"
-                name="Usuario"
-                label="Usuario"
-                value={user?.nombre_usuario} //revisar ya que no lo guarda en  la base de datos
-                onChange={handleInputChange}
-              />
-            </Grid>
-        </Grid>
-          <Button type="submit" disabled={isSubmitting}>
-            Agregar
-          </Button>
-      </form>
+            <Button type="submit" disabled={isSubmitting}>
+              {t('Baja-BotonAgregar')}
+            </Button>
+        </form>
+      </Box>
     </Card>
   );
 }

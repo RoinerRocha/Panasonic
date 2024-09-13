@@ -27,6 +27,8 @@ import html2canvas from 'html2canvas';
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import * as XLSX from 'xlsx';
 import { saveAs } from "file-saver";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from '../../app/context/LanguageContext';
 
 import { SelectChangeEvent } from "@mui/material";
 
@@ -36,6 +38,8 @@ interface Props {
 }
 
 function NewAssetsList({ newAssets, setNewAssets }: Props) {
+  const { t } = useTranslation();
+  const { changeLanguage, language } = useLanguage();
   const [accountingAccounts, setAccountingAccounts] = useState<accountingAccount[]>([]);
   const [zones, setZones] = useState<Zona[]>([]);
   const [serviceLives, setServiceLives] = useState<serviceLifeModels[]>([]);
@@ -245,7 +249,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
   const handleZonaChange = (event: SelectChangeEvent<string | number>) => {
     const selectedZonaName = event.target.value as string;
 
-    if (selectedZonaName === "Mostrar todo") {
+    if (selectedZonaName === t('Lista-Filtro')) {
         // Si no se selecciona ninguna zona, mostrar todos los activos
         setFilteredAssets(newAssets);
     } else {
@@ -361,11 +365,11 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
           color="primary"
           onClick={() => setOpenAddDialog(true)}
         >
-          Agregar Nuevo Activo
+          {t('Lista-BotonAgregar')}
         </Button>
       </Box>
       <FormControl fullWidth>
-        <InputLabel id="zona-label">Zona</InputLabel>
+        <InputLabel id="zona-label">{t('Lista-ColumnaZona')}</InputLabel>
         <Select
             labelId="zona-label"
             id="zona"
@@ -374,8 +378,8 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
             name="Zona"
             label="Zona"
         >
-            <MenuItem value="Mostrar todo">
-                <em>Mostrar todos</em>
+            <MenuItem value={t('Lista-Filtro')}>
+                <em>{t('Lista-Filtro')}</em>
             </MenuItem>
             {zones.map((zona) => (
                 <MenuItem key={zona.id} value={zona.nombreZona}>
@@ -383,32 +387,32 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                 </MenuItem>
             ))}
         </Select>
-        <FormHelperText>Seleccione una zona para filtrar los activos</FormHelperText>
+        <FormHelperText>{t('Lista-FiltroTitulo')}</FormHelperText>
       </FormControl>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Codigo Cuenta</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Zona</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Tipo</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Estado</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Descripción</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Numero Placa</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Valor Compra CRC</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Valor Compra USD</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Fotografía</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Nombre Proveedor</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Fecha Compra</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Numero Factura</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Factura Imagen</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Orden Compra Numero</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Orden Compra Imagen</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Numero Asiento</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Numero Boleta</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Usuario</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Acciones</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Imprimir</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaCodigo')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaZona')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaTipo')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaEstado')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaDescripcion')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaPlaca')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaCRC')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaUSD')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaFotografia')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaProveedor')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaFecha')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaFactura')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaFacturaDoc')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaOrden')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaOrdenDoc')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaAsiento')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaBoleta')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaUsuario')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaConfiguracion')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('Lista-ColumnaReportes')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -429,7 +433,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                       alt="Fotografía"
                       style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                     />
-                  ) : 'No Image'}
+                  ) : t('Lista-ErrorImagen')}
                 </TableCell>
                 <TableCell>{newAsset.NombreProveedor}</TableCell>
                 <TableCell>{new Date(newAsset.FechaCompra).toLocaleDateString()}</TableCell>
@@ -443,9 +447,9 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                       download
                       onClick={(e) => e.stopPropagation()}
                     >
-                      Ver Factura
+                      {t('Lista-TextoFacturaDoc')}
                     </a>
-                  ) : 'Sin Documento'}
+                  ) : t('Lista-ErrorFactura')}
                 </TableCell>
                 <TableCell>{newAsset.OrdenCompraNum}</TableCell>
                 <TableCell>
@@ -457,9 +461,9 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                         download
                         onClick={(e) => e.stopPropagation()}
                       >
-                        Ver Orden
+                        {t('Lista-TextoOrdenDoc')}
                       </a>
-                  ) : 'Sin Documento'}
+                  ) : t('Lista-ErrorOrden')}
                 </TableCell>
                 <TableCell>{newAsset.NumeroAsiento}</TableCell>
                 <TableCell>{newAsset.NumeroBoleta}</TableCell>
@@ -474,7 +478,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                       handleEdit(newAsset);
                     }}
                   >
-                    Editar
+                    {t('Lista-BotonEditar')}
                   </Button>
                   <Button
                     variant="contained"
@@ -485,7 +489,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                       handleDelete(newAsset.id);
                     }}
                   >
-                    Eliminar
+                    {t('Lista-BotonEliminar')}
                   </Button>
                 </TableCell>
                 <TableCell>
@@ -535,24 +539,24 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
             generateExcelForAll(); 
         }}
       >
-          Descargar todos los datos en excel
+          {t('Lista-BotonExcel')}
       </Button>
 
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-        <DialogTitle>Agregar Nuevo Activo</DialogTitle>
+        <DialogTitle>{t('Lista-BotonAgregar')}</DialogTitle>
         <DialogContent>
           <RegisterAsset></RegisterAsset>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenAddDialog(false)}>Cancelar</Button>
+          <Button onClick={() => setOpenAddDialog(false)}>{t('Lista-BotonCancelar')}</Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
-        <DialogTitle>Editar Activo</DialogTitle>
+        <DialogTitle>{t('EditarLista-Titulo')}</DialogTitle>
         <DialogContent>
           <FormControl fullWidth margin="normal">
-            <InputLabel id="codigo-label">Codigo Cuenta</InputLabel>
+            <InputLabel id="codigo-label">{t('EditarLista-TituloCodigo')}</InputLabel>
             <Select
               labelId="codigo-label"
               id="codigo"
@@ -568,7 +572,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
             </Select>
           </FormControl>
           <FormControl fullWidth margin="normal">
-            <InputLabel id="Zona-label">Zona</InputLabel>
+            <InputLabel id="Zona-label">{t('EditarLista-TituloZona')}</InputLabel>
             <Select
               labelId="Zona-label"
               id="zona"
@@ -584,7 +588,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
             </Select>
           </FormControl>
           <FormControl fullWidth margin="normal">
-            <InputLabel id="tipo-label">Tipo</InputLabel>
+            <InputLabel id="tipo-label">{t('EditarLista-TituloTipo')}</InputLabel>
             <Select
               labelId="tipo-label"
               id="tipo"
@@ -600,7 +604,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
             </Select>
           </FormControl>
           <FormControl fullWidth margin="normal">
-            <InputLabel id="Estado-label">Estado</InputLabel>
+            <InputLabel id="Estado-label">{t('EditarLista-TituloEstado')}</InputLabel>
             <Select
               labelId="Estado-label"
               id="estado"
@@ -616,28 +620,28 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
             </Select>
           </FormControl>
           <TextField
-            label="Descripción"
+            label={t('EditarLista-TituloDescripcion')}
             value={newAsset.Descripcion}
             onChange={(e) => setNewAsset({ ...newAsset, Descripcion: e.target.value })}
             fullWidth
             margin="dense"
           />
           <TextField
-            label="Número Placa"
+            label={t('EditarLista-TituloPlaca')}
             value={newAsset.NumeroPlaca}
             onChange={(e) => setNewAsset({ ...newAsset, NumeroPlaca: +e.target.value })}
             fullWidth
             margin="dense"
           />
           <TextField
-            label="Valor Compra CRC"
+            label={t('EditarLista-TituloCRC')}
             value={newAsset.ValorCompraCRC}
             onChange={(e) => setNewAsset({ ...newAsset, ValorCompraCRC: e.target.value })}
             fullWidth
             margin="dense"
           />
           <TextField
-            label="Valor Compra USD"
+            label={t('EditarLista-TituloUSD')}
             value={selectedNewAsset?.ValorCompraUSD}
             onChange={(e) => setNewAsset({ ...newAsset, ValorCompraUSD: e.target.value })}
             fullWidth
@@ -648,7 +652,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
         <img src={imageUrlMap.get(newAsset.id || 0)?.get('Fotografia')} alt="Fotografía" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
       )}
             <Button variant="contained" component="label" fullWidth>
-            {newAsset.Fotografia? 'Cambiar Imagen de Fotografia' : 'Subir Imagen de Fotografia'}
+            {newAsset.Fotografia? t('EditarLista-BotonFotografia') : t('EditarLista-BotonFotografia')}
               <VisuallyHiddenInput
                 type="file"
                 name="ImagenFotografia"
@@ -663,14 +667,14 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                 }}
               />
             </Button> 
-            {newAsset.Fotografia && <FormHelperText>Archivo cargado: {newAsset.Fotografia.name}</FormHelperText>}
+            {newAsset.Fotografia && <FormHelperText>{t('EditarLista-TituloArchivo')}: {newAsset.Fotografia.name}</FormHelperText>}
             {imageUrlMap1.get(newAsset.Fotografia?.name || '') && (
               <img src={imageUrlMap1.get(newAsset.Fotografia?.name || '')} alt="Fotografía" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
             )}
           </Grid>
 
           <TextField
-            label="Nombre Proveedor"
+            label={t('EditarLista-TituloProveedor')}
             value={newAsset.NombreProveedor}
             onChange={(e) => setNewAsset({ ...newAsset, NombreProveedor: e.target.value })}
             fullWidth
@@ -678,7 +682,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
           />
           
           <TextField
-            label="Fecha Compra"
+            label={t('EditarLista-TituloFecha')}
             type="date"
             value={selectedNewAsset?.FechaCompra}
             
@@ -688,19 +692,18 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
             margin="dense"
           />
           <TextField
-            label="Número Factura"
+            label={t('EditarLista-TituloFactura')}
             value={newAsset.FacturaNum}
             onChange={(e) => setNewAsset({ ...newAsset, FacturaNum: +e.target.value })}
             fullWidth
             margin="dense"
           />
           <Grid item xs={6}>
-            Imagen Actual:
           {newAsset.Fotografia && (
-        <img src={imageUrlMap.get(newAsset.id || 0)?.get('FacturaImagen')} alt="Fotografía del Activo" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+        <img src={imageUrlMap.get(newAsset.id || 0)?.get('FacturaImagen')} alt={t('AgregarActivo-Documento')} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
       )}
             <Button variant="contained" component="label" fullWidth>
-              Subir Imagen de Factura
+              {t('EditarLista-BotonFacturaDoc')}
               <VisuallyHiddenInput
                 type="file"
                 name="FacturaImagen"
@@ -714,13 +717,13 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                 }}
               />
             </Button> 
-            {newAsset.FacturaImagen && <FormHelperText>Archivo cargado: {newAsset.FacturaImagen.name}</FormHelperText>}
+            {newAsset.FacturaImagen && <FormHelperText>{t('EditarLista-TituloArchivo')}: {newAsset.FacturaImagen.name}</FormHelperText>}
             {imageUrlMap1.get(newAsset.FacturaImagen?.name || '') && (
               <img src={imageUrlMap1.get(newAsset.FacturaImagen?.name || '')} alt="FacturaImg" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
             )}
           </Grid>
           <TextField
-            label="Ordén De Comprá"
+            label={t('EditarLista-TituloOrden')}
             value={newAsset.OrdenCompraNum}
             onChange={(e) => setNewAsset({ ...newAsset, OrdenCompraNum: +e.target.value })}
             fullWidth
@@ -728,10 +731,10 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
           />
            <Grid item xs={6}>
            {newAsset.Fotografia && (
-        <img src={imageUrlMap.get(newAsset.id || 0)?.get('OrdenCompraImagen')} alt="Imagen de Orden de Compra" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+        <img src={imageUrlMap.get(newAsset.id || 0)?.get('OrdenCompraImagen')} alt={t('AgregarActivo-Documento')} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
       )}
             <Button variant="contained" component="label" fullWidth>
-              Subir Imagen de Factura
+              {t('EditarLista-BotonOrdenDoc')}
               <VisuallyHiddenInput
                 type="file"
                 name="OrdenCompImagen"
@@ -745,20 +748,20 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                   }}
                 />
               </Button> 
-              {newAsset.OrdenCompraImagen && <FormHelperText>Archivo cargado: {newAsset.OrdenCompraImagen.name}</FormHelperText>}
+              {newAsset.OrdenCompraImagen && <FormHelperText>{t('EditarLista-TituloArchivo')}: {newAsset.OrdenCompraImagen.name}</FormHelperText>}
               {imageUrlMap1.get(newAsset.OrdenCompraImagen?.name || '') && (
                 <img src={imageUrlMap1.get(newAsset.OrdenCompraImagen?.name || '')} alt="OrdemCompImgen" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
               )}
           </Grid>
           <TextField
-            label="Número Asiento"
+            label={t('EditarLista-TituloAsiento')}
             value={newAsset.NumeroAsiento}
             onChange={(e) => setNewAsset({ ...newAsset, NumeroAsiento: +e.target.value })}
             fullWidth
             margin="dense"
           />
           <TextField
-            label="Número Boleta"
+            label={t('EditarLista-TituloBoleta')}
             value={newAsset.NumeroBoleta}
             onChange={(e) => setNewAsset({ ...newAsset, NumeroBoleta: e.target.value })}
             fullWidth
@@ -766,7 +769,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
             disabled={true}
           />
           <TextField
-            label="Usuario"
+            label={t('EditarLista-TituloUsuario')}
             value={newAsset.Usuario}
             onChange={(e) => setNewAsset({ ...newAsset, Usuario: e.target.value })}
             fullWidth
@@ -775,26 +778,26 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenEditDialog(false)}>Cancelar</Button>
-          <Button onClick={handleUpdateAsset}>Actualizar</Button>
+          <Button onClick={() => setOpenEditDialog(false)}>{t('EditarLista-BotonCancelar')}</Button>
+          <Button onClick={handleUpdateAsset}>{t('EditarLista-BotonEditar')}</Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={openDetailDialog} onClose={() => setOpenDetailDialog(false)}>
-        <DialogTitle>Detalles del Activo</DialogTitle>
+        <DialogTitle>{t('DetallesLista-Titulo')}</DialogTitle>
         <DialogContent>
           <div>
-            <p><strong>Código Cuenta:</strong> {selectedNewAsset?.CodigoCuenta}</p>
-            <p><strong>Zona:</strong> {selectedNewAsset?.Zona}</p>
-            <p><strong>Tipo:</strong> {selectedNewAsset?.Tipo}</p>
-            <p><strong>Estado:</strong> {selectedNewAsset?.Estado}</p>
-            <p><strong>Descripción:</strong> {selectedNewAsset?.Descripcion}</p>
-            <p><strong>Número Placa:</strong> {selectedNewAsset?.NumeroPlaca}</p>
-            <p><strong>Valor Compra CRC:</strong> {selectedNewAsset?.ValorCompraCRC}</p>
-            <p><strong>Valor Compra USD:</strong> {selectedNewAsset?.ValorCompraUSD}</p>
+            <p><strong>{t('DetallesLista-TituloCodigo')}:</strong> {selectedNewAsset?.CodigoCuenta}</p>
+            <p><strong>{t('DetallesLista-TituloZona')}:</strong> {selectedNewAsset?.Zona}</p>
+            <p><strong>{t('DetallesLista-TituloTipo')}:</strong> {selectedNewAsset?.Tipo}</p>
+            <p><strong>{t('DetallesLista-TituloEstado')}:</strong> {selectedNewAsset?.Estado}</p>
+            <p><strong>{t('DetallesLista-TituloDescripcion')}:</strong> {selectedNewAsset?.Descripcion}</p>
+            <p><strong>{t('DetallesLista-TituloPlaca')}:</strong> {selectedNewAsset?.NumeroPlaca}</p>
+            <p><strong>{t('DetallesLista-TituloCRC')}:</strong> {selectedNewAsset?.ValorCompraCRC}</p>
+            <p><strong>{t('DetallesLista-TituloUSD')}:</strong> {selectedNewAsset?.ValorCompraUSD}</p>
             {imageUrlMap.get(selectedNewAsset?.id || 0)?.get('Fotografia') && (
               <p>
-                <strong>Fotografía:</strong>
+                <strong>{t('DetallesLista-Fotografia')}:</strong>
                 <img
                   src={imageUrlMap.get(selectedNewAsset?.id || 0)?.get('Fotografia')}
                   alt="Fotografía del Activo"
@@ -802,39 +805,40 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                 />
               </p>
             )}
-            <p><strong>Nombre Proveedor:</strong> {selectedNewAsset?.NombreProveedor}</p>
-            <p><strong>Fecha Compra:</strong> {selectedNewAsset?.FechaCompra ? new Date(selectedNewAsset.FechaCompra).toLocaleDateString() : 'N/A'}</p>
+            <p><strong>{t('DetallesLista-TituloProveedor')}:</strong> {selectedNewAsset?.NombreProveedor}</p>
+            <p><strong>{t('DetallesLista-TituloFecha')}:</strong> {selectedNewAsset?.FechaCompra ? new Date(selectedNewAsset.FechaCompra).toLocaleDateString() : 'N/A'}</p>
 
-            <p><strong>Número Factura:</strong> {selectedNewAsset?.FacturaNum}</p>
+            <p><strong>{t('DetallesLista-TituloFactura')}:</strong> {selectedNewAsset?.FacturaNum}</p>
             {imageUrlMap.get(selectedNewAsset?.id || 0)?.get('FacturaImagen') && (
               <p>
-                <strong>Factura:</strong>
-                <img
-                  src={imageUrlMap.get(selectedNewAsset?.id || 0)?.get('FacturaImagen')}
-                  alt="Factura"
-                  style={{ width: 550, height: 550 }}
-                />
+                <strong>{t('DetallesLista-Factura')}:</strong>
+                <a
+                  href={imageUrlMap.get(selectedNewAsset?.id || 0)?.get('FacturaImagen')}
+                  download="Factura"
+                >
+                  {t('AgregarActivo-Ver Documento')}
+                </a>
               </p>
             )}
-            <p><strong>Número Orden de Compra:</strong> {selectedNewAsset?.OrdenCompraNum}</p>
+            <p><strong>{t('DetallesLista-TituloOrden')}:</strong> {selectedNewAsset?.OrdenCompraNum}</p>
             {imageUrlMap.get(selectedNewAsset?.id || 0)?.get('OrdenCompraImagen') && (
               <p>
-                <strong>Orden de Compra:</strong>
-                
-                <img
-                  src={imageUrlMap.get(selectedNewAsset?.id || 0)?.get('OrdenCompraImagen')}
-                  alt="Imagen de Orden de Compra"
-                  style={{ width: 550, height: 550 }}
-                />
+                <strong>{t('DetallesLista-Orden')}:</strong>
+                <a
+                  href={imageUrlMap.get(selectedNewAsset?.id || 0)?.get('OrdenCompraImagen')}
+                  download="OrdenCompra"
+                >
+                  {t('AgregarActivo-Ver Documento')}
+                </a>
               </p>
             )}
-            <p><strong>Número Asiento:</strong> {selectedNewAsset?.NumeroAsiento}</p>
-            <p><strong>Número Boleta:</strong> {selectedNewAsset?.NumeroBoleta}</p>
-            <p><strong>Usuario:</strong> {selectedNewAsset?.Usuario}</p>
+            <p><strong>{t('DetallesLista-TituloAsiento')}:</strong> {selectedNewAsset?.NumeroAsiento}</p>
+            <p><strong>{t('DetallesLista-TituloBoleta')}:</strong> {selectedNewAsset?.NumeroBoleta}</p>
+            <p><strong>{t('DetallesLista-TituloUsuario')}:</strong> {selectedNewAsset?.Usuario}</p>
           </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDetailDialog(false)}>Cerrar</Button>
+          <Button onClick={() => setOpenDetailDialog(false)}>{t('DetallesLista-BotonCancelar')}</Button>
         </DialogActions>
       </Dialog>
     </div>

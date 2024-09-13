@@ -25,6 +25,8 @@ import { accessModel } from "../../app/models/access";
 import { useState, useEffect } from "react";
 import api from "../../app/api/api";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from '../../app/context/LanguageContext';
 
 interface Props {
   profiles: profileModels[];
@@ -46,6 +48,8 @@ export default function ProfilesList({
     nombre: "",
     permisoAcceso: "",
   });
+  const { t } = useTranslation();
+  const { changeLanguage, language } = useLanguage();
 
   useEffect(() => {
     // Cargar los Estado Activos al montar el componente
@@ -129,7 +133,7 @@ export default function ProfilesList({
         color="primary"
         onClick={() => setOpenAddDialog(true)}
       >
-        Agregar Perfil
+        {t('Perfil-botonAgregar')}
       </Button>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -139,19 +143,19 @@ export default function ProfilesList({
                 align="center"
                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
               >
-                NOMBRE
+                {t('Perfil-columnaNombre')}
               </TableCell>
               <TableCell
                 align="center"
                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
               >
-                PERMISOS DE ACCESO
+                {t('Perfil-columnaPermiso')}
               </TableCell>
               <TableCell
                 align="center"
                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
               >
-                CONFIGURACIÓN
+                {t('Perfil-columnaConfiguracion')}
               </TableCell>
             </TableRow>
           </TableHead>
@@ -167,7 +171,7 @@ export default function ProfilesList({
                     sx={{ margin: "5px" }}
                     onClick={() => handleEdit(profile)}
                   >
-                    Editar
+                    {t('Perfil-botonEditar')}
                   </Button>
                   <Button
                     variant="contained"
@@ -175,7 +179,7 @@ export default function ProfilesList({
                     sx={{ margin: "5px" }}
                     onClick={() => handleDelete(profile.id)}
                   >
-                    Eliminar
+                    {t('Perfil-botonEliminar')}
                   </Button>
                 </TableCell>
               </TableRow>
@@ -196,10 +200,10 @@ export default function ProfilesList({
       />
 
       <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
-        <DialogTitle>Editar Perfil </DialogTitle>
+        <DialogTitle>{t('EditarPerfil-titulo')}</DialogTitle>
         <DialogContent>
           <TextField
-            label="Nombre Perfil"
+            label={t('EditarPerfil-tituloNombre')}
             value={selectedProfile?.nombre || null}
             onChange={(e) =>
               setSelectedProfile(
@@ -218,7 +222,7 @@ export default function ProfilesList({
 
         <DialogContent>
           <FormControl fullWidth margin="normal">
-            <InputLabel id="perfil-asignado-label">Permisos de acceso</InputLabel>
+            <InputLabel id="perfil-asignado-label">{t('EditarPerfil-tituloPermiso')}</InputLabel>
             <Select
               label="Permiso de Acceso del Usuario"
               value={selectedProfile?.permisoAcceso || ""}
@@ -243,16 +247,16 @@ export default function ProfilesList({
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={() => setOpenEditDialog(false)}>Cancelar</Button>
-          <Button onClick={handleUpdate}>Actualizar</Button>
+          <Button onClick={() => setOpenEditDialog(false)}>{t('EditarPerfil-botonCancelar')}</Button>
+          <Button onClick={handleUpdate}>{t('EditarPerfil-botonActualizar')}</Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-        <DialogTitle>Agregar Perfil</DialogTitle>
+        <DialogTitle>{t('AgregarPerfil-titulo')}</DialogTitle>
         <DialogContent>
           <TextField
-            label="Nuevo Perfil"
+            label={t('AgregarPerfil-tituloPerfil')}
             value={newProfile?.nombre}
             onChange={(e) =>
               setNewProfile({
@@ -267,7 +271,7 @@ export default function ProfilesList({
         
         <DialogContent>
           <FormControl fullWidth margin="normal">
-            <InputLabel id="perfil-asignado-label">Permisos de acceso</InputLabel>
+            <InputLabel id="perfil-asignado-label">{t('AgregarPerfil-tituloPermiso')}</InputLabel>
             <Select
               label="Permiso de Acceso del Usuario"
               value={newProfile?.permisoAcceso || ""}
@@ -287,8 +291,8 @@ export default function ProfilesList({
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenAddDialog(false)}>Cancelar</Button>
-          <Button onClick={handleAdd}>Agregar</Button>
+          <Button onClick={() => setOpenAddDialog(false)}>{t('AgregarPerfil-botonCancelar')}</Button>
+          <Button onClick={handleAdd}>{t('AgregarPerfil-botonAgregar')}</Button>
         </DialogActions>
       </Dialog>
     </Grid>

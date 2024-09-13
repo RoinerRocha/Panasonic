@@ -1,5 +1,6 @@
 import {Grid,Button,TextField,Card,Select,FormControl,FormHelperText,
   InputLabel,MenuItem,styled,
+  Box,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
@@ -9,11 +10,16 @@ import { assetSaleModel } from "../../app/models/assetSaleModel";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { useNavigate } from "react-router-dom";
 import { FieldValues, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from '../../app/context/LanguageContext';
 
 import { useAppDispatch, useAppSelector } from "../../store/configureStore";//ruta para obtener el usuario
 
 
 export default function RegisterAsset() {
+
+  const { t } = useTranslation();
+  const { changeLanguage, language } = useLanguage();
 
   const navigate = useNavigate();
   const [numeroBoleta, setNumeroBoleta] = useState<string>("");
@@ -180,147 +186,139 @@ async function getLastConsecutive(letra: string): Promise<number> {
 
   return (
     <Card>
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel id="placa-activo-label">
-                  Seleccionar Placa de activo
-                </InputLabel>
-                <Select
-                  labelId="placa-activo-label"
-                  id="placa-activo"
-                  name="PlacaActivo"
-                  value={newAssetSale.PlacaActivo}
-                  onChange={handleSelectChange}
-                  label="Seleccionar Placa de Activo"
-                >
-                  {Array.isArray(assets) && assets.map((account) => (
-                    <MenuItem key={account.id} value={account.NumeroPlaca}>
-                      {account.NumeroPlaca}
-                    </MenuItem>
-                  ))}
-                </Select>
-                {newAssetSale.PlacaActivo > "0" && (
-                <FormHelperText>
-                  <Card>
-                    <p>
-                      <strong>Descripción:</strong>  {assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.Descripcion || ""}
-                    </p>
-                    <p>
-                      <strong>Cuenta Principal:</strong>{" "}
-                       {assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.CodigoCuenta || ""}
-                    </p>
-                    <p>
-                      <strong>Tipo de Activo:</strong> {assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.Tipo || ""}
-                    </p>
-                    <p>
-                      <strong>Zona:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.Zona || ""}
-                    </p>
-                    <p>
-                      <strong>Estado del Activo:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.Estado || ""}
-                    </p>
-                    <p>
-                      <strong>Numero Boleta:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.NumeroBoleta || ""}
-                    </p>
-                    
-                  </Card>
-                </FormHelperText>
-              )}
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <Button variant="contained" component="label" fullWidth>
-                Adjuntar documento de aprobacion
-                <VisuallyHiddenInput
-                  type="file"
-                  name="DocumentoAprobado"
-                  onChange={handleFileInputChange}
+      <Box p={2}>
+
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <InputLabel id="placa-activo-label">
+                    {t('Ventas-Placa')}
+                  </InputLabel>
+                  <Select
+                    labelId="placa-activo-label"
+                    id="placa-activo"
+                    name="PlacaActivo"
+                    value={newAssetSale.PlacaActivo}
+                    onChange={handleSelectChange}
+                    label="Seleccionar Placa de Activo"
+                  >
+                    {Array.isArray(assets) && assets.map((account) => (
+                      <MenuItem key={account.id} value={account.NumeroPlaca}>
+                        {account.NumeroPlaca}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {newAssetSale.PlacaActivo > "0" && (
+                  <FormHelperText>
+                    <Card>
+                      <p>
+                        <strong>{t('Placa-Descripcion')}:</strong>  {assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.Descripcion || ""}
+                      </p>
+                      <p>
+                        <strong>{t('Placa-CuentaPrincipal')}:</strong>{" "}
+                        {assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.CodigoCuenta || ""}
+                      </p>
+                      <p>
+                        <strong>{t('Placa-Tipo')}:</strong> {assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.Tipo || ""}
+                      </p>
+                      <p>
+                        <strong>{t('Placa-Zona')}:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.Zona || ""}
+                      </p>
+                      <p>
+                        <strong>{t('Placa-Estado')}:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.Estado || ""}
+                      </p>
+                      <p>
+                        <strong>{t('Placa-Boleta')}:</strong>{assets.find((account) => account.NumeroPlaca.toString() === newAssetSale.PlacaActivo.toString())?.NumeroBoleta || ""}
+                      </p>
+                      
+                    </Card>
+                  </FormHelperText>
+                )}
+                </FormControl>
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id="descripcion"
+                  name="Descripcion"
+                  label={t('Ventas-Razon')}
+                  value={newAssetSale.Descripcion || ""}
+                  onChange={handleInputChange}
                 />
-              </Button>
-              {newAssetSale.DocumentoAprobado && <FormHelperText>Archivo cargado: {newAssetSale.DocumentoAprobado.name}</FormHelperText>}
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                id="descripcion"
-                name="Descripcion"
-                label="Explicar la razon de venta"
-                value={newAssetSale.Descripcion || ""}
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                type="number"
-                id="monto-ventas"
-                name="MontoVentas"
-                label="Monto de ventas"
-                value={newAssetSale.MontoVentas || ""}
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <Button variant="contained" component="label" fullWidth>
-                Adjuntar Cotizacion de venta
-                <VisuallyHiddenInput
-                  type="file"
-                  name="CotizacionVentas"
-                  onChange={handleFileInputChange}
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  type="number"
+                  id="monto-ventas"
+                  name="MontoVentas"
+                  label={t('Ventas-Monto')}
+                  value={newAssetSale.MontoVentas || ""}
+                  onChange={handleInputChange}
                 />
-              </Button>
-              {newAssetSale.CotizacionVentas && <FormHelperText>Archivo cargado: {newAssetSale.CotizacionVentas.name}</FormHelperText>}
-            </Grid>
-            <Grid item xs={6}>
-              <Button variant="contained" component="label" fullWidth>
-                Adjuntar Fotografia actual del activo
-                <VisuallyHiddenInput
-                  type="file"
-                  name="Fotografia"
-                  onChange={handleFileInputChange}
+              </Grid>
+              <Grid item xs={6}>
+                <Button variant="contained" component="label" fullWidth>
+                  {t('Ventas-BotonVenta')}
+                  <VisuallyHiddenInput
+                    type="file"
+                    name="CotizacionVentas"
+                    onChange={handleFileInputChange}
+                  />
+                </Button>
+                {newAssetSale.CotizacionVentas && <FormHelperText>Archivo cargado: {newAssetSale.CotizacionVentas.name}</FormHelperText>}
+              </Grid>
+              <Grid item xs={6}>
+                <Button variant="contained" component="label" fullWidth>
+                  {t('Ventas-BotonFotografia')}
+                  <VisuallyHiddenInput
+                    type="file"
+                    name="Fotografia"
+                    onChange={handleFileInputChange}
+                  />
+                </Button>
+                {newAssetSale.Fotografia && <FormHelperText>Archivo cargado: {newAssetSale.Fotografia.name}</FormHelperText>}
+              </Grid>
+              <Grid item xs={6}>
+                <Button variant="contained" component="label" fullWidth>
+                  {t('Ventas-BotonComprobante')}
+                  <VisuallyHiddenInput
+                    type="file"
+                    name="Comprobante"
+                    onChange={handleFileInputChange}
+                  />
+                </Button>
+                {newAssetSale.Comprobante && <FormHelperText>Archivo cargado: {newAssetSale.Comprobante.name}</FormHelperText>}
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  disabled
+                  id="numero-boleta"
+                  name="NumeroBoleta"
+                  label={t('Ventas-Boletas')}
+                  value={numeroBoleta} //revisar ya que no lo guarda en la base de datos
+                  onChange={handleInputChange}
                 />
-              </Button>
-              {newAssetSale.Fotografia && <FormHelperText>Archivo cargado: {newAssetSale.Fotografia.name}</FormHelperText>}
-            </Grid>
-            <Grid item xs={6}>
-              <Button variant="contained" component="label" fullWidth>
-                Adjuntar Comprobante del banco
-                <VisuallyHiddenInput
-                  type="file"
-                  name="Comprobante"
-                  onChange={handleFileInputChange}
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  disabled
+                  id="usuario"
+                  name={t('Ventas-Usuario')}
+                  label={user?.nombre_usuario}
+                  value={user?.nombre_usuario} //revisar ya que no lo guarda en  la base de datos
+                  onChange={handleInputChange}
                 />
-              </Button>
-              {newAssetSale.Comprobante && <FormHelperText>Archivo cargado: {newAssetSale.Comprobante.name}</FormHelperText>}
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                disabled
-                id="numero-boleta"
-                name="NumeroBoleta"
-                label="Numero de Boleta"
-                value={numeroBoleta} //revisar ya que no lo guarda en la base de datos
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                disabled
-                id="usuario"
-                name="Usuario"
-                label={user?.nombre_usuario}
-                value={user?.nombre_usuario} //revisar ya que no lo guarda en  la base de datos
-                onChange={handleInputChange}
-              />
-            </Grid>
-        </Grid>
-          <Button type="submit" disabled={isSubmitting}>
-            Agregar
-          </Button>
-      </form>
+              </Grid>
+          </Grid>
+            <Button type="submit" disabled={isSubmitting}>
+              {t('Ventas-BotonAgregar')}
+            </Button>
+        </form>
+      </Box>
     </Card>
   );
 }
