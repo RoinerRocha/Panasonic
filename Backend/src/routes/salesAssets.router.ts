@@ -4,6 +4,8 @@ import {
    getSalesAssets,
     getAssetSaleByNumeroBoleta,
     searchSalesAssets,
+    updateSalesAsset,
+    deleteSalesAsset,
  //   totalVentas
 //   deleteSalesAsset,
 //   updateSalesAsset,
@@ -28,6 +30,17 @@ router.post(
   saveSalesAsset
 )
 
+router.put(
+  "/salesAssets/:id",
+  uploadSalesAssets.fields([
+    { name: 'CotizacionVentas', maxCount: 1 },
+    { name: 'DocumentoAprobado', maxCount: 1 },
+    { name: 'Fotografia', maxCount: 1 },
+    { name: 'Comprobante', maxCount: 1 }
+  ]),
+  updateSalesAsset
+);
+
 router.post("/saveSalesAsset", saveSalesAsset);
 router.get("/getSalesAssets", getSalesAssets);
 router.get("/salesAssets/boleta/:NumeroBoleta", getAssetSaleByNumeroBoleta);
@@ -36,6 +49,6 @@ router.get("/searchSalesAssets", searchSalesAssets);
 
 // router.put("/salesAssets/:id", updateSalesAsset);
 
-// router.delete("/deleteSalesAsset/:id", deleteSalesAsset);
+router.delete("/deleteSalesAsset/:id", deleteSalesAsset);
 
 export default router;

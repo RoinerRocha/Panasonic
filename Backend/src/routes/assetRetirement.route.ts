@@ -27,7 +27,14 @@ router.post("/saveAssetRetirement",
 router.post("/saveAssetRetirement", saveAssetRetirement);
 router.get("/getAssetRetirements", getAssetRetirements);
 
-router.put("/assetRetirements/:id", updateAssetRetirement);
+router.put(
+  "/assetRetirements/:id",
+  uploadAssetRetirement.fields([
+    { name: 'Fotografia', maxCount: 1 },
+    { name: 'DocumentoAprobado', maxCount: 1 }
+  ]),
+  updateAssetRetirement,
+);
 
 router.delete("/deleteAssetRetirement/:id", deleteAssetRetirement);
 

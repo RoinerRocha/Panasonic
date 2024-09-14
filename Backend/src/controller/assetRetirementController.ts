@@ -2,12 +2,24 @@ import { Request, Response } from "express";
 import AssetRetirementModel from "../models/assetRetirementModel";
 import { Op } from "sequelize";
 import Joi from 'joi';
+import path from 'path';
+import fs from 'fs';
 
 
 interface MulterFiles {
   DocumentoAprobado?: Express.Multer.File[];
   Fotografia?: Express.Multer.File[];
 }
+
+const deleteFile = (filePath: string) => {
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      console.error(`Error deleting file: ${filePath}`, err);
+    } else {
+      console.log(`File deleted: ${filePath}`);
+    }
+  });
+};
 // Método para guardar la baja de un activo
 export const saveAssetRetirement = async (req: Request, res: Response) => {
   const {
@@ -65,13 +77,24 @@ export const deleteAssetRetirement = async (req: Request, res: Response) => {
   const assetRetirementId = req.params.id;
 
   try {
-    const deleted = await AssetRetirementModel.destroy({
-      where: { id: assetRetirementId },
-    });
+    const assetToDelete = await AssetRetirementModel.findByPk(assetRetirementId);
 
-    if (deleted === 0) {
+    if (!assetToDelete) {
       return res.status(404).json({ message: "Asset retirement not found" });
     }
+
+    // Eliminar archivos asociados
+    if (assetToDelete.Fotografia) {
+      deleteFile(path.resolve(assetToDelete.Fotografia));
+    }
+    if (assetToDelete.DocumentoAprobado) {
+      deleteFile(path.resolve(assetToDelete.DocumentoAprobado));
+    }
+
+    // Eliminar el retiro de activo de la base de datos
+    await AssetRetirementModel.destroy({
+      where: { id: assetRetirementId },
+    });
 
     res.status(200).json({ message: "Delete asset retirement successful" });
   } catch (error: any) {
@@ -84,35 +107,55 @@ export const updateAssetRetirement = async (req: Request, res: Response) => {
   const assetRetirementId = req.params.id;
   const {
     PlacaActivo,
-    DocumentoAprobado,
     Descripcion,
     DestinoFinal,
-    Fotografia,
     NumeroBoleta,
     Usuario,
   } = req.body;
 
+  const files = req.files as MulterFiles;
+
+  const fotografiaPath = files?.Fotografia?.[0]?.path || null;
+  const documentoAprobadoPath = files?.DocumentoAprobado?.[0]?.path || null;
+
   try {
-    const [updated] = await AssetRetirementModel.update(
-      {
-        PlacaActivo,
-        DocumentoAprobado,
-        Descripcion,
-        DestinoFinal,
-        Fotografia,
-        NumeroBoleta,
-        Usuario,
-      },
-      {
-        where: { id: assetRetirementId },
-        returning: true,
-      }
-    );
+    const existingAssetRetirement = await AssetRetirementModel.findByPk(assetRetirementId);
+
+    if (!existingAssetRetirement) {
+      return res.status(404).json({ message: "Asset retirement not found" });
+    }
+
+    const updateData: any = {
+      PlacaActivo,
+      Descripcion,
+      DestinoFinal,
+      NumeroBoleta,
+      Usuario,
+    };
+
+    // Solo actualizar las rutas de los archivos si se han subido nuevos archivos
+    if (fotografiaPath) {
+      updateData.Fotografia = fotografiaPath;
+    }
+    if (documentoAprobadoPath) {
+      updateData.DocumentoAprobado = documentoAprobadoPath;
+    }
+
+    const [updated] = await AssetRetirementModel.update(updateData, {
+      where: { id: assetRetirementId },
+      returning: true,
+    });
 
     if (updated) {
-      const updatedAssetRetirement = await AssetRetirementModel.findByPk(
-        assetRetirementId
-      );
+      // Eliminar los archivos antiguos solo si se han subido nuevos archivos
+      if (fotografiaPath && existingAssetRetirement.Fotografia) {
+        deleteFile(path.resolve(existingAssetRetirement.Fotografia));
+      }
+      if (documentoAprobadoPath && existingAssetRetirement.DocumentoAprobado) {
+        deleteFile(path.resolve(existingAssetRetirement.DocumentoAprobado));
+      }
+
+      const updatedAssetRetirement = await AssetRetirementModel.findByPk(assetRetirementId);
       res
         .status(200)
         .json({
