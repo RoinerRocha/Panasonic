@@ -3,7 +3,7 @@ export interface assetSaleModel {
   Descripcion: string;
   DocumentoAprobado: File | null;
   MontoVentas: number;
-  PlacaActivo: string;
+  PlacaActivo: string | number;
   CotizacionVentas: File | null;
   Fotografia: File | null;
   Comprobante: File | null;

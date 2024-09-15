@@ -22,6 +22,8 @@ import ProtectedRoute from "./PrivateRoute";
 import MapsRoute from "../../features/Maps/Map"
 import History from "../../features/history/History";
 import MapDetails from "../../features/Maps/MapDetails";
+import AssetRetirementList from "../../features/assetRetirement/assetRetirement";
+import AssetSalesList from "../../features/salesAssest/salesAssest";
 
 export const router = createBrowserRouter([
   {
@@ -50,7 +52,9 @@ export const router = createBrowserRouter([
               { path: "NewServiceLife", element: <ServiceLife /> },
               { path: "NewAsset", element: <NewAsset /> },
               { path: "AssetRetirement", element: <AssetRetirement /> },
+              { path: "RetirementList", element: <AssetRetirementList />},
               { path: "AssetSales", element: <AssetSales /> },
+              { path: "AssetSalesList", element: <AssetSalesList />},
               { path: "Depreciation", element: <Depreciation /> },
               { path: "Access", element: <Access /> },
               { path: "Maps", element: <MapsRoute /> },

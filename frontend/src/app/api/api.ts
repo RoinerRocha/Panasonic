@@ -152,9 +152,10 @@ const assetRetirement = {
   saveAssetRetirement: (values: any) => requests.post("saveAssetRetirement", values),
   getAssetRetirements: () => requests.get("/getAssetRetirements"),
   updateAssetRetirement: (assetRetirementId: any, assetRetirementData: any) =>
-    requests.put(`/assetRetirements/${assetRetirementId}`, assetRetirementData),
+    requests.put(`/assetRetirements/${assetRetirementId}`,assetRetirementData),
   deleteAssetRetirement: (id: number) => requests.delete(`deleteAssetRetirement/${id}`),
   getAssetRetirementByNumeroBoleta: (id: string) => requests.get(`/assetRetirements/boleta/${id}`),
+  getAssetRetirementPlate: (plate: string) => requests.get(`/assetRetirements/plate/${plate}`)
 };
 
 const salesAssest = {

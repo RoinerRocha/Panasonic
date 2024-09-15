@@ -1,6 +1,6 @@
 export interface assetRetirementModel {
   id: number;
-  PlacaActivo: string;
+  PlacaActivo: string | number;
   DocumentoAprobado: File | null;
   Descripcion: string;
   DestinoFinal: string;

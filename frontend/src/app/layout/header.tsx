@@ -127,9 +127,8 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
     { title: t('menu-accesos'), path: "/Access" },
     { title: t('menu-perfiles'), path: "/NewProfiles" },
     { title: t('menu-lista-activos'), path: "/NewAsset" },
-    { title: t('menu-ingreso-activos'), path: "/RegisterAsset" },
-    { title: t('menu-baja-activos'), path: "/AssetRetirement" }, // frm
-    { title: t('menu-venta-activos'), path: "/AssetSales" }, // frm
+    { title: t('menu-baja-activos'), path: "/RetirementList" },
+    { title: t('menu-venta-activos'), path: "/AssetSalesList" },
     { title: t('menu-reportes'), path: "/" },
     { title: t('menu-depreciacion-mensual'), path: "/depreciation" },
     { title: t('menu-depreciacion-activos'), path: "/NewServiceLife" },
