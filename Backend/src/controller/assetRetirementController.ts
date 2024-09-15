@@ -229,3 +229,28 @@ export const searchSalesRetirenement = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const getAssetRetirementPlate = async (req: Request, res: Response) => {
+  const { PlacaActivo } = req.params;
+
+  try {
+    const assetRetirement = await AssetRetirementModel.findOne({
+      where: {
+        PlacaActivo: {
+          [Op.eq]: PlacaActivo,
+        },
+      },
+    });
+
+    if (assetRetirement) {
+      res.status(200).json({
+        message: "Asset retirement fetched successfully",
+        data: assetRetirement,
+      });
+    } else {
+      res.status(404).json({ message: "Asset retirement not found" });
+    }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
