@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import SalesAssetsModel from "../models/salesAssetsModel";
 import { Op } from "sequelize";
 import Joi from 'joi';
+import fs from 'fs';
+import path from 'path';
 
 
 interface MulterFiles {
@@ -10,6 +12,16 @@ interface MulterFiles {
   Fotografia?: Express.Multer.File[];
   Comprobante?: Express.Multer.File[];
 }
+
+const deleteFile = (filePath: string) => {
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      console.error(`Error deleting file: ${filePath}`, err);
+    } else {
+      console.log(`File deleted: ${filePath}`);
+    }
+  });
+};
 
 /*export const totalVentas = async (req: Request, res: Response) => { //revisar y terminarlo
   try {
@@ -138,61 +150,125 @@ export const searchSalesAssets = async (req: Request, res: Response) => {
 };
 
 // Método para eliminar una venta de activo por ID
-// export const deleteSalesAsset = async (req: Request, res: Response) => {
-//   const salesAssetId = req.params.id;
+export const deleteSalesAsset = async (req: Request, res: Response) => {
+  const salesAssetId = req.params.id;
 
-//   try {
-//     const deleted = await SalesAssetsModel.destroy({
-//       where: { id: salesAssetId },
-//     });
+  try {
+      // Buscar el activo de ventas por ID
+      const assetToDelete = await SalesAssetsModel.findByPk(salesAssetId);
 
-//     if (deleted === 0) {
-//       return res.status(404).json({ message: "Sales asset not found" });
-//     }
+      if (!assetToDelete) {
+          return res.status(404).json({ message: "Sales asset not found" });
+      }
 
-//     res.status(200).json({ message: "Delete sales asset successful" });
-//   } catch (error: any) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+      // Eliminar archivos de imagen asociados
+      if (assetToDelete.Fotografia) {
+          deleteFile(path.resolve(assetToDelete.Fotografia));
+      }
+      if (assetToDelete.Comprobante) {
+          deleteFile(path.resolve(assetToDelete.Comprobante));
+      }
+      if (assetToDelete.CotizacionVentas) {
+          deleteFile(path.resolve(assetToDelete.CotizacionVentas));
+      }
+      if (assetToDelete.DocumentoAprobado) {
+        deleteFile(path.resolve(assetToDelete.DocumentoAprobado));
+    }
+
+      // Eliminar el activo de ventas de la base de datos
+      const deleted = await SalesAssetsModel.destroy({
+          where: { id: salesAssetId },
+      });
+
+      if (deleted === 0) {
+          return res.status(404).json({ message: "Sales asset not found" });
+      }
+
+      res.status(200).json({ message: "Delete sales asset successful" });
+  } catch (error: any) {
+      res.status(500).json({ message: error.message });
+  }
+};
 
 // Método para actualizar una venta de activo
-// export const updateSalesAsset = async (req: Request, res: Response) => {
-//   const salesAssetId = req.params.id;
-//   const { PlacaActivo, DocumentoAprobado, Descripcion, MontoVentas, CotizacionVentas, Fotografia, Comprobante, NumeroBoleta, Usuario } = req.body;
+export const updateSalesAsset = async (req: Request, res: Response) => {
+  const salesAssetId = req.params.id;
+  const { 
+    PlacaActivo,  
+    Descripcion, 
+    MontoVentas,  
+    NumeroBoleta, 
+    Usuario 
+  } = req.body;
 
-//   try {
-//     const [updated] = await SalesAssetsModel.update(
-//       {
-//         PlacaActivo,
-//         DocumentoAprobado,
-//         Descripcion,
-//         MontoVentas,
-//         CotizacionVentas,
-//         Fotografia,
-//         Comprobante,
-//         NumeroBoleta,
-//         Usuario
-//       },
-//       {
-//         where: { id: salesAssetId },
-//         returning: true,
-//       }
-//     );
+  const files = req.files as MulterFiles;
 
-//     if (updated) {
-//       const updatedSalesAsset = await SalesAssetsModel.findByPk(salesAssetId);
-//       res
-//         .status(200)
-//         .json({ message: "Update sales asset successful", data: updatedSalesAsset });
-//     } else {
-//       res.status(404).json({ message: "Sales asset not found" });
-//     }
-//   } catch (error: any) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+  // Obtener las rutas de los archivos subidos, si existen
+  const CotizacionVentasPath = files?.CotizacionVentas?.[0]?.path || null;
+  const DocumentoAprobadoPath = files?.DocumentoAprobado?.[0]?.path || null;
+  const fotografiaPath = files?.Fotografia?.[0]?.path || null;
+  const comprobantePath = files?.Comprobante?.[0]?.path || null;
 
+  try {
+    const existingSalesAsset = await SalesAssetsModel.findByPk(salesAssetId);
+
+    if (!existingSalesAsset) {
+      return res.status(404).json({ message: "Sales asset not found" });
+    }
+
+    const updateData: any = {
+      PlacaActivo,
+      Descripcion,
+      MontoVentas,
+      NumeroBoleta,
+      Usuario,
+    };
+
+    // Solo actualizar las rutas de las imágenes si se han subido nuevas imágenes
+    if (CotizacionVentasPath) {
+      updateData.CotizacionVentas = CotizacionVentasPath;
+    }
+    if (DocumentoAprobadoPath) {
+      updateData.CotizacionVentas = DocumentoAprobadoPath;
+    }
+    if (fotografiaPath) {
+      updateData.Fotografia = fotografiaPath;
+    }
+    if (comprobantePath) {
+      updateData.Comprobante = comprobantePath;
+    }
+
+    const [updated] = await SalesAssetsModel.update(updateData, {
+      where: { id: salesAssetId },
+      returning: true,
+    });
+
+    if (updated) {
+      // Eliminar las imágenes antiguas si se han subido nuevas
+      if (CotizacionVentasPath && existingSalesAsset.CotizacionVentas) {
+        deleteFile(path.resolve(existingSalesAsset.CotizacionVentas));
+      }
+      if (DocumentoAprobadoPath && existingSalesAsset.DocumentoAprobado) {
+        deleteFile(path.resolve(existingSalesAsset.DocumentoAprobado));
+      }
+      if (fotografiaPath && existingSalesAsset.Fotografia) {
+        deleteFile(path.resolve(existingSalesAsset.Fotografia));
+      }
+      if (comprobantePath && existingSalesAsset.Comprobante) {
+        deleteFile(path.resolve(existingSalesAsset.Comprobante));
+      }
+
+      const updatedSalesAsset = await SalesAssetsModel.findByPk(salesAssetId);
+      res
+        .status(200)
+        .json({ message: "Update sales asset successful", data: updatedSalesAsset });
+    } else {
+      res.status(404).json({ message: "Sales asset not found" });
+    }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
 // Método para obtener bajas de activos por el número de boleta que empiecen con una letra específica
 export const getAssetRetirementByNumeroBoleta = async (req: Request, res: Response) => {
   const {letraNumBoleta} =  req.params;
