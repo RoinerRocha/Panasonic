@@ -1,7 +1,7 @@
   import { Request, Response } from "express";
   import NewAssetModel from "../models/newAssetModel";
   import axios from 'axios';
-  import FormData from 'form-data';
+  import FormData, { errorMonitor } from 'form-data';
   import fs from 'fs';
   import { writeFileSync, unlink } from "fs";
   import multer from 'multer';
@@ -623,44 +623,62 @@ export const searchNewAssets = async (req: Request, res: Response) => {
   }
 };
 
-// Función para actualizar las posiciones de los activos
+ // Función para actualizar las posiciones de los activos
 export const saveAssetPositions = async (req: Request, res: Response) => {
-  const { assetPositions } = req.body; // Se Obtiene las posiciones del body
+  const { assetPositions } = req.body; // Se obtienen las posiciones del body
 
-  if (!assetPositions) {
+  if (!assetPositions || Object.keys(assetPositions).length === 0) {
     return res.status(400).json({ error: 'Las posiciones de los activos son requeridas.' });
   }
 
-  // Iterar sobre cada activo y actualizar su posición en la base de datos
+  // Iniciar una transacción para asegurar consistencia
+  const transaction = await NewAssetModel.sequelize?.transaction();
+
   try {
-    const queries = Object.keys(assetPositions).map((assetId) => {
+    const updatePromises = Object.keys(assetPositions).map((assetId) => {
       const { x, y } = assetPositions[assetId];
-      
-      // Actualizar la posición del activo usando el método `update` de Sequelize
+
+      // Validar si x e y son números válidos
+      if (isNaN(x) || isNaN(y)) {
+        throw new Error(`Posiciones inválidas para el activo con ID ${assetId}.`);
+      }
+
+      // Actualizar la posición del activo usando Sequelize
       return NewAssetModel.update(
         { posX: x, posY: y },  // Campos a actualizar
-        { where: { id: assetId } }  // Condición de actualización
+        { where: { id: assetId }, transaction }  // Condición y transacción
       );
     });
 
     // Ejecutar todas las actualizaciones en paralelo
-    await Promise.all(queries);
+    await Promise.all(updatePromises);
+
+    // Confirmar la transacción
+    await transaction?.commit();
 
     return res.status(200).json({ message: 'Posiciones actualizadas correctamente.' });
   } catch (error) {
+    // Revertir la transacción en caso de error
+    await transaction?.rollback();
+
     console.error('Error al actualizar las posiciones:', error);
     return res.status(500).json({ error: 'Error al actualizar las posiciones.' });
   }
 };
 
+
 // Método para obtener las posiciones de los activos según la zona
 export const getAssetPositions = async (req: Request, res: Response) => {
-  const { zona } = req.params;  // Obtener el nombre de la zona desde los parámetros
+  const { Zona } = req.params;  // Obtener el nombre de la zona desde los parámetros
+
+  if (!Zona) {
+    return res.status(400).json({ message: 'La zona es requerida.' });
+  }
 
   try {
     // Consultar los activos que pertenecen a la zona especificada
     const assets = await NewAssetModel.findAll({
-      where: { zona },  // Filtrar por zona
+      where: { Zona },  // Filtrar por zona
       attributes: ['id', 'posX', 'posY']  // Solo devolver el id, posX y posY
     });
 
@@ -669,7 +687,10 @@ export const getAssetPositions = async (req: Request, res: Response) => {
     }
 
     // Devolver las posiciones de los activos
-    res.json(assets);
+    res.status(200).json({
+      count: assets.length,
+      assets: assets
+    });
   } catch (error) {
     console.error('Error al obtener las posiciones de los activos:', error);
     res.status(500).json({ message: 'Error al obtener las posiciones de los activos.' });
