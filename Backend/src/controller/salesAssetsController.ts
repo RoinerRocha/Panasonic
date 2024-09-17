@@ -4,6 +4,8 @@ import { Op } from "sequelize";
 import Joi from 'joi';
 import fs from 'fs';
 import path from 'path';
+import ExcelJS from "exceljs";
+import { writeFileSync, unlink } from "fs";
 
 
 interface MulterFiles {
@@ -22,27 +24,6 @@ const deleteFile = (filePath: string) => {
     }
   });
 };
-
-/*export const totalVentas = async (req: Request, res: Response) => { //revisar y terminarlo
-  try {
-    const salesAssets = await SalesAssetsModel.findAll();
-
-    // Calcula el total de activos vendidos
-    const totalAmountSold = salesAssets.reduce((total, asset) => total + asset.amount, 0);
-
-    res.status(200).json({
-      message: "List of sales assets successful",
-      data: salesAssets,
-      kpi: {
-        totalAmountSold,
-        totalAssetsSold: salesAssets.length,
-      },
-    });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
-  }
-};
-*/
 
 // Método para guardar la venta de un activo
 export const saveSalesAsset = async (req: Request, res: Response) => {
@@ -229,7 +210,7 @@ export const updateSalesAsset = async (req: Request, res: Response) => {
       updateData.CotizacionVentas = CotizacionVentasPath;
     }
     if (DocumentoAprobadoPath) {
-      updateData.CotizacionVentas = DocumentoAprobadoPath;
+      updateData.DocumentoAprobado = DocumentoAprobadoPath;
     }
     if (fotografiaPath) {
       updateData.Fotografia = fotografiaPath;
@@ -289,6 +270,63 @@ export const getAssetRetirementByNumeroBoleta = async (req: Request, res: Respon
     } else {
       res.status(404).json({ message: "Asset Sales not found" });
     }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const generateExcelFile = async (req: Request, res: Response) => {
+  const salesAssetId  = req.params.id;
+
+  try {
+    const asset = await SalesAssetsModel.findByPk(salesAssetId);
+
+    if (!asset) {
+      return res.status(404).json({ message: "Asset not found" });
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Asset Information");
+
+    worksheet.columns = [
+      { header: "Placa de activo", key: "plate", width: 30 },
+      { header: "Descripcion", key: "description", width: 30 },
+      { header: "Monto de Ventas", key: "Amount", width: 30 },
+      { header: "Comprobante", key: "Voucher", width: 30 },
+      { header: "Cotizacion de Ventas", key: "Quotation", width: 30 },
+      { header: "Documento de Aprobacion", key: "Document", width: 30 },
+      { header: "Fotografia", key: "photo", width: 30 },
+      { header: "Numero Boleta", key: "ballot", width: 30 },
+      { header: "Usuario", key: "user", width: 30 },
+    ];
+
+    const assetData = {
+      plate: asset.PlacaActivo,
+      description: asset.Descripcion,
+      Amount: asset.MontoVentas,
+      Voucher: asset.Comprobante ?  "Document available / Documento disponible" : "No document / Sin documento",
+      Quotation: asset.CotizacionVentas ? "Quotation available / Cotización disponible" : "No quotation / Sin cotización",
+      Document: asset.DocumentoAprobado ? "Approval document available / Documento de aprobación disponible" : "No approval document / Sin documento de aprobación",
+      photo: asset.Fotografia ? "Photo available / Fotografía disponible" : "No photo / Sin fotografía",
+      ballot: asset.NumeroBoleta,
+      user: asset.Usuario,
+    };
+
+    const row = worksheet.addRow(assetData);
+    row.alignment = { vertical: 'middle', horizontal: 'center' };
+
+    const filePath = `./uploads/Asset_${asset.NumeroBoleta}.xlsx`;
+    await workbook.xlsx.writeFile(filePath);
+
+    res.download(filePath, `Asset_${asset.NumeroBoleta}.xlsx`, (err) => {
+      if (err) {
+        console.error("Error downloading file:", err);
+        res.status(500).json({ message: "Error downloading file" });
+      }
+      unlink(filePath, (err) => {
+        if (err) console.error("Error deleting file:", err);
+      });
+    });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
