@@ -155,7 +155,8 @@ const assetRetirement = {
     requests.put(`/assetRetirements/${assetRetirementId}`,assetRetirementData),
   deleteAssetRetirement: (id: number) => requests.delete(`deleteAssetRetirement/${id}`),
   getAssetRetirementByNumeroBoleta: (id: string) => requests.get(`/assetRetirements/boleta/${id}`),
-  getAssetRetirementPlate: (plate: string) => requests.get(`/assetRetirements/plate/${plate}`)
+  getAssetRetirementPlate: (plate: string) => requests.get(`/assetRetirements/plate/${plate}`),
+  generateExcelFile: (id: number) => requests.download(`/RetirementExcelFile/${id}`),
 };
 
 const salesAssest = {
@@ -165,6 +166,7 @@ const salesAssest = {
     requests.put(`/salesAssets/${assetSaleId}`, assetSaleData),//metodo comentado en el backend
   deleteSalesAsset: (id: number) => requests.delete(`deleteSalesAsset/${id}`),//metodo commentado en el backend
   getAssetSaleByNumeroBoleta: (id: string) => requests.get(`/salesAssets/boleta/${id}`),
+  generateExcelFile: (id: number) => requests.download(`/SalesExcelFile/${id}`),
 };
 
 const depreciations = {

@@ -44,6 +44,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
     Descripcion: "",
     DestinoFinal: "",
     Fotografia: null,
+    DocumentoAprobado: null,
     NumeroBoleta: "",
     Usuario: "",
   });
@@ -104,7 +105,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
       if (asset.DocumentoAprobado) {
         setImageUrlMap((prevMap) => {
           const assetMap = prevMap.get(asset.id) || new Map();
-          assetMap.set('FacturaImagen', `http://localhost:5000/${asset.DocumentoAprobado}`);
+          assetMap.set('DocumentoAprobado', `http://localhost:5000/${asset.DocumentoAprobado}`);
           return new Map(prevMap).set(asset.id, assetMap);
         });
       }
@@ -163,6 +164,9 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
         formData.append('DestinoFinal', newAsset.DestinoFinal?.toString() ?? '');
         if (newAsset.Fotografia) {
           formData.append('Fotografia', newAsset.Fotografia);
+        }
+        if (newAsset.DocumentoAprobado) {
+          formData.append('DocumentoAprobado', newAsset.DocumentoAprobado);
         }
 
         await api.assetRetirement.updateAssetRetirement(selectedNewAsset.id, formData);
@@ -254,6 +258,17 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
     }
   };
 
+  const generateExcel = async (assetId: number, numBoleta: string) => {
+    try {
+      const response = await api.assetRetirement.generateExcelFile(assetId);
+      const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, `asset_${numBoleta}.xlsx`);
+    } catch (error) {
+      console.error('Error generando Excel:', error);
+      toast.error('Error generando Excel');
+    }
+  };
+
   return (
     <div>
       <Box sx={{ mb: 2 }}>
@@ -298,6 +313,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Fotografia</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Documento Aprobado</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Configuracion</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Reporte Individual</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -352,6 +368,19 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
                     }}
                   >
                     {t('Lista-BotonEliminar')}
+                  </Button>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    sx={{ margin: "5px" }}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      generateExcel(newAsset.id, newAsset.NumeroBoleta);
+                    }}
+                  >
+                    Excel
                   </Button>
                 </TableCell>
               </TableRow>
@@ -446,6 +475,31 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
             {newAsset.Fotografia && <FormHelperText>{t('EditarLista-TituloArchivo')}: {newAsset.Fotografia.name}</FormHelperText>}
             {imageUrlMap1.get(newAsset.Fotografia?.name || '') && (
               <img src={imageUrlMap1.get(newAsset.Fotografia?.name || '')} alt="Fotografía" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+            )}
+          </Grid>
+          <Grid item xs={6}>
+          {newAsset.DocumentoAprobado && (
+        <img src={imageUrlMap.get(newAsset.id || 0)?.get('DocumentoAprobado')} alt="DocumentoAprobado" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+      )}
+            <Button variant="contained" component="label" fullWidth>
+            {newAsset.DocumentoAprobado? "Agregar Documento" : "Editar Documento"}
+              <VisuallyHiddenInput
+                type="file"
+                name="ImagenDocumento"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];  // Obtener el primer archivo seleccionado
+                  if (file) {
+                    const fileUrl = URL.createObjectURL(file); // Crear una URL temporal para el archivo
+                    
+                    setNewAsset({ ...newAsset, DocumentoAprobado: file });
+                    setImageUrlMap1(prevMap => new Map(prevMap).set(file.name, fileUrl));
+                  }
+                }}
+              />
+            </Button> 
+            {newAsset.DocumentoAprobado && <FormHelperText>{t('EditarLista-TituloArchivo')}: {newAsset.DocumentoAprobado.name}</FormHelperText>}
+            {imageUrlMap1.get(newAsset.DocumentoAprobado?.name || '') && (
+              <img src={imageUrlMap1.get(newAsset.DocumentoAprobado?.name || '')} alt="DocumentoAprobado" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
             )}
           </Grid>
           <TextField
