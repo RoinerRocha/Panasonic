@@ -147,7 +147,14 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
             try {
               await api.salesAssest.deleteSalesAsset(id);
               toast.success("Activo Eliminado Correctamente");
-              loadNewAsset();
+              
+              // Actualiza directamente los estados después de la eliminación
+              setAssetSales(prevAssetSales => 
+                prevAssetSales.filter(asset => asset.id !== id)
+              );
+              setFilteredAssets(prevFilteredAssets =>
+                prevFilteredAssets.filter(asset => asset.id !== id)
+              );
             } catch (error) {
               console.error("Error al eliminar El Activo", error);
               toast.error("Error al eliminar El activo");
@@ -160,7 +167,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
         }
       ]
     });
-  };
+};
 
   const handleEdit = (newAsset: assetSaleModel) => {
     setSelectedNewAsset(newAsset);
@@ -172,25 +179,37 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
     if (selectedNewAsset) {
       try {
         const formData = new FormData();
-
+  
         formData.append('PlacaActivo', newAsset.PlacaActivo?.toString() ?? '');
         formData.append('Descripcion', newAsset.Descripcion?.toString() ?? '');
         formData.append('MontoVentas', newAsset.MontoVentas?.toString() ?? '');
         if (newAsset.Fotografia) {
-            formData.append('Fotografia', newAsset.Fotografia);
+          formData.append('Fotografia', newAsset.Fotografia);
         }
         if (newAsset.CotizacionVentas) {
-            formData.append('CotizacionVentas', newAsset.CotizacionVentas);
+          formData.append('CotizacionVentas', newAsset.CotizacionVentas);
         }
         if (newAsset.Comprobante) {
-            formData.append('Comprobante', newAsset.Comprobante);
+          formData.append('Comprobante', newAsset.Comprobante);
         }
         if (newAsset.DocumentoAprobado) {
           formData.append('DocumentoAprobado', newAsset.DocumentoAprobado);
         }
+  
         await api.salesAssest.updateSalesAsset(selectedNewAsset.id, formData);
         toast.success("Activo Actualizado");
         setOpenEditDialog(false);
+        // Actualizar el estado directamente
+        setAssetSales((prevAssetSales) =>
+          prevAssetSales.map((asset) =>
+            asset.id === selectedNewAsset.id ? { ...asset, ...newAsset } : asset
+          )
+        );
+        setFilteredAssets((prevFilteredAssets) =>
+          prevFilteredAssets.map((asset) =>
+            asset.id === selectedNewAsset.id ? { ...asset, ...newAsset } : asset
+          )
+        );
         loadNewAsset();
       } catch (error) {
         console.error("Error al actualizar El Activo:", error);
@@ -342,12 +361,12 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
           <TableBody>
             {filteredAssets.slice(startIndex, endIndex).map((newAsset) => (
               <TableRow key={newAsset.id} onClick={() => handleRowClick(newAsset)} style={{ cursor: "pointer" }}>
-                <TableCell>{newAsset.PlacaActivo}</TableCell>
-                <TableCell>{newAsset.Descripcion}</TableCell>
-                <TableCell>{newAsset.MontoVentas}</TableCell>
-                <TableCell>{newAsset.NumeroBoleta}</TableCell>
-                <TableCell>{newAsset.Usuario}</TableCell>
-                <TableCell>
+                <TableCell align="center">{newAsset.PlacaActivo}</TableCell>
+                <TableCell align="center">{newAsset.Descripcion}</TableCell>
+                <TableCell align="center">{newAsset.MontoVentas}</TableCell>
+                <TableCell align="center">{newAsset.NumeroBoleta}</TableCell>
+                <TableCell align="center">{newAsset.Usuario}</TableCell>
+                <TableCell align="center">
                   {imageUrlMap.get(newAsset.id)?.get('Fotografia') ? (
                     <img
                       src={imageUrlMap.get(newAsset.id)?.get('Fotografia')}
@@ -356,7 +375,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
                     />
                   ) : t('Lista-ErrorImagen')}
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                 {imageUrlMap.get(newAsset.id)?.get('DocumentoAprobado') ? (
                     <a
                     href={imageUrlMap.get(newAsset.id)?.get('DocumentoAprobado')}
@@ -369,7 +388,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
                     </a>
                 ) : t('Lista-ErrorFactura')}
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   {newAsset.CotizacionVentas ? (
                      <a
                       href={`http://localhost:5000/${newAsset.CotizacionVentas}`}
@@ -382,7 +401,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
                     </a>
                   ) : t('Lista-ErrorFactura')}
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   {newAsset.Comprobante ? (
                      <a
                       href={`http://localhost:5000/${newAsset.Comprobante}`}
@@ -395,7 +414,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
                     </a>
                   ) : t('Lista-ErrorFactura')}
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   <Button
                     variant="contained"
                     color="info"
@@ -419,7 +438,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
                     {t('Lista-BotonEliminar')}
                   </Button>
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   <Button
                     variant="contained"
                     color="success"

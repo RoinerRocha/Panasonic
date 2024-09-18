@@ -3,9 +3,7 @@ import {
     TableRow, TableBody, Button, Dialog, DialogActions,
     DialogContent, DialogTitle, TablePagination,
     FormControl, InputLabel, Select, MenuItem,
-    TextField,
-    FormHelperText,
-    Grid,
+    TextField, FormHelperText, Grid,
     styled, Box
 } from "@mui/material";
 
@@ -133,7 +131,14 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
             try {
               await api.assetRetirement.deleteAssetRetirement(id);
               toast.success("Activo Eliminado Correctamente");
-              loadNewAsset();
+              
+              // Actualiza directamente los estados después de la eliminación
+              setAssetRetirements(prevAssetRetirements => 
+                prevAssetRetirements.filter(asset => asset.id !== id)
+              );
+              setFilteredAssets(prevFilteredAssets =>
+                prevFilteredAssets.filter(asset => asset.id !== id)
+              );
             } catch (error) {
               console.error("Error al eliminar El Activo", error);
               toast.error("Error al eliminar El activo");
@@ -146,7 +151,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
         }
       ]
     });
-  };
+};
 
   const handleEdit = (newAsset: assetRetirementModel) => {
     setSelectedNewAsset(newAsset);
@@ -158,7 +163,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
     if (selectedNewAsset) {
       try {
         const formData = new FormData();
-
+  
         formData.append('PlacaActivo', newAsset.PlacaActivo?.toString() ?? '');
         formData.append('Descripcion', newAsset.Descripcion?.toString() ?? '');
         formData.append('DestinoFinal', newAsset.DestinoFinal?.toString() ?? '');
@@ -168,10 +173,21 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
         if (newAsset.DocumentoAprobado) {
           formData.append('DocumentoAprobado', newAsset.DocumentoAprobado);
         }
-
+  
         await api.assetRetirement.updateAssetRetirement(selectedNewAsset.id, formData);
         toast.success("Activo Actualizado");
         setOpenEditDialog(false);
+        // Actualizar el estado directamente
+        setAssetRetirements((prevAssetRetirements) =>
+          prevAssetRetirements.map((asset) =>
+            asset.id === selectedNewAsset.id ? { ...asset, ...newAsset } : asset
+          )
+        );
+        setFilteredAssets((prevFilteredAssets) =>
+          prevFilteredAssets.map((asset) =>
+            asset.id === selectedNewAsset.id ? { ...asset, ...newAsset } : asset
+          )
+        );
         loadNewAsset();
       } catch (error) {
         console.error("Error al actualizar El Activo:", error);
@@ -319,12 +335,12 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
           <TableBody>
             {filteredAssets.slice(startIndex, endIndex).map((newAsset) => (
               <TableRow key={newAsset.id} onClick={() => handleRowClick(newAsset)} style={{ cursor: "pointer" }}>
-                <TableCell>{newAsset.PlacaActivo}</TableCell>
-                <TableCell>{newAsset.Descripcion}</TableCell>
-                <TableCell>{newAsset.DestinoFinal}</TableCell>
-                <TableCell>{newAsset.NumeroBoleta}</TableCell>
-                <TableCell>{newAsset.Usuario}</TableCell>
-                <TableCell>
+                <TableCell align="center">{newAsset.PlacaActivo}</TableCell>
+                <TableCell align="center">{newAsset.Descripcion}</TableCell>
+                <TableCell align="center">{newAsset.DestinoFinal}</TableCell>
+                <TableCell align="center">{newAsset.NumeroBoleta}</TableCell>
+                <TableCell align="center">{newAsset.Usuario}</TableCell>
+                <TableCell align="center">
                   {imageUrlMap.get(newAsset.id)?.get('Fotografia') ? (
                     <img
                       src={imageUrlMap.get(newAsset.id)?.get('Fotografia')}
@@ -333,7 +349,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
                     />
                   ) : t('Lista-ErrorImagen')}
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   {newAsset.DocumentoAprobado ? (
                      <a
                       href={`http://localhost:5000/${newAsset.DocumentoAprobado}`}
@@ -346,7 +362,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
                     </a>
                   ) : t('Lista-ErrorFactura')}
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   <Button
                     variant="contained"
                     color="info"
@@ -370,7 +386,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
                     {t('Lista-BotonEliminar')}
                   </Button>
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   <Button
                     variant="contained"
                     color="success"
