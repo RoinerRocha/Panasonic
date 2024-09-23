@@ -16,10 +16,12 @@
     "menu-lista-activos": "List of Assets",
     "menu-ingreso-activos": "New Assets",
     "menu-baja-activos": "Asset Retirement",
+    "menu-lista-bajas": "Asset Retirement",
     "menu-venta-activos": "Sales of Assets",
+    "menu-lista-ventas": "Sales of Assets",
     "menu-reportes": "Reports",
     "menu-depreciacion-mensual": "Monthly Depreciation",
-    "menu-depreciacion-activos": "Depreciation of Assets List (Mh)",
+    "menu-depreciacion-activos": "Type of Assets (Mh)",
     "menu-Mapas": "Mapas",
     "menu-ayuda": "Help",
 

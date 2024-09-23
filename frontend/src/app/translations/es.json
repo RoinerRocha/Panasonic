@@ -16,10 +16,12 @@
     "menu-lista-activos": "Lista de Activos",
     "menu-ingreso-activos": "Ingreso de Activos",
     "menu-baja-activos": "Baja de Activos",
+    "menu-lista-bajas": "Baja de Activos",
     "menu-venta-activos": "Ventas de Activos",
+    "menu-lista-ventas": "Ventas de Activos",
     "menu-reportes": "Reportes",
     "menu-depreciacion-mensual": "Depreciación Mensual",
-    "menu-depreciacion-activos": "Lista Depreciación de Activos (Mh)",
+    "menu-depreciacion-activos": "Tipo de Activos (Mh)",
     "menu-Mapas": "Mapas",
     "menu-ayuda": "Ayuda",
 

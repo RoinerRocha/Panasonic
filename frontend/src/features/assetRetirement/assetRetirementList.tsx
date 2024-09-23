@@ -3,9 +3,7 @@ import {
     TableRow, TableBody, Button, Dialog, DialogActions,
     DialogContent, DialogTitle, TablePagination,
     FormControl, InputLabel, Select, MenuItem,
-    TextField,
-    FormHelperText,
-    Grid,
+    TextField, FormHelperText, Grid,
     styled, Box
 } from "@mui/material";
 
@@ -44,6 +42,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
     Descripcion: "",
     DestinoFinal: "",
     Fotografia: null,
+    DocumentoAprobado: null,
     NumeroBoleta: "",
     Usuario: "",
   });
@@ -104,7 +103,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
       if (asset.DocumentoAprobado) {
         setImageUrlMap((prevMap) => {
           const assetMap = prevMap.get(asset.id) || new Map();
-          assetMap.set('FacturaImagen', `http://localhost:5000/${asset.DocumentoAprobado}`);
+          assetMap.set('DocumentoAprobado', `http://localhost:5000/${asset.DocumentoAprobado}`);
           return new Map(prevMap).set(asset.id, assetMap);
         });
       }
@@ -132,7 +131,14 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
             try {
               await api.assetRetirement.deleteAssetRetirement(id);
               toast.success("Activo Eliminado Correctamente");
-              loadNewAsset();
+              
+              // Actualiza directamente los estados después de la eliminación
+              setAssetRetirements(prevAssetRetirements => 
+                prevAssetRetirements.filter(asset => asset.id !== id)
+              );
+              setFilteredAssets(prevFilteredAssets =>
+                prevFilteredAssets.filter(asset => asset.id !== id)
+              );
             } catch (error) {
               console.error("Error al eliminar El Activo", error);
               toast.error("Error al eliminar El activo");
@@ -145,7 +151,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
         }
       ]
     });
-  };
+};
 
   const handleEdit = (newAsset: assetRetirementModel) => {
     setSelectedNewAsset(newAsset);
@@ -157,17 +163,31 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
     if (selectedNewAsset) {
       try {
         const formData = new FormData();
-
+  
         formData.append('PlacaActivo', newAsset.PlacaActivo?.toString() ?? '');
         formData.append('Descripcion', newAsset.Descripcion?.toString() ?? '');
         formData.append('DestinoFinal', newAsset.DestinoFinal?.toString() ?? '');
         if (newAsset.Fotografia) {
           formData.append('Fotografia', newAsset.Fotografia);
         }
-
+        if (newAsset.DocumentoAprobado) {
+          formData.append('DocumentoAprobado', newAsset.DocumentoAprobado);
+        }
+  
         await api.assetRetirement.updateAssetRetirement(selectedNewAsset.id, formData);
         toast.success("Activo Actualizado");
         setOpenEditDialog(false);
+        // Actualizar el estado directamente
+        setAssetRetirements((prevAssetRetirements) =>
+          prevAssetRetirements.map((asset) =>
+            asset.id === selectedNewAsset.id ? { ...asset, ...newAsset } : asset
+          )
+        );
+        setFilteredAssets((prevFilteredAssets) =>
+          prevFilteredAssets.map((asset) =>
+            asset.id === selectedNewAsset.id ? { ...asset, ...newAsset } : asset
+          )
+        );
         loadNewAsset();
       } catch (error) {
         console.error("Error al actualizar El Activo:", error);
@@ -254,6 +274,17 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
     }
   };
 
+  const generateExcel = async (assetId: number, numBoleta: string) => {
+    try {
+      const response = await api.assetRetirement.generateExcelFile(assetId);
+      const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, `asset_${numBoleta}.xlsx`);
+    } catch (error) {
+      console.error('Error generando Excel:', error);
+      toast.error('Error generando Excel');
+    }
+  };
+
   return (
     <div>
       <Box sx={{ mb: 2 }}>
@@ -298,17 +329,18 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Fotografia</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Documento Aprobado</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Configuracion</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Reporte Individual</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredAssets.slice(startIndex, endIndex).map((newAsset) => (
               <TableRow key={newAsset.id} onClick={() => handleRowClick(newAsset)} style={{ cursor: "pointer" }}>
-                <TableCell>{newAsset.PlacaActivo}</TableCell>
-                <TableCell>{newAsset.Descripcion}</TableCell>
-                <TableCell>{newAsset.DestinoFinal}</TableCell>
-                <TableCell>{newAsset.NumeroBoleta}</TableCell>
-                <TableCell>{newAsset.Usuario}</TableCell>
-                <TableCell>
+                <TableCell align="center">{newAsset.PlacaActivo}</TableCell>
+                <TableCell align="center">{newAsset.Descripcion}</TableCell>
+                <TableCell align="center">{newAsset.DestinoFinal}</TableCell>
+                <TableCell align="center">{newAsset.NumeroBoleta}</TableCell>
+                <TableCell align="center">{newAsset.Usuario}</TableCell>
+                <TableCell align="center">
                   {imageUrlMap.get(newAsset.id)?.get('Fotografia') ? (
                     <img
                       src={imageUrlMap.get(newAsset.id)?.get('Fotografia')}
@@ -317,7 +349,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
                     />
                   ) : t('Lista-ErrorImagen')}
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   {newAsset.DocumentoAprobado ? (
                      <a
                       href={`http://localhost:5000/${newAsset.DocumentoAprobado}`}
@@ -330,7 +362,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
                     </a>
                   ) : t('Lista-ErrorFactura')}
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   <Button
                     variant="contained"
                     color="info"
@@ -352,6 +384,19 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
                     }}
                   >
                     {t('Lista-BotonEliminar')}
+                  </Button>
+                </TableCell>
+                <TableCell align="center">
+                  <Button
+                    variant="contained"
+                    color="success"
+                    sx={{ margin: "5px" }}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      generateExcel(newAsset.id, newAsset.NumeroBoleta);
+                    }}
+                  >
+                    Excel
                   </Button>
                 </TableCell>
               </TableRow>
@@ -446,6 +491,31 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
             {newAsset.Fotografia && <FormHelperText>{t('EditarLista-TituloArchivo')}: {newAsset.Fotografia.name}</FormHelperText>}
             {imageUrlMap1.get(newAsset.Fotografia?.name || '') && (
               <img src={imageUrlMap1.get(newAsset.Fotografia?.name || '')} alt="Fotografía" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+            )}
+          </Grid>
+          <Grid item xs={6}>
+          {newAsset.DocumentoAprobado && (
+        <img src={imageUrlMap.get(newAsset.id || 0)?.get('DocumentoAprobado')} alt="DocumentoAprobado" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+      )}
+            <Button variant="contained" component="label" fullWidth>
+            {newAsset.DocumentoAprobado? "Agregar Documento" : "Editar Documento"}
+              <VisuallyHiddenInput
+                type="file"
+                name="ImagenDocumento"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];  // Obtener el primer archivo seleccionado
+                  if (file) {
+                    const fileUrl = URL.createObjectURL(file); // Crear una URL temporal para el archivo
+                    
+                    setNewAsset({ ...newAsset, DocumentoAprobado: file });
+                    setImageUrlMap1(prevMap => new Map(prevMap).set(file.name, fileUrl));
+                  }
+                }}
+              />
+            </Button> 
+            {newAsset.DocumentoAprobado && <FormHelperText>{t('EditarLista-TituloArchivo')}: {newAsset.DocumentoAprobado.name}</FormHelperText>}
+            {imageUrlMap1.get(newAsset.DocumentoAprobado?.name || '') && (
+              <img src={imageUrlMap1.get(newAsset.DocumentoAprobado?.name || '')} alt="DocumentoAprobado" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
             )}
           </Grid>
           <TextField

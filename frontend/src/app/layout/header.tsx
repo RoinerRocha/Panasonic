@@ -129,8 +129,6 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
     { title: t('menu-lista-activos'), path: "/NewAsset" },
     { title: t('menu-baja-activos'), path: "/RetirementList" },
     { title: t('menu-venta-activos'), path: "/AssetSalesList" },
-    { title: t('menu-reportes'), path: "/" },
-    { title: t('menu-depreciacion-mensual'), path: "/depreciation" },
     { title: t('menu-depreciacion-activos'), path: "/NewServiceLife" },
     { title: t('menu-Mapas'), path: "/Maps" },
     { title: t('menu-ayuda'), path: "/" }, // Manual
@@ -140,13 +138,14 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
   const filteredMidLinks = user?.perfil_asignado === "Maestro"
     ? midLinks
     : midLinks.filter(link =>
-        link.title === t('menu-ingreso-activos') ||
         link.title === t('menu-historial') ||
-        link.title === t('menu-venta-activos') ||
-        link.title === t('menu-reportes') ||
-        link.title === t('menu-lista-activos') ||
-        link.title === t('menu-baja-activos')
-      );
+        link.title === t('menu-Mapas') 
+  ).concat([
+      { title: t('menu-ingreso-activos'), path: "/RegisterAsset" },
+      { title: t('menu-lista-ventas'), path: "/AssetSales" },
+      { title: t('menu-lista-bajas'), path: "/AssetRetirement" },
+      { title: t('menu-ayuda'), path: "/" }
+  ]);
 
   return (
     <Box>

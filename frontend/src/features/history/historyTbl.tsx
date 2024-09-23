@@ -279,32 +279,7 @@ const downloadExcelFile = async (boletas: string[]) => {
                           profile as assetRetirementModel | assetSaleModel
                         ) === "Pendiente" ? (
                           <>
-                             <Button
-                              variant="contained"
-                              color="primary"
-                              onClick={() => handleClickOpen(profile.NumeroBoleta)}
-                            >
-                              {t('Boton-Documento')}
-                            </Button>
-
-                            <Dialog open={open} onClose={handleClose}>
-                              <DialogTitle>{t('Titulo-documento')}</DialogTitle>
-                              <DialogContent>
-                                <TextField
-                                  type="file"
-                                  onChange={handleFileChange}
-                                  fullWidth
-                                />
-                              </DialogContent>
-                              <DialogActions>
-                                <Button onClick={handleClose} color="primary">
-                                  {t('Boton-documento-cancelar')}
-                                </Button>
-                                <Button onClick={handleUpload} color="primary">
-                                  {t('Boton-documento-agregar')}
-                                </Button>
-                              </DialogActions>
-                            </Dialog>
+                             Sin aprobar
                           </>
                         ) : (
                           "Aprobado"

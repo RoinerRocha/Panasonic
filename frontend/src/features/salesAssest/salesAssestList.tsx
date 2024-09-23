@@ -42,6 +42,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
     Descripcion: "",
     MontoVentas: 0,
     CotizacionVentas: null,
+    DocumentoAprobado: null,
     Fotografia: null,
     Comprobante: null,
     NumeroBoleta: "",
@@ -111,14 +112,14 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
       if (asset.Comprobante) {
         setImageUrlMap((prevMap) => {
           const assetMap = prevMap.get(asset.id) || new Map();
-          assetMap.set('FacturaImagen', `http://localhost:5000/${asset.Comprobante}`);
+          assetMap.set('Comprobante', `http://localhost:5000/${asset.Comprobante}`);
           return new Map(prevMap).set(asset.id, assetMap);
         });
       }
       if (asset.CotizacionVentas) {
         setImageUrlMap((prevMap) => {
           const assetMap = prevMap.get(asset.id) || new Map();
-          assetMap.set('FacturaImagen', `http://localhost:5000/${asset.CotizacionVentas}`);
+          assetMap.set('CotizacionVentas', `http://localhost:5000/${asset.CotizacionVentas}`);
           return new Map(prevMap).set(asset.id, assetMap);
         });
       }
@@ -146,7 +147,14 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
             try {
               await api.salesAssest.deleteSalesAsset(id);
               toast.success("Activo Eliminado Correctamente");
-              loadNewAsset();
+              
+              // Actualiza directamente los estados después de la eliminación
+              setAssetSales(prevAssetSales => 
+                prevAssetSales.filter(asset => asset.id !== id)
+              );
+              setFilteredAssets(prevFilteredAssets =>
+                prevFilteredAssets.filter(asset => asset.id !== id)
+              );
             } catch (error) {
               console.error("Error al eliminar El Activo", error);
               toast.error("Error al eliminar El activo");
@@ -159,7 +167,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
         }
       ]
     });
-  };
+};
 
   const handleEdit = (newAsset: assetSaleModel) => {
     setSelectedNewAsset(newAsset);
@@ -171,22 +179,37 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
     if (selectedNewAsset) {
       try {
         const formData = new FormData();
-
+  
         formData.append('PlacaActivo', newAsset.PlacaActivo?.toString() ?? '');
         formData.append('Descripcion', newAsset.Descripcion?.toString() ?? '');
         formData.append('MontoVentas', newAsset.MontoVentas?.toString() ?? '');
         if (newAsset.Fotografia) {
-            formData.append('Fotografia', newAsset.Fotografia);
+          formData.append('Fotografia', newAsset.Fotografia);
         }
         if (newAsset.CotizacionVentas) {
-            formData.append('CotizacionVentas', newAsset.CotizacionVentas);
+          formData.append('CotizacionVentas', newAsset.CotizacionVentas);
         }
         if (newAsset.Comprobante) {
-            formData.append('Comprobante', newAsset.Comprobante);
+          formData.append('Comprobante', newAsset.Comprobante);
         }
+        if (newAsset.DocumentoAprobado) {
+          formData.append('DocumentoAprobado', newAsset.DocumentoAprobado);
+        }
+  
         await api.salesAssest.updateSalesAsset(selectedNewAsset.id, formData);
         toast.success("Activo Actualizado");
         setOpenEditDialog(false);
+        // Actualizar el estado directamente
+        setAssetSales((prevAssetSales) =>
+          prevAssetSales.map((asset) =>
+            asset.id === selectedNewAsset.id ? { ...asset, ...newAsset } : asset
+          )
+        );
+        setFilteredAssets((prevFilteredAssets) =>
+          prevFilteredAssets.map((asset) =>
+            asset.id === selectedNewAsset.id ? { ...asset, ...newAsset } : asset
+          )
+        );
         loadNewAsset();
       } catch (error) {
         console.error("Error al actualizar El Activo:", error);
@@ -275,6 +298,17 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
     }
   };
 
+  const generateExcel = async (assetId: number, numBoleta: string) => {
+    try {
+      const response = await api.salesAssest.generateExcelFile(assetId);
+      const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, `asset_${numBoleta}.xlsx`);
+    } catch (error) {
+      console.error('Error generando Excel:', error);
+      toast.error('Error generando Excel');
+    }
+  };
+
   return (
     <div>
       <Box sx={{ mb: 2 }}>
@@ -321,17 +355,18 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Documento de Cotizacion</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Comprobante de Banco</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Configuracion</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Reporte Individual</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredAssets.slice(startIndex, endIndex).map((newAsset) => (
               <TableRow key={newAsset.id} onClick={() => handleRowClick(newAsset)} style={{ cursor: "pointer" }}>
-                <TableCell>{newAsset.PlacaActivo}</TableCell>
-                <TableCell>{newAsset.Descripcion}</TableCell>
-                <TableCell>{newAsset.MontoVentas}</TableCell>
-                <TableCell>{newAsset.NumeroBoleta}</TableCell>
-                <TableCell>{newAsset.Usuario}</TableCell>
-                <TableCell>
+                <TableCell align="center">{newAsset.PlacaActivo}</TableCell>
+                <TableCell align="center">{newAsset.Descripcion}</TableCell>
+                <TableCell align="center">{newAsset.MontoVentas}</TableCell>
+                <TableCell align="center">{newAsset.NumeroBoleta}</TableCell>
+                <TableCell align="center">{newAsset.Usuario}</TableCell>
+                <TableCell align="center">
                   {imageUrlMap.get(newAsset.id)?.get('Fotografia') ? (
                     <img
                       src={imageUrlMap.get(newAsset.id)?.get('Fotografia')}
@@ -340,7 +375,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
                     />
                   ) : t('Lista-ErrorImagen')}
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                 {imageUrlMap.get(newAsset.id)?.get('DocumentoAprobado') ? (
                     <a
                     href={imageUrlMap.get(newAsset.id)?.get('DocumentoAprobado')}
@@ -349,11 +384,11 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
                     download
                     onClick={(e) => e.stopPropagation()}
                     >
-                    {t('Lista-TextoFacturaDoc')}
+                    Ver Documento Aprobado
                     </a>
                 ) : t('Lista-ErrorFactura')}
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   {newAsset.CotizacionVentas ? (
                      <a
                       href={`http://localhost:5000/${newAsset.CotizacionVentas}`}
@@ -366,7 +401,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
                     </a>
                   ) : t('Lista-ErrorFactura')}
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   {newAsset.Comprobante ? (
                      <a
                       href={`http://localhost:5000/${newAsset.Comprobante}`}
@@ -379,7 +414,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
                     </a>
                   ) : t('Lista-ErrorFactura')}
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   <Button
                     variant="contained"
                     color="info"
@@ -401,6 +436,19 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
                     }}
                   >
                     {t('Lista-BotonEliminar')}
+                  </Button>
+                </TableCell>
+                <TableCell align="center">
+                  <Button
+                    variant="contained"
+                    color="success"
+                    sx={{ margin: "5px" }}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      generateExcel(newAsset.id, newAsset.NumeroBoleta);
+                    }}
+                  >
+                    Excel
                   </Button>
                 </TableCell>
               </TableRow>
@@ -497,6 +545,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
               <img src={imageUrlMap1.get(newAsset.Fotografia?.name || '')} alt="Fotografía" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
             )}
           </Grid>
+
           <Grid item xs={6}>
           {newAsset.Comprobante && (
         <img src={imageUrlMap.get(newAsset.id || 0)?.get('Comprobante')} alt="Comprobante" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
@@ -545,6 +594,31 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
             {newAsset.CotizacionVentas && <FormHelperText>{t('EditarLista-TituloArchivo')}: {newAsset.CotizacionVentas.name}</FormHelperText>}
             {imageUrlMap1.get(newAsset.CotizacionVentas?.name || '') && (
               <img src={imageUrlMap1.get(newAsset.CotizacionVentas?.name || '')} alt="CotizacionVentas" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+            )}
+          </Grid>
+          <Grid item xs={6}>
+          {newAsset.DocumentoAprobado && (
+        <img src={imageUrlMap.get(newAsset.id || 0)?.get('DocumentoAprobado')} alt="DocumentoAprobado" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+      )}
+            <Button variant="contained" component="label" fullWidth>
+            {newAsset.DocumentoAprobado? "Subir Documento Aprobado" : "Subir Documento"}
+              <VisuallyHiddenInput
+                type="file"
+                name="ImagenDocumentoAprobado"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];  // Obtener el primer archivo seleccionado
+                  if (file) {
+                    const fileUrl = URL.createObjectURL(file); // Crear una URL temporal para el archivo
+                    
+                    setNewAsset({ ...newAsset, DocumentoAprobado: file });
+                    setImageUrlMap1(prevMap => new Map(prevMap).set(file.name, fileUrl));
+                  }
+                }}
+              />
+            </Button> 
+            {newAsset.DocumentoAprobado && <FormHelperText>{t('EditarLista-TituloArchivo')}: {newAsset.DocumentoAprobado.name}</FormHelperText>}
+            {imageUrlMap1.get(newAsset.DocumentoAprobado?.name || '') && (
+              <img src={imageUrlMap1.get(newAsset.DocumentoAprobado?.name || '')} alt="Fotografía" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
             )}
           </Grid>
           <TextField

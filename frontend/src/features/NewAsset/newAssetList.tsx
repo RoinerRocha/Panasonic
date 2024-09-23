@@ -183,7 +183,14 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
             try {
               await api.newAsset.deleteNewAsset(id);
               toast.success("Activo Eliminado Correctamente");
-              loadNewAsset();
+              
+              // Actualiza directamente los estados después de la eliminación
+              setNewAssets(prevNewAssets => 
+                prevNewAssets.filter(asset => asset.id !== id)
+              );
+              setFilteredAssets(prevFilteredAssets =>
+                prevFilteredAssets.filter(asset => asset.id !== id)
+              );
             } catch (error) {
               console.error("Error al eliminar El Activo", error);
               toast.error("Error al eliminar El activo");
@@ -196,7 +203,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
         }
       ]
     });
-  };
+};
 
   const handleEdit = (newAsset: newAssetModels) => {
     setSelectedNewAsset(newAsset);
@@ -208,7 +215,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
     if (selectedNewAsset) {
       try {
         const formData = new FormData();
-
+  
         formData.append('CodigoCuenta', newAsset.CodigoCuenta?.toString() ?? '');
         formData.append('Zona', newAsset.Zona?.toString() ?? '');
         formData.append('Tipo', newAsset.Tipo?.toString() ?? '');
@@ -234,13 +241,24 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
         formData.append('NumeroBoleta', newAsset.NumeroBoleta ?? '');
         formData.append('Usuario', newAsset.Usuario ?? '');
 
-
+  
         await api.newAsset.updateNewAsset(selectedNewAsset.id, formData);
-        toast.success("Activo Ingresado Actualizado");
+        toast.success("Activo Actualizado");
         setOpenEditDialog(false);
+        // Actualizar el estado directamente
+        setNewAssets((prevNesAssets) =>
+          prevNesAssets.map((asset) =>
+            asset.id === selectedNewAsset.id ? { ...asset, ...newAsset } : asset
+          )
+        );
+        setFilteredAssets((prevFilteredAssets) =>
+          prevFilteredAssets.map((asset) =>
+            asset.id === selectedNewAsset.id ? { ...asset, ...newAsset } : asset
+          )
+        );
         loadNewAsset();
       } catch (error) {
-        console.error("Error al actualizar El Activo Ingresado:", error);
+        console.error("Error al actualizar El Activo:", error);
         toast.error("Error al intentar Actualizar Activo");
       }
     }
@@ -418,15 +436,15 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
           <TableBody>
             {filteredAssets.slice(startIndex, endIndex).map((newAsset) => (
               <TableRow key={newAsset.id} onClick={() => handleRowClick(newAsset)} style={{ cursor: "pointer" }}>
-                <TableCell>{newAsset.CodigoCuenta}</TableCell>
-                <TableCell>{newAsset.Zona}</TableCell>
-                <TableCell>{newAsset.Tipo}</TableCell>
-                <TableCell>{newAsset.Estado}</TableCell>
-                <TableCell>{newAsset.Descripcion}</TableCell>
-                <TableCell>{newAsset.NumeroPlaca}</TableCell>
-                <TableCell>{'₡' + newAsset.ValorCompraCRC}</TableCell>
-                <TableCell>{"$" + newAsset.ValorCompraUSD}</TableCell>
-                <TableCell>
+                <TableCell align="center">{newAsset.CodigoCuenta}</TableCell>
+                <TableCell align="center">{newAsset.Zona}</TableCell>
+                <TableCell align="center">{newAsset.Tipo}</TableCell>
+                <TableCell align="center">{newAsset.Estado}</TableCell>
+                <TableCell align="center">{newAsset.Descripcion}</TableCell>
+                <TableCell align="center">{newAsset.NumeroPlaca}</TableCell>
+                <TableCell align="center">{'₡' + newAsset.ValorCompraCRC}</TableCell>
+                <TableCell align="center">{"$" + newAsset.ValorCompraUSD}</TableCell>
+                <TableCell align="center">
                   {imageUrlMap.get(newAsset.id)?.get('Fotografia') ? (
                     <img
                       src={imageUrlMap.get(newAsset.id)?.get('Fotografia')}
@@ -435,10 +453,10 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                     />
                   ) : t('Lista-ErrorImagen')}
                 </TableCell>
-                <TableCell>{newAsset.NombreProveedor}</TableCell>
-                <TableCell>{new Date(newAsset.FechaCompra).toLocaleDateString()}</TableCell>
-                <TableCell>{newAsset.FacturaNum}</TableCell>
-                <TableCell>
+                <TableCell align="center">{newAsset.NombreProveedor}</TableCell>
+                <TableCell align="center">{new Date(newAsset.FechaCompra).toLocaleDateString()}</TableCell>
+                <TableCell align="center">{newAsset.FacturaNum}</TableCell>
+                <TableCell align="center">
                   {newAsset.FacturaImagen ? (
                      <a
                       href={`http://localhost:5000/${newAsset.FacturaImagen}`}
@@ -451,8 +469,8 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                     </a>
                   ) : t('Lista-ErrorFactura')}
                 </TableCell>
-                <TableCell>{newAsset.OrdenCompraNum}</TableCell>
-                <TableCell>
+                <TableCell align="center">{newAsset.OrdenCompraNum}</TableCell>
+                <TableCell align="center">
                   {newAsset.OrdenCompraImagen ? (
                       <a
                         href={`http://localhost:5000/${newAsset.OrdenCompraImagen}`}
@@ -465,10 +483,10 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                       </a>
                   ) : t('Lista-ErrorOrden')}
                 </TableCell>
-                <TableCell>{newAsset.NumeroAsiento}</TableCell>
-                <TableCell>{newAsset.NumeroBoleta}</TableCell>
-                <TableCell>{newAsset.Usuario}</TableCell>
-                <TableCell>
+                <TableCell align="center">{newAsset.NumeroAsiento}</TableCell>
+                <TableCell align="center">{newAsset.NumeroBoleta}</TableCell>
+                <TableCell align="center">{newAsset.Usuario}</TableCell>
+                <TableCell align="center">
                   <Button
                     variant="contained"
                     color="info"
@@ -492,7 +510,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
                     {t('Lista-BotonEliminar')}
                   </Button>
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   <Button
                     variant="contained"
                     color="error"
