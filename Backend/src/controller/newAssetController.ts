@@ -635,6 +635,8 @@ export const saveAssetPositions = async (req: Request, res: Response) => {
   const transaction = await NewAssetModel.sequelize?.transaction();
 
   try {
+    console.log('Posiciones a actualizar:', assetPositions);
+
     const updatePromises = Object.keys(assetPositions).map((assetId) => {
       const { x, y } = assetPositions[assetId];
 
@@ -681,9 +683,10 @@ export const getAssetPositions = async (req: Request, res: Response) => {
       where: { Zona },  // Filtrar por zona
       attributes: ['id', 'posX', 'posY']  // Solo devolver el id, posX y posY
     });
+    console.log('Activos encontrados:', assets);
 
     if (assets.length === 0) {
-      return res.status(404).json({ message: 'No se encontraron activos para la zona especificada.' });
+      return res.status(200).json({ message: 'No se encontraron activos para la zona especificada.', assets: [] });
     }
 
     // Devolver las posiciones de los activos
