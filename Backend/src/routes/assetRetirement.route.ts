@@ -7,6 +7,7 @@ import {
    getAssetRetirementByNumeroBoleta, 
    getAssetRetirementPlate,
    searchSalesRetirenement,
+   generateExcelFile,
 } from "../controller/assetRetirementController";
 import { uploadAssetRetirement } from "../Middleware/multerConfigAssetRetirement";
 
@@ -44,5 +45,7 @@ router.get("/assetRetirements/boleta/:NumeroBoleta", getAssetRetirementByNumeroB
 router.get("/assetRetirements/placa/:PlacaActivo", getAssetRetirementPlate);
 
 router.get("/searchAssetsRetirenement", searchSalesRetirenement);
+
+router.get("/RetirementExcelFile/:id", generateExcelFile);
 
 export default router;

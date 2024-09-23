@@ -6,6 +6,7 @@ import {
     searchSalesAssets,
     updateSalesAsset,
     deleteSalesAsset,
+    generateExcelFile,
  //   totalVentas
 //   deleteSalesAsset,
 //   updateSalesAsset,
@@ -41,10 +42,10 @@ router.put(
   updateSalesAsset
 );
 
-router.post("/saveSalesAsset", saveSalesAsset);
 router.get("/getSalesAssets", getSalesAssets);
 router.get("/salesAssets/boleta/:NumeroBoleta", getAssetSaleByNumeroBoleta);
 router.get("/searchSalesAssets", searchSalesAssets);
+router.get("/SalesExcelFile/:id", generateExcelFile);
 //router.get("/totalSalesAssets", totalVentas);
 
 // router.put("/salesAssets/:id", updateSalesAsset);

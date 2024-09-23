@@ -4,6 +4,8 @@ import { Op } from "sequelize";
 import Joi from 'joi';
 import path from 'path';
 import fs from 'fs';
+import ExcelJS from "exceljs";
+import { writeFileSync, unlink } from "fs";
 
 
 interface MulterFiles {
@@ -250,6 +252,59 @@ export const getAssetRetirementPlate = async (req: Request, res: Response) => {
     } else {
       res.status(404).json({ message: "Asset retirement not found" });
     }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const generateExcelFile = async (req: Request, res: Response) => {
+  const assetRetirementId   = req.params.id;
+
+  try {
+    const asset = await AssetRetirementModel.findByPk(assetRetirementId );
+
+    if (!asset) {
+      return res.status(404).json({ message: "Asset not found" });
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Asset Information");
+
+    worksheet.columns = [
+      { header: "Placa de activo", key: "plate", width: 30 },
+      { header: "Descripcion", key: "description", width: 30 },
+      { header: "Destino Final", key: "Destiny", width: 30 },
+      { header: "Documento de Aprobacion", key: "Document", width: 30 },
+      { header: "Fotografia", key: "photo", width: 30 },
+      { header: "Numero Boleta", key: "ballot", width: 30 },
+      { header: "Usuario", key: "user", width: 30 },
+    ];
+
+    const assetData = {
+      plate: asset.PlacaActivo,
+      description: asset.Descripcion,
+      Destiny: asset.DestinoFinal,
+      Document: asset.DocumentoAprobado ? "Approval document available / Documento de aprobación disponible" : "No approval document / Sin documento de aprobación",
+      photo: asset.Fotografia ? "Photo available / Fotografía disponible" : "No photo / Sin fotografía",
+      ballot: asset.NumeroBoleta,
+      user: asset.Usuario,
+    };
+
+    const row = worksheet.addRow(assetData);
+    row.alignment = { vertical: 'middle', horizontal: 'center' };
+
+    const filePath = `./uploads/Asset_${asset.NumeroBoleta}.xlsx`;
+    await workbook.xlsx.writeFile(filePath);
+
+    res.download(filePath, `Asset_${asset.NumeroBoleta}.xlsx`, (err) => {
+      if (err) {
+        console.error("Error downloading file:", err);
+        res.status(500).json({ message: "Error downloading file" });
+      }
+      unlink(filePath, (err) => {
+        if (err) console.error("Error deleting file:", err);
+      });
+    });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
