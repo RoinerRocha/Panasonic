@@ -41,6 +41,7 @@ export const router = createBrowserRouter([
           { path: "AssetRetirement", element: <AssetRetirement /> },
           { path: "history", element: < History/>},
           { path: "Maps", element: <MapsRoute /> },
+          { path: "Details/:id", element: < MapDetails/>},
           {
             element: <ProtectedRoute requiredProfile="Maestro" />,  // Protege las rutas solo para "Maestro"
             children: [

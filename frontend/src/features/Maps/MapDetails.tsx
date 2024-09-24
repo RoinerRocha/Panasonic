@@ -22,6 +22,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import api from '../../app/api/api';
 import { Zona } from '../../app/models/zone';
 import { newAssetModels } from '../../app/models/newAssetModels';
+import { useAppSelector } from '../../store/configureStore';
 
 const MapDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,7 +33,8 @@ const MapDetails = () => {
   const [loading, setLoading] = useState(true);
   const [imageUrlMap, setImageUrlMap] = useState<Map<number, string>>(new Map());
   const [assetPositions, setAssetPositions] = useState<{ [key: string]: { x: number; y: number } }>({});
-
+  const { user } = useAppSelector((state) => state.account); // Obtener el usuario del estado
+  const isMaestro = user?.perfil_asignado === 'Maestro';
   // Función para cargar datos de la zona y los activos
   const loadZona = useCallback(async () => {
     try {
@@ -114,11 +116,11 @@ const MapDetails = () => {
       collect: (monitor) => ({
         isDragging: !!monitor.isDragging(),
       }),
-    }));
+    }), [isMaestro] );
 
     return (
       <div
-        ref={drag}
+        ref={isMaestro ? drag : null}
         style={{
           position: 'absolute',
           left: assetPositions[asset.id]?.x || 0,
@@ -231,7 +233,7 @@ const MapDetails = () => {
 
         <Grid item xs={12}>
           <Box display="flex" justifyContent="flex-end">
-            <Button variant="contained" color="primary" onClick={saveAssetPositions}>
+            <Button variant="contained" color="primary" onClick={saveAssetPositions} disabled={!isMaestro}>
               Guardar Posiciones
             </Button>
           </Box>
