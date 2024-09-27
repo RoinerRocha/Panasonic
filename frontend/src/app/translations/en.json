@@ -22,7 +22,7 @@
     "menu-reportes": "Reports",
     "menu-depreciacion-mensual": "Monthly Depreciation",
     "menu-depreciacion-activos": "Type of Assets (Mh)",
-    "menu-Mapas": "Mapas",
+    "menu-Mapas": "Maps",
     "menu-ayuda": "Help",
 
     "//": "idioma signMenu",
@@ -44,6 +44,9 @@
     "Estado":"State",
     "Boton-Historial":"Download visible data in excel",
     "Boton-Documento":"Add approval document",
+    "Aprobado": "Approved",
+    "Desaprobado": "No Approval",
+    "toasty-excel-error": "Error downloading the Excel file (data with C-ballots should be downloaded in the assets table).",
 
     "Titulo-documento":"Upload Approved Document",
     "Titulo-documento-seleccionar":"Select document",

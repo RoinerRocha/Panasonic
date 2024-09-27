@@ -41,6 +41,7 @@
     "Label-correo-titulo": "Correo",
     "Label-boton-cancelar": "Cancelar",
     "Label-boton-enviar": "Enviar",
+    
 
     "//": "idioma registro",
     "titulo-registro": "Registro",
@@ -75,6 +76,9 @@
     "Estado":"Estado",
     "Boton-Historial":"Descargar datos visibles en excel",
     "Boton-Documento":"Agregar documento de aprobacion",
+    "Aprobado": "Aprobado",
+    "Desaprobado": "Sin Aprobacion",
+    "toasty-excel-error": "Error al descargar el Excel(Los datos con las boletas C deben descargarse en la tabla de activos)",
 
     "Titulo-documento":"Subir Documento Aprobado",
     "Titulo-documento-seleccionar":"Seleccionar documento",

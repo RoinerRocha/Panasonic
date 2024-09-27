@@ -23,6 +23,7 @@ import api from '../../app/api/api';
 import { Zona } from '../../app/models/zone';
 import { newAssetModels } from '../../app/models/newAssetModels';
 import { useAppSelector } from '../../store/configureStore';
+import { toast } from "react-toastify";
 
 const MapDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -94,10 +95,10 @@ const MapDetails = () => {
     try {
       await api.newAsset.saveAssetPositions({ assetPositions });
       localStorage.setItem(`positions-${id}`, JSON.stringify(assetPositions));
-      alert('Posiciones guardadas correctamente');
+       toast.success("Posicion de activo guardada con exito");
     } catch (error) {
       console.error('Error al guardar las posiciones:', error);
-      alert('Error al guardar las posiciones');
+      toast.error("Error al guardar el activo");
     }
   };
 

@@ -131,7 +131,6 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
     { title: t('menu-venta-activos'), path: "/AssetSalesList" },
     { title: t('menu-depreciacion-activos'), path: "/NewServiceLife" },
     { title: t('menu-Mapas'), path: "/Maps" },
-    { title: t('menu-ayuda'), path: "/" }, // Manual
   ];
 
   // Filtrar enlaces en función del perfil del usuario
@@ -144,7 +143,6 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
       { title: t('menu-ingreso-activos'), path: "/RegisterAsset" },
       { title: t('menu-lista-ventas'), path: "/AssetSales" },
       { title: t('menu-lista-bajas'), path: "/AssetRetirement" },
-      { title: t('menu-ayuda'), path: "/" }
   ]);
 
   return (

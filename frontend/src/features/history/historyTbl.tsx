@@ -193,7 +193,7 @@ const downloadExcelFile = async (boletas: string[]) => {
     link.remove();
   } catch (error) {
     console.error('Error downloading the Excel file:', error);
-    toast.error("Error al descargar el Excel(Los datos con las boletas C deben descargarse en la tabla de activos)");
+    toast.error(t("toasty-excel-error"));
   }
 };
 
@@ -279,10 +279,10 @@ const downloadExcelFile = async (boletas: string[]) => {
                           profile as assetRetirementModel | assetSaleModel
                         ) === "Pendiente" ? (
                           <>
-                             Sin aprobar
+                             {t('Aprobado')}
                           </>
                         ) : (
-                          "Aprobado"
+                          t('Desaprobado')
                         )
                       ) : (
                         "N/A"

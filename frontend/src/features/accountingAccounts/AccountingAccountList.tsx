@@ -333,7 +333,7 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
       </Dialog>
 
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-        <DialogTitle>{t('titulo1_AddDialog_CuentaContable')}</DialogTitle>
+        <DialogTitle>{t('titulo1_AddtDialog_CuentaContable')}</DialogTitle>
         <DialogContent>
           <DialogContentText>
             {t('titulo2_AddDialog_CuentaContable')}

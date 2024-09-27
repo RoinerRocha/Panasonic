@@ -23,7 +23,7 @@ export default function HomePage() {
       }}
     >
       <Typography variant="h2" sx={{ color: 'white' }}>
-        HOME PAGE
+        
       </Typography>
     </Box>
 
