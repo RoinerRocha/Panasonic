@@ -177,7 +177,15 @@ export const generateExcelFileByBoleta = async (req: Request, res: Response) => 
       }
     });
 
-    if (assetRetirements.length === 0 && salesAssets.length === 0) {
+    const newAssets = await NewAssetModel.findAll({
+      where: {
+        NumeroBoleta: {
+          [Op.in]: boletaList
+        }
+      }
+    });
+
+    if (assetRetirements.length === 0 && salesAssets.length === 0 && newAssets.length === 0) {
       return res.status(404).json({ message: "No se encontró el NumeroBoleta" });
     }
 
@@ -222,6 +230,19 @@ export const generateExcelFileByBoleta = async (req: Request, res: Response) => 
         amount: salesAsset.MontoVentas || 'N/A',
         date: currentDate,
         approvalStatus: salesAsset.DocumentoAprobado ? "Con Aprobacion" : "Sin Aprobacion"
+      });
+    });
+
+    newAssets.forEach((newAsset) => {
+      worksheet.addRow({
+        placa: newAsset.NumeroPlaca || 'N/A',
+        description: newAsset.Descripcion || 'N/A',
+        ballotNumber: newAsset.NumeroBoleta || 'N/A',
+        destination: newAsset.Zona || 'N/A',
+        user: newAsset.Usuario || 'N/A',
+        amount: 'N/A',
+        date: currentDate,
+        approvalStatus: 'N/A'
       });
     });
 
