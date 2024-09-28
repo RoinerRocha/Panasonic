@@ -32,7 +32,7 @@ export const router = createBrowserRouter([
     children: [
       { path: "", element: <HomePage /> },
       { path: "login", element: <Login /> },
-      { path: "register", element: <Register /> },
+      { path: "ResetPassword", element: <ResetPassword /> },
       {
         element: <ProtectedRoute />,  // Protege estas rutas
         children: [
@@ -46,6 +46,7 @@ export const router = createBrowserRouter([
             element: <ProtectedRoute requiredProfile="Maestro" />,  // Protege las rutas solo para "Maestro"
             children: [
               { path: "users", element: <Users /> },
+              { path: "register", element: <Register /> },
               { path: "zonas", element: <Zone /> },
               { path: "nuevaZona", element: <NewZone /> },
               { path: "NewAccount", element: <AccountingAccounts /> },

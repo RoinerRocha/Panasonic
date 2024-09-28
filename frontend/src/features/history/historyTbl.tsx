@@ -101,7 +101,7 @@ export default function HistoryTbl({
       setData(allData);
     } catch (error) {
       console.error("Error al cargar el historial de activos:", error);
-      toast.error("Error al cargar el historial de activos");
+      toast.error(t('Toast-data'));
     } finally {
       setLoading(false);
     }

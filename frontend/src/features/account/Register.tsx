@@ -74,7 +74,7 @@ export default function Register() {
       const response = await api.Account.register(data);
       console.log(response.data); // Manejar la respuesta del backend según sea necesario
       navigate('/login');
-      toast.success('puedes iniciar sesion'); // Redirigir al usuario a la página de inicio de sesión después de registrarse
+      toast.success(t('Toast-registro')); // Redirigir al usuario a la página de inicio de sesión después de registrarse
     } catch (error) {
       handleApiErrors(errors);
       console.error('Error:', error);

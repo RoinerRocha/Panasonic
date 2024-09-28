@@ -46,7 +46,15 @@
     "Boton-Documento":"Add approval document",
     "Aprobado": "Approved",
     "Desaprobado": "No Approval",
-    "toasty-excel-error": "Error downloading the Excel file (data with C-ballots should be downloaded in the assets table).",
+    "toasty-excel-error": "Error downloading the Excel file.",
+    "Toast-data": "Error loading data",
+    "ToastZona-eliminar": "Zone Deleted",
+    "ToastZona-eliminar-error": "Error deleting zone",
+    "ToastZona-editar": "Updated Zone",
+    "ToastZona-editar-error": "Error Editing Zone",
+    "ToastZona-agregar": "Zone successfully added",
+    "ToastZona-agregar-error": "Error adding zone",
+
 
     "Titulo-documento":"Upload Approved Document",
     "Titulo-documento-seleccionar":"Select document",
@@ -68,6 +76,20 @@
     "Label-correo-titulo": "Email",
     "Label-boton-cancelar": "Cancel",
     "Label-boton-enviar": "Send",
+    "toast-correo":"Email Send",
+    "toast-correo-error":"Email not verify",
+    "toast-bienvenido":"Welcome",
+    "toast-Credenciales":"incorrect information",
+
+    "//":"cambio Contraseña",
+    "Titulo":"New Password",
+    "Correo":"User Email",
+    "Contra":"New Password",
+    "boton": "Change Password",
+    "campo": "This field is Required",
+    "toast-token": "No previous request",
+    "toast-token-error": "Password change error",
+    "toast-contra": "Password has been changed",
 
 
     "//": "registro idioma",
@@ -87,6 +109,7 @@
     "perfil-registro": "Profile",
     "perfil-registro-error": "Profile is required",
     "boton-registro": "Register user",
+    "Toast-registro": "Error loading data",
 
     "//": "tabla zonas idioma",
     "Numero-zona": "Number",
@@ -118,6 +141,7 @@
     "AgregarBotonImagen-zona": "Upload image of the area",
     "AgregarBotonAñadir-zona": "Add",
     "AgregarBotonCancelar-zona": "Cancel",
+    "ToastZona-datos": "Error loading data",
 
     "//": "tabla usuarios idioma",
     "nombre-tabla-usuarios": "Name",
@@ -140,6 +164,11 @@
     "dialog-perfil-tablaUsuario": "Profile",
     "dialog-Cancel-tablaUsuario": "Cancel",
     "dialog-Edit-tablaUsuario": "Edit",
+    "toast-Usuarios": "Error loading data",
+    "toast-Usuarios-Eliminado": "User Deleted",
+    "toast-Usuarios-Eliminado-error": "Error deleting user",
+    "toast-Usuarios-Editar": "Updated User",
+    "toast-Usuarios-Editar-error": "Error updating user",
 
     "DetallesZona-titulo":"Details of the area",
     "DetallesZona-Numero":"Zone number:",

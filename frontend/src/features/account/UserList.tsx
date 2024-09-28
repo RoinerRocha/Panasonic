@@ -47,7 +47,7 @@ export default function UserList({ users, setUsers }: Props){
           }
         } catch (error) {
             console.error("Error fetching data:", error);
-            toast.error("Error al cargar datos");
+            toast.error(t('toast-Usuarios'));
         }
     };
 
@@ -73,12 +73,12 @@ export default function UserList({ users, setUsers }: Props){
     const handleDelete = async (id: number) => {
         try {
             await api.Account.deleteUser(id);
-            toast.success('Usuario Eliminado');
+            toast.success(t('toast-Usuarios-Eliminado'));
             // Recargar las zonas después de eliminar
             loadUsers();
         } catch (error) {
             console.error("Error al eliminar al usuario:", error);
-            toast.error('Error al eliminar el usuario');
+            toast.error(t('toast-Usuarios-Eliminado-error'));
         }
     };
 
@@ -100,11 +100,12 @@ export default function UserList({ users, setUsers }: Props){
                     perfil_asignado: selectedUser.perfil_asignado,
                 };
                 await api.Account.updateUser(accountId, updateUser);
-                toast.success('Usuario Actualizado');
+                toast.success(t('toast-Usuarios-Editar'));
                 setOpenEditDialog(false);
                 loadUsers();
             } catch (error) {
                 console.error("Error al actualizar al usuario:", error);
+                toast.error(t('toast-Usuarios-Editar-error'));
             }
         }
     }

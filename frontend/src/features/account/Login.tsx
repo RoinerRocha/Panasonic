@@ -44,6 +44,7 @@ export default function Login() {
       setOpenAddDialog(false);
     } catch (error) {
       console.error("Error al agregar la zona:", error);
+      toast.error('toast-correo-error');
     }
   }
 
@@ -62,10 +63,10 @@ export default function Login() {
     if (isAuthenticated) {
       // Si el usuario está autenticado, redirige a la página '/'
       navigate('/');
-      toast.success('Bienvenido');
+      toast.success(t('toast-bienvenido'));
     } else if (isSubmitSuccessful) {
       // Si el formulario ha sido enviado pero el usuario no está autenticado, muestra la alerta de credenciales incorrectas
-      toast.error('Credenciales incorrectas');
+      toast.error(t('toast-Credenciales'));
     }
   }, [isAuthenticated, isSubmitSuccessful, navigate]);
 

@@ -5,6 +5,9 @@ import { toast } from 'react-toastify';
 import { Controller, useForm } from 'react-hook-form';
 import api from "../../app/api/api";
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from "react-i18next";
+import { useLanguage } from '../../app/context/LanguageContext';
+
 
 export default function ResetPassword() {
     const { handleSubmit, control, formState: { errors, isValid } } = useForm({
@@ -18,13 +21,13 @@ export default function ResetPassword() {
 
     const handdleNewPassword = async (data: any) => {
         if (!token) {
-            toast.error('Token no encontrado');
+            toast.error(t('toast-token'));
             return;
         }
 
         try {
             const passwordReset = await api.Account.newPasword({ ...data, token });
-            toast.success('Contraseña restablecida');
+            toast.success(t('toast-contra'));
             navigate('/login');  // Navegar a la página de login después de cambiar la contraseña
         } catch (error: any) {
             if (error.response && error.response.data.message === "El token ha expirado") {
@@ -32,10 +35,12 @@ export default function ResetPassword() {
             } else if (error.response && error.response.data.message === "Token inválido") {
                 toast.error('Token inválido. Por favor, solicita un nuevo enlace de restablecimiento de contraseña.');
             } else {
-                toast.error('Error al restablecer la contraseña');
+                toast.error(t('toast-token-error'));
             }
         }
     }
+    const { t } = useTranslation();
+    const { changeLanguage, language } = useLanguage();
 
     return (
         <Container component={Paper} maxWidth="sm" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 4 }}>
@@ -43,18 +48,18 @@ export default function ResetPassword() {
                 <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-                Nueva Contraseña
+                {t('Titulo')}
             </Typography>
             <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleSubmit(handdleNewPassword)}>
                 <Controller
                     name="email"
                     control={control}
                     defaultValue=""
-                    rules={{ required: 'Este campo es requerido' }}
+                    rules={{ required: t('campo') }}
                     render={({ field }) => (
                         <TextField
                             {...field}
-                            label="Correo del usuario"
+                            label={t('Correo')}
                             fullWidth
                             margin="dense"
                             autoFocus
@@ -68,11 +73,11 @@ export default function ResetPassword() {
                     name="password"
                     control={control}
                     defaultValue=""
-                    rules={{ required: 'Este campo es requerido' }}
+                    rules={{ required: t('campo') }}
                     render={({ field }) => (
                         <TextField
                             {...field}
-                            label="Nueva Contraseña"
+                            label={t('Contra')}
                             type="password"
                             fullWidth
                             margin="dense"
@@ -89,7 +94,7 @@ export default function ResetPassword() {
                     type="submit"
                     disabled={!isValid}
                 >
-                    Enviar
+                    {t('boton')}
                 </Button>
             </Box>
         </Container>

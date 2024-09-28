@@ -63,7 +63,7 @@ export default function ZoneList({ zonas, setZonas }: Props) {
             }
         } catch (error) {
             console.error("Error fetching data:", error);
-            toast.error("Error al cargar datos");
+            toast.error(t('ToastZona-datos'));
         }
     };
 
@@ -84,11 +84,12 @@ export default function ZoneList({ zonas, setZonas }: Props) {
     const handleDelete = async (id: number) => {
         try {
             await api.Zones.deleteZona(id);
-            toast.success('Zona Eliminada');
+            toast.success(t('ToastZona-eliminar'));
             // Recargar las zonas después de eliminar
             loadZonas();
         } catch (error) {
             console.error("Error al eliminar la zona:", error);
+            toast.error(t('ToastZona-eliminar-error'));
         }
     };
 
@@ -110,11 +111,12 @@ export default function ZoneList({ zonas, setZonas }: Props) {
                 }
                 console.log(selectedZona.id);
                 await api.Zones.updateZona(selectedZona.id, formData);
-                toast.success('Zona Actualizada');
+                toast.success(t('ToastZona-editar'));
                 setOpenEditDialog(false);
                 loadZonas();
             } catch (error) {
                 console.error("Error al actualizar la zona:", error);
+                toast.error(t('ToastZona-editar-error'));
             }
         }
     };
@@ -122,12 +124,12 @@ export default function ZoneList({ zonas, setZonas }: Props) {
     const onSubmit = async (data: FieldValues) =>{
         try {
             await api.Zones.saveZona(data);
-            toast.success("Zona agregada exitosamente");
+            toast.success(t('ToastZona-agregar'));
             setOpenAddDialog(false);
             loadZonas();
         } catch (error) {
             console.error(error);
-            toast.error("Error registrando la zona");
+            toast.error(t('ToastZona-agregar-error'));
         }
     }
 
