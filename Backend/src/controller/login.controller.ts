@@ -57,13 +57,13 @@ export const login = async (req: Request, res: Response) => {
     const user = await User.findOne({ where: { nombre_usuario } });
 
     if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json({ message: "Usuario no encontrado / User Not Found" });
     }
 
     const isPasswordValid = await bcrypt.compare(contrasena, user.contrasena);
 
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "Contraseña Invalida" });
+      return res.status(401).json({ message: "Contraseña Equivocada / Wrong Password" });
     }
 
     const token = jwt.sign(
@@ -210,6 +210,10 @@ export const sendEmailToUserByEmail = async (req: Request, res: Response) => {
   const { email } = req.body;
 
   try {
+    const user = await User.findOne({ where: { correo_electronico: email } });
+    if (!user) {
+      return res.status(404).json({ message: "Email not registered" });
+    }
     const token = jwt.sign({ email }, process.env.JWT_SECRET as string, { expiresIn: '1m' });
     const link = `http://localhost:3000/ResetPassword?token=${token}`;
 
@@ -230,7 +234,7 @@ export const updatePasswordByEmail = async (req: Request, res: Response) => {
     const user = await User.findOne({ where: { correo_electronico: email } });
 
     if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json({ message: "Error 404" });
     }
 
     // Hashear la nueva contraseña
@@ -243,7 +247,7 @@ export const updatePasswordByEmail = async (req: Request, res: Response) => {
     res.status(200).json({ message: "Contraseña actualizada exitosamente" });
   } catch (error: any) {
     if (error.name === 'TokenExpiredError') {
-      res.status(400).json({ message: "El token ha expirado" });
+      res.status(400).json({ message: "Error 403" });
     } else if (error.name === 'JsonWebTokenError') {
       res.status(400).json({ message: "Token inválido" });
     } else {
