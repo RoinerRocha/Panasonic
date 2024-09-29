@@ -3,6 +3,9 @@ import { Zona } from "../../app/models/zone";
 import React, { useState, useEffect } from "react";
 import api from "../../app/api/api";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from '../../app/context/LanguageContext';
+import { toast } from "react-toastify";
 
 interface Props {
     zona: Zona;
@@ -11,6 +14,8 @@ interface Props {
 
 export default function ProductCard({zona, setZona }: Props) {
     const [imageUrlMap, setImageUrlMap] = useState<Map<number, Map<string, string>>>(new Map());
+    const { t } = useTranslation();
+    const { changeLanguage, language } = useLanguage();
     useEffect(() => {
         // Cargar las zonas al montar el componente
         loadZonas();
@@ -23,6 +28,7 @@ export default function ProductCard({zona, setZona }: Props) {
             convertImagesToDataUrl(response.data);
         } catch (error) {
             console.error("Error al cargar las zonas:", error);
+            toast.error(t('Mapa-toast-error'));
         }
     };
 
@@ -62,14 +68,14 @@ export default function ProductCard({zona, setZona }: Props) {
             />
             <CardContent>
                 <Typography gutterBottom color="secondary" variant="h5">
-                 Numero de zona: {zona.numeroZona}
+                 {t('Mapa-Numero')}: {zona.numeroZona}
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                   Encargado: {zona.responsableAreaNom_user}
+                   {t('Mapa-encargado')}: {zona.responsableAreaNom_user}
                 </Typography>
             </CardContent>
             <CardActions>
-                <Button component={Link} to={`/Details/${zona.id}`} size="small">Administrar Activo</Button>
+                <Button component={Link} to={`/Details/${zona.id}`} size="small">{t('Mapa-Boton')}</Button>
             </CardActions>
         </Card>
     )

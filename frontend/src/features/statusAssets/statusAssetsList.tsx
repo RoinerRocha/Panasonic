@@ -81,16 +81,18 @@ export default function StatusAssetList({
       setStatusAssets(response.data);
     } catch (error) {
       console.error("Error al cargar los Estado de Activos :", error);
+      toast.error(t('Toast-Estado-Datos'));
     }
   };
 
   const handleDelete = async (id: number) => {
     try {
       await api.statusAssets.deleteStatusAsset(id);
-      toast.success("Estado de Activo Eliminado");
+      toast.success(t('Toast-Estado-Eliminar'));
       loadStatusAsset();
     } catch (error) {
       console.error("Error al eliminar el Estado de Activo:", error);
+      toast.error(t('Toast-Estado-Eliminar-Error'));
     }
   };
 
@@ -110,11 +112,12 @@ export default function StatusAssetList({
           statusAssetId,
           updatedStatusAsset
         );
-        toast.success("Estado Activo Actualizado");
+        toast.success(t('Toast-Estado-Editar'));
         setOpenEditDialog(false);
         loadStatusAsset();
       } catch (error) {
         console.error("Error al actualizar el Estado Activo:", error);
+        toast.error(t('Toast-Estado-Editar-Error'));
       }
     }
   };
@@ -124,11 +127,12 @@ export default function StatusAssetList({
       const addedStatusAsset = await api.statusAssets.saveStatusAsset(
         newSatatusAsset
       );
-      toast.success("Estado Activo Agregado");
+      toast.success(t('Toast-Estado-Agregar'));
       setOpenAddDialog(false);
       loadStatusAsset();
     } catch (error) {
       console.error("Error al agregar el Estado Activo:", error);
+      toast.error(t('Toast-Estado-Agregar-Error'));
     }
   };
 

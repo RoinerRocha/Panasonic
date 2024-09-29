@@ -72,16 +72,17 @@ export default function ProfilesList({
       setProfiles(response.data);
     } catch (error) {
       console.error("Error al cargar los Perfiles de Usuarios (Rol):", error);
+      toast.error(t('Toast-Perfil-Datos'));
     }
   };
 
   const handleDelete = async (id: number) => {
     try {
       await api.profiles.deleteProfile(id);
-      toast.success("Perfil de Usuario Eliminado");
+      toast.success(t('Toast-Perfil-Eliminar'));
       loadProfile();
     } catch (error) {
-      console.error("Error al eliminar el Perfil de Usuario (Rol):", error);
+      toast.error(t('Toast-Perfil-Eliminar-Error'));
     }
   };
 
@@ -99,11 +100,12 @@ export default function ProfilesList({
           permisoAcceso: selectedProfile.permisoAcceso,
         };
         await api.profiles.updateProfile(profileId, updatedProfile);
-        toast.success("Perfil de Usuario Actualizado");
+        toast.success(t('Toast-Perfil-Editar'));
         setOpenEditDialog(false);
         loadProfile();
       } catch (error) {
         console.error("Error al actualizar el Perfil de Usario (Rol):", error);
+        toast.error(t('Toast-Perfil-Editar-Error'));
       }
     }
   };
@@ -111,11 +113,12 @@ export default function ProfilesList({
   const handleAdd = async () => {
     try {
       const addedStatusAsset = await api.profiles.saveProfile(newProfile);
-      toast.success("Perfil Agregado");
+      toast.success(t('Toast-Perfil-Agregar'));
       setOpenAddDialog(false);
       loadProfile();
     } catch (error) {
       console.error("Error al agregar el Perfil de Usuario (Rol):", error);
+      toast.error(t('Toast-Perfil-Agregar-Error'));
     }
   };
 

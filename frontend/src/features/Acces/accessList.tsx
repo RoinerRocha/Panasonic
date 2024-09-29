@@ -56,16 +56,18 @@ export default function AccessList({
           setAccesses(response.data);
         } catch (error) {
           console.error("Error al cargar los accesos:", error);
+          toast.error(t('Toast-Control-Datos'));
         }
     };
 
     const handleDelete = async (id: number) => {
         try {
           await api.access.deleteAccess(id);
-          toast.success("Acceso eliminado");
+          toast.success(t('Toast-Control-Eliminar'));
           loadAccess();
         } catch (error) {
           console.error("Error al eliminar el acceso:", error);
+          toast.error(t('Toast-Control-Eliminar-Error'));
         }
     };
 
@@ -82,11 +84,12 @@ export default function AccessList({
               Acceso: selectedAccess.Acceso,
             };
             await api.access.updateAccess(accessId, updatedAccess);
-            toast.success("Acceso Actualizado");
+            toast.success(t('Toast-Control-Editar'));
             setOpenEditDialog(false);
             loadAccess();
           } catch (error) {
             console.error("Error al actualizar permisos", error);
+            toast.error(t('Toast-Control-Editar-Error'));
           }
         }
     };
@@ -94,11 +97,12 @@ export default function AccessList({
     const handleAdd = async () => {
         try {
           const addedStatusAccess = await api.access.saveAccess(newAccess);
-          toast.success("Acceso Agregado");
+          toast.success(t('Toast-Control-Agregar'));
           setOpenAddDialog(false);
           loadAccess();
         } catch (error) {
           console.error("Error al agregar el acceso", error);
+          toast.error(t('Toast-Control-Agregar-Error'));
         }
     };
 

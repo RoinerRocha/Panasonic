@@ -20,6 +20,8 @@ import { serviceLifeModels } from "../../app/models/serviceLifeModels";
 import { useState, useEffect } from "react";
 import api from "../../app/api/api";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from '../../app/context/LanguageContext';
 
 interface Props {
   serviceLifes: serviceLifeModels[];
@@ -58,6 +60,8 @@ export default function ServiceLifeList({
   serviceLifes: serviceLifes,
   setServiceLifes: setServiceLifes,
 }: Props) {
+  const { t } = useTranslation();
+  const { changeLanguage, language } = useLanguage();
   const [selectedSserviceLife, setSelectedserviceLife] =
     useState<serviceLifeModels | null>(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -81,16 +85,18 @@ export default function ServiceLifeList({
       setServiceLifes(response.data);
     } catch (error) {
       console.error("Error al cargar la lista del Mh:", error);
+      toast.error(t('Toast-Tipo-Datos'));
     }
   };
 
   const handleDelete = async (id: number) => {
     try {
       await api.serviceLife.deleteServiceLife(id);
-      toast.success("Lista Mh Eliminado");
+      toast.success(t('Toast-Tipo-Eliminar'));
       loadServiceLife();
     } catch (error) {
       console.error("Error al eliminar Tipo de la lista Mh:", error);
+      toast.error(t('Toast-Tipo-Eliminar-Error'));
     }
   };
 
@@ -111,11 +117,12 @@ export default function ServiceLifeList({
           serviceLifeId,
           updatedServiceLife
         );
-        toast.success("Lista Mh Actualizada");
+        toast.success(t('Toast-Tipo-Editar'));
         setOpenEditDialog(false);
         loadServiceLife();
       } catch (error) {
         console.error("Error al actualizar la lista Mh:", error);
+        toast.error(t('Toast-Tipo-Editar-Error'));
       }
     }
   };
@@ -125,11 +132,12 @@ export default function ServiceLifeList({
       const addedStatusAsset = await api.serviceLife.saveServiceLife(
         newServiceLife
       );
-      toast.success("Tipo Mh Agregado");
+      toast.success(t('Toast-Tipo-Agregar'));
       setOpenAddDialog(false);
       loadServiceLife();
     } catch (error) {
       console.error("Error al agregar tipo de la lista Mh:", error);
+      toast.error(t('Toast-Tipo-Agregar-Error'));
     }
   };
 
@@ -151,7 +159,7 @@ export default function ServiceLifeList({
         color="primary"
         onClick={() => setOpenAddDialog(true)}
       >
-        Agregar Tipo
+        {t('AgregarTipo-Titulo')}
       </Button>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -161,19 +169,19 @@ export default function ServiceLifeList({
                 align="center"
                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
               >
-                Tipo
+                {t('Tabla-Tipo')}
               </TableCell>
               <TableCell
                 align="center"
                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
               >
-                Vida Útil
+                {t('Tabla-Vida')}
               </TableCell>
               <TableCell
                 align="center"
                 sx={{ fontWeight: "bold", textTransform: "uppercase" }}
               >
-                CONFIGURACIÓN
+                {t('Tabla-Config')}
               </TableCell>
             </TableRow>
           </TableHead>
@@ -189,7 +197,7 @@ export default function ServiceLifeList({
                     sx={{ margin: "5px" }}
                     onClick={() => handleEdit(serviceLife)}
                   >
-                    Editar
+                    {t('Tabla-BotonEditar')}
                   </Button>
                   <Button
                     variant="contained"
@@ -197,7 +205,7 @@ export default function ServiceLifeList({
                     sx={{ margin: "5px" }}
                     onClick={() => handleDelete(serviceLife.id)}
                   >
-                    Eliminar
+                    {t('Tabla-BotonEliminar')}
                   </Button>
                 </TableCell>
               </TableRow>
@@ -218,10 +226,10 @@ export default function ServiceLifeList({
       />
 
       <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
-        <DialogTitle>Editar Tipo </DialogTitle>
+        <DialogTitle>{t('EditarTipo-Titulo')}</DialogTitle>
         <DialogContent>
           <TextField
-            label="Nombre Tipo"
+            label={t('EditarTipo-Nombre')}
             value={selectedSserviceLife?.tipo || null}
             onChange={(e) =>
               setSelectedserviceLife(
@@ -240,7 +248,7 @@ export default function ServiceLifeList({
 
         <DialogContent>
           <TextField
-            label="Vida Útil"
+            label={t('EditarTipo-Vida')}
             value={selectedSserviceLife?.añoUtil || null}
             onChange={(e) =>
                 setSelectedserviceLife(
@@ -259,16 +267,16 @@ export default function ServiceLifeList({
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={() => setOpenEditDialog(false)}>Cancelar</Button>
-          <Button onClick={handleUpdate}>Actualizar</Button>
+          <Button onClick={() => setOpenEditDialog(false)}>{t('EditarTipo-Cancelar')}</Button>
+          <Button onClick={handleUpdate}>{t('EditarTipo-Editar')}</Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-        <DialogTitle>Agregar tipo</DialogTitle>
+        <DialogTitle>{t('AgregarTipo-Titulo')}</DialogTitle>
         <DialogContent>
           <TextField
-            label="Nuevo Nombre Tipo"
+            label={t('AgregarTipo-Nombre')}
             value={newServiceLife?.tipo}
             onChange={(e) =>
               setNewServiceLife({
@@ -282,7 +290,7 @@ export default function ServiceLifeList({
         </DialogContent>
         <DialogContent>
           <TextField
-            label="Vida Útil"
+            label={t('AgregarTipo-Vida')}
             value={newServiceLife?.añoUtil}
             onChange={(e) =>
               handleChange(e, setError, (val) =>
@@ -302,8 +310,8 @@ export default function ServiceLifeList({
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenAddDialog(false)}>Cancelar</Button>
-          <Button onClick={handleAdd}>Agregar</Button>
+          <Button onClick={() => setOpenAddDialog(false)}>{t('AgregarTipo-Cancelar')}</Button>
+          <Button onClick={handleAdd}>{t('AgregarTipo-Agregar')}</Button>
         </DialogActions>
       </Dialog>
     </Grid>

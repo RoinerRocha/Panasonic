@@ -24,8 +24,12 @@ import { Zona } from '../../app/models/zone';
 import { newAssetModels } from '../../app/models/newAssetModels';
 import { useAppSelector } from '../../store/configureStore';
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from '../../app/context/LanguageContext';
 
 const MapDetails = () => {
+  const { t } = useTranslation();
+  const { changeLanguage, language } = useLanguage();
   const { id } = useParams<{ id: string }>();
   const [zona, setZona] = useState<Zona | null>(null);
   const [assets, setAssets] = useState<newAssetModels[]>([]);
@@ -95,10 +99,10 @@ const MapDetails = () => {
     try {
       await api.newAsset.saveAssetPositions({ assetPositions });
       localStorage.setItem(`positions-${id}`, JSON.stringify(assetPositions));
-       toast.success("Posicion de activo guardada con exito");
+       toast.success(t('Mapa-ToastGuardar'));
     } catch (error) {
       console.error('Error al guardar las posiciones:', error);
-      toast.error("Error al guardar el activo");
+      toast.error(t('Mapa-ToastGuardar-error'));
     }
   };
 
@@ -137,7 +141,7 @@ const MapDetails = () => {
           style={{ width: '50px', height: '50px' }}
         />
         <div style={{ position: 'absolute', bottom: '-20px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'rgba(0, 0, 0, 0.6)', color: 'white', padding: '2px 5px', fontSize: '10px' }}>
-          {`Placa: ${asset.NumeroPlaca}`}
+          {`${t('Mapa-Placa')}: ${asset.NumeroPlaca}`}
         </div>
         <div style={{ position: 'absolute', top: '0', left: '0', backgroundColor: 'rgba(255, 0, 0, 0.7)', color: 'white', padding: '2px 5px', fontSize: '10px' }}>
           {`#${index + 1}`}
@@ -176,10 +180,10 @@ const MapDetails = () => {
         <Grid item xs={12}>
           <Card>
             <CardContent>
-              <Typography variant="h5">Detalles de la Zona</Typography>
+              <Typography variant="h5">{t('Mapa-Titulo1')}</Typography>
               {zona && (
                 <Typography variant="body1">
-                  {`Número Zona: ${zona.numeroZona} | Nombre de la Zona: ${zona.nombreZona} | Responsable: ${zona.responsableAreaNom_user}`}
+                  {`${t('Mapa-Numero')}: ${zona.numeroZona} | ${t('Mapa-Nombre')}: ${zona.nombreZona} | ${t('Mapa-encargado')}: ${zona.responsableAreaNom_user}`}
                 </Typography>
               )}
             </CardContent>
@@ -189,7 +193,7 @@ const MapDetails = () => {
         <Grid item xs={12}>
           <Card>
             <CardContent>
-              <Typography variant="h5">Activos en el Mapa</Typography>
+              <Typography variant="h5">{t('Mapa-Titulo2')}</Typography>
               <MapDropArea />
             </CardContent>
           </Card>
@@ -201,11 +205,11 @@ const MapDetails = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>#</TableCell>
-                  <TableCell>Descripción</TableCell>
-                  <TableCell>Número de Placa</TableCell>
-                  <TableCell>Estado</TableCell>
-                  <TableCell>Posición X</TableCell>
-                  <TableCell>Posición Y</TableCell>
+                  <TableCell>{t('Mapa-tabla1')}</TableCell>
+                  <TableCell>{t('Mapa-Tabla2')}</TableCell>
+                  <TableCell>{t('Mapa-Tabla3')}</TableCell>
+                  <TableCell>{t('Mapa-Tabla4')}</TableCell>
+                  <TableCell>{t('Mapa-Tabla5')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -235,7 +239,7 @@ const MapDetails = () => {
         <Grid item xs={12}>
           <Box display="flex" justifyContent="flex-end">
             <Button variant="contained" color="primary" onClick={saveAssetPositions} disabled={!isMaestro}>
-              Guardar Posiciones
+              {t('Mapa-BotonGuardar')}
             </Button>
           </Box>
         </Grid>

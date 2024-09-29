@@ -81,16 +81,18 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
         setAccountingAccounts(response.data);
     } catch (error) {
         console.error("Error al cargar las zonas:", error);
+        toast.error(t('Toast-Cuenta-Datos'));
     }
   };
 
   const handleDelete = async (id: number) => {
     try {
       await api.AcountingAccounts.deleteAccountingAccount(id);
-      toast.success("Cuenta Contable Eliminada");
+      toast.success(t('Toast-Cuenta-Eliminar'));
       loadAccoutingAccount();
     } catch (error) {
       console.error("Error al eliminar la Cuenta Contable:", error);
+      toast.error(t('Toast-Cuenta-Eliminar-Error'));
     }
   };
 
@@ -118,11 +120,12 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
           accountingAccountId,
           updatedAccountingAccount
         );
-        toast.success("Cuenta Contable Actualizada");
+        toast.success(t('Toast-Cuenta-Editar'));
         setOpenEditDialog(false);
         loadAccoutingAccount();
       } catch (error) {
         console.error("Error al actualizar la Cuenta Contable:", error);
+        toast.error(t('Toast-Cuenta-Editar-Error'));
       }
     }
   };
@@ -131,11 +134,12 @@ export default function AccountingAccountList({ accountingAccounts, setAccountin
       const addedZona = await api.AcountingAccounts.saveAccountingAccount(
         newAccountingAccount
       );
-      toast.success("Cuenta Contable Agregada");
+      toast.success(t('Toast-Cuenta-Agregar'));
       setOpenAddDialog(false);
       loadAccoutingAccount();
     } catch (error) {
       console.error("Error al agregar la Cuenta Contable:", error);
+      toast.error(t('Toast-Cuenta-Agregar-Error'));
     }
   };
 
