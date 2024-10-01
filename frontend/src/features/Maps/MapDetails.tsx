@@ -15,6 +15,7 @@ import {
   Box,
   CircularProgress,
   Button,
+  Stack,
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { useDrag, useDrop, DndProvider } from 'react-dnd';
@@ -180,13 +181,17 @@ const MapDetails = () => {
         <Grid item xs={12}>
           <Card>
             <CardContent>
-              <Typography variant="h5">{t('Mapa-Titulo1')}</Typography>
-              {zona && (
-                <Typography variant="body1">
-                  {`${t('Mapa-Numero')}: ${zona.numeroZona} | ${t('Mapa-Nombre')}: ${zona.nombreZona} | ${t('Mapa-encargado')}: ${zona.responsableAreaNom_user}`}
-                </Typography>
-              )}
-            </CardContent>
+  <Typography variant="h5">{t('Mapa-Titulo1')}</Typography>
+  {zona ? (
+    <Stack spacing={1}>
+      <Typography variant="body1">{`${t('Mapa-Numero')}: ${zona.numeroZona || 'N/A'}`}</Typography>
+      <Typography variant="body1">{`${t('Mapa-Nombre')}: ${zona.nombreZona || 'N/A'}`}</Typography>
+      <Typography variant="body1">{`${t('Mapa-encargado')}: ${zona.responsableAreaNom_user || 'N/A'}`}</Typography>
+    </Stack>
+  ) : (
+    <Typography variant="body1">{t('Zona no disponible')}</Typography>
+  )}
+</CardContent>
           </Card>
         </Grid>
 
@@ -208,8 +213,12 @@ const MapDetails = () => {
                   <TableCell>{t('Mapa-tabla1')}</TableCell>
                   <TableCell>{t('Mapa-Tabla2')}</TableCell>
                   <TableCell>{t('Mapa-Tabla3')}</TableCell>
-                  <TableCell>{t('Mapa-Tabla4')}</TableCell>
-                  <TableCell>{t('Mapa-Tabla5')}</TableCell>
+                 {/* <TableCell>{t('Mapa-Tabla4')}</TableCell>
+                  <TableCell>{t('Mapa-Tabla5')}</TableCell>*/}
+                  <TableCell>{t('Proveerdor')}</TableCell>
+                  <TableCell>{t('Fecha Compra')}</TableCell>
+                  <TableCell>{t('N° Boleta')}</TableCell>
+                  <TableCell>{t('Tipo')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -219,8 +228,12 @@ const MapDetails = () => {
                     <TableCell>{asset.Descripcion}</TableCell>
                     <TableCell>{asset.NumeroPlaca}</TableCell>
                     <TableCell>{asset.Estado}</TableCell>
-                    <TableCell>{assetPositions[asset.id]?.x || '-'}</TableCell>
-                    <TableCell>{assetPositions[asset.id]?.y || '-'}</TableCell>
+                    <TableCell>{asset.NombreProveedor}</TableCell>
+                    <TableCell>{asset.FechaCompra ? new Date(asset.FechaCompra).toLocaleDateString() : 'Fecha no disponible'}</TableCell>
+                    <TableCell>{asset.NumeroBoleta}</TableCell>
+                    <TableCell>{asset.Tipo}</TableCell>
+                    {/*<TableCell>{assetPositions[asset.id]?.x || '-'}</TableCell>
+                    <TableCell>{assetPositions[asset.id]?.y || '-'}</TableCell>*/}
                   </TableRow>
                 ))}
               </TableBody>
