@@ -343,12 +343,12 @@ export const generatePDFFile = async (req: Request, res: Response) => {
     try {
       const existingPlacaNum = await NewAssetModel.findOne({ where: { NumeroPlaca } });
       if (existingPlacaNum ) {
-        return res.status(400).json({ message: "El numero de placa ya existe" });
+        return res.status(400).json({ message: "El numero de placa ya existe / The plate number already exists" });
       }
 
       const existingFacturaNum = await NewAssetModel.findOne({ where: { FacturaNum } });
       if (existingFacturaNum) {
-        return res.status(400).json({ message: "El numero de factura debe de ser diferente" });
+        return res.status(400).json({ message: "El numero de factura debe de ser diferente / The invoice number must be different" });
       }
 
       const newAsset = await NewAssetModel.create({
@@ -397,7 +397,7 @@ export const generatePDFFile = async (req: Request, res: Response) => {
       });
   
       if (assets.length === 0) {
-        return res.status(404).json({ message: "No assets found for the specified zone." });
+        return res.status(404).json({ message: "No assets found for the specified zone / No se han encontrado activos para la zona especificada" });
       }
   
       res.status(200).json({ message: "Assets fetched successfully", data: assets });
