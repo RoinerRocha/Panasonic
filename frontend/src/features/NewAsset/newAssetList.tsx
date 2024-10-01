@@ -113,7 +113,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
        
              } catch (error) {
                console.error("Error fetching data:", error);
-               toast.error("Error al cargar datos");
+               toast.error(t('Lista-toast-error'));
              }
            };
        
@@ -174,15 +174,15 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
 
   const handleDelete = (id: number) => {
     confirmAlert({
-      title: 'Confirmar Eliminación',
-      message: '¿Estás seguro de que deseas eliminar este activo?',
+      title: t('Eliminacion-titulo'),
+      message: t('Eliminacion-texto'),
       buttons: [
         {
-          label: 'Sí',
+          label: t('Eliminacion-botonSi'),
           onClick: async () => {
             try {
               await api.newAsset.deleteNewAsset(id);
-              toast.success("Activo Eliminado Correctamente");
+              toast.success(t('Lista-toast-Eliminar'));
               
               // Actualiza directamente los estados después de la eliminación
               setNewAssets(prevNewAssets => 
@@ -193,12 +193,12 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
               );
             } catch (error) {
               console.error("Error al eliminar El Activo", error);
-              toast.error("Error al eliminar El activo");
+              toast.error(t('Lista-toastError-Eliminar'));
             }
           }
         },
         {
-          label: 'No',
+          label: t('Eliminacion-botonNo'),
           onClick: () => { }
         }
       ]
@@ -243,7 +243,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
 
   
         await api.newAsset.updateNewAsset(selectedNewAsset.id, formData);
-        toast.success("Activo Actualizado");
+        toast.success(t('Lista-toast-Editar'));
         setOpenEditDialog(false);
         // Actualizar el estado directamente
         setNewAssets((prevNesAssets) =>
@@ -259,7 +259,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
         loadNewAsset();
       } catch (error) {
         console.error("Error al actualizar El Activo:", error);
-        toast.error("Error al intentar Actualizar Activo");
+        toast.error(t('Lista-toastError-Editar'));
       }
     }
   };
@@ -322,7 +322,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
       saveAs(blob, `asset_${numBoleta}.pdf`);
     } catch (error) {
       console.error('Error generando PDF:', error);
-      toast.error('Error generando PDF');
+      toast.error(t('Lista-toastError-PDF'));
     }
   };
 
@@ -360,7 +360,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
         saveAs(blob, `Assets_${currentDate}.xlsx`);
     } catch (error) {
         console.error("Error generando Excel:", error);
-        toast.error("Error generando Excel");
+        toast.error(t('Lista-toastError-Excel'));
     }
 };
 
@@ -371,7 +371,7 @@ function NewAssetsList({ newAssets, setNewAssets }: Props) {
       saveAs(blob, `asset_${numBoleta}.xlsx`);
     } catch (error) {
       console.error('Error generando Excel:', error);
-      toast.error('Error generando Excel');
+      toast.error(t('Lista-toastError-Excel'));
     }
   };
 

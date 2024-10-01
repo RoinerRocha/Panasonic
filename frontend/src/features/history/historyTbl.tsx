@@ -187,8 +187,8 @@ export default function HistoryTbl({
                     <TableCell align="center">
                       {"DocumentoAprobado" in profile
                         ? profile.DocumentoAprobado
-                          ? "Aprobado"
-                          : "Pendiente"
+                          ? t('Aprobado')
+                          : t('Desaprobado')
                         : "N/A"}
                     </TableCell>
                     <TableCell align="center">{"Tipo" in profile ? profile.Tipo : "N/A"}</TableCell>

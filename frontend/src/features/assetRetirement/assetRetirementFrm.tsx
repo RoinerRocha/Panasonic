@@ -71,7 +71,7 @@ export default function RegisterAsset() {
        
              } catch (error) {
                console.error("Error fetching data:", error);
-               toast.error("Error al cargar datos");
+               toast.error(t('Baja-toast-error'));
              }
            };
        
@@ -149,11 +149,11 @@ async function getLastConsecutive(letra: string): Promise<number> {
   const onSubmit = async (data: FieldValues) => {
     try {
       await api.assetRetirement.saveAssetRetirement(data);
-      toast.success("Baja de Activo registrado exitosamente");
+      toast.success(t('Baja-toast-Guardar'));
       navigate("/");
     } catch (error) {
       console.error(error);
-      toast.error("Error registrando el activo");
+      toast.error(t('Baja-toast-GuardarError'));
     }
   };
 

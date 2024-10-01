@@ -110,7 +110,7 @@ export default function RegisterAsset() {
        
              } catch (error) {
                console.error("Error fetching data:", error);
-               toast.error("Error al cargar datos");
+               toast.error(t('Activo-toast-errror'));
              }
            };
        
@@ -183,19 +183,6 @@ async function getLastConsecutive(letra: string): Promise<number> {
     }
   };
 
-  // const handleAdd = async () => {
-  //   try {
-  //     const addedAsset = await api.newAsset.saveNewAsset(newAsset);
-  //     toast.success("Activo agregado");
-  //     navigate("/RegisterAsset"); // Redirigir a la lista de zonas después de agregar el activo
-  //     //register(addedAsset);
-  //   } catch (error) {
-  //     handleApiErrors(errors);
-  //     console.error("Error al agregar el nuevo activo:", error);
-  //     toast.error("Error al agregar el nuevo activo");
-  //   }
-  // };
-
   /**
    * Metodo para guardar/registrar el activo obtenido del formulario
    * @param data 
@@ -203,11 +190,11 @@ async function getLastConsecutive(letra: string): Promise<number> {
   const onSubmit = async (data: FieldValues) => {
     try {
       await api.newAsset.saveNewAsset(data);
-      toast.success("Activo registrado exitosamente");
+      toast.success(t('Activo-toast-registro'));
       navigate("/");
     } catch (error) {
       console.error(error);
-      toast.error("Error registrando el activo");
+      toast.error(t('Activo-toastError-registro'));
     }
   };
 

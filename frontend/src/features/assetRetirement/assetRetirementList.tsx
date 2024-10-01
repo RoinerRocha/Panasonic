@@ -68,7 +68,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
        
              } catch (error) {
                console.error("Error fetching data:", error);
-               toast.error("Error al cargar datos");
+               toast.error(t('TablaBaja-Toast-Error'));
              }
            };
        
@@ -122,15 +122,15 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
 
   const handleDelete = (id: number) => {
     confirmAlert({
-      title: 'Confirmar Eliminación',
-      message: '¿Estás seguro de que deseas eliminar este activo?',
+      title: t('Eliminacion-titulo'),
+      message: t('Eliminacion-texto'),
       buttons: [
         {
-          label: 'Sí',
+          label: t('Eliminacion-botonSi'),
           onClick: async () => {
             try {
               await api.assetRetirement.deleteAssetRetirement(id);
-              toast.success("Activo Eliminado Correctamente");
+              toast.success(t('TablaBaja-Toast-Eliminar'));
               
               // Actualiza directamente los estados después de la eliminación
               setAssetRetirements(prevAssetRetirements => 
@@ -141,12 +141,12 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
               );
             } catch (error) {
               console.error("Error al eliminar El Activo", error);
-              toast.error("Error al eliminar El activo");
+              toast.error(t('TablaBaja-Toast-EliminarError'));
             }
           }
         },
         {
-          label: 'No',
+          label: t('Eliminacion-botonNo'),
           onClick: () => { }
         }
       ]
@@ -175,7 +175,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
         }
   
         await api.assetRetirement.updateAssetRetirement(selectedNewAsset.id, formData);
-        toast.success("Activo Actualizado");
+        toast.success(t('TablaBaja-Toast-Editar'));
         setOpenEditDialog(false);
         // Actualizar el estado directamente
         setAssetRetirements((prevAssetRetirements) =>
@@ -191,7 +191,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
         loadNewAsset();
       } catch (error) {
         console.error("Error al actualizar El Activo:", error);
-        toast.error("Error al intentar Actualizar Activo");
+        toast.error(t('TablaBaja-Toast-EditarError'));
       }
     }
   };
@@ -270,7 +270,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
         saveAs(blob, `AssetsRetirement_${currentDate}.xlsx`);
     } catch (error) {
         console.error("Error generando Excel:", error);
-        toast.error("Error generando Excel");
+        toast.error(t('TablaBaja-Toast-ExcelError'));
     }
   };
 
@@ -281,7 +281,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
       saveAs(blob, `asset_${numBoleta}.xlsx`);
     } catch (error) {
       console.error('Error generando Excel:', error);
-      toast.error('Error generando Excel');
+      toast.error(t('TablaBaja-Toast-ExcelError'));
     }
   };
 
@@ -293,11 +293,11 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
           color="primary"
           onClick={() => setOpenAddDialog(true)}
         >
-          {t('Lista-BotonAgregar')}
+          {t('Baja-Titulo')}
         </Button>
       </Box>
       <FormControl fullWidth>
-        <InputLabel id="zona-label">Placa</InputLabel>
+        <InputLabel id="zona-label">{t('TablaBaja-tituloFiltro')}</InputLabel>
         <Select
           labelId="zona-label"
           id="zona"
@@ -315,21 +315,21 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
             </MenuItem>
           ))}
         </Select>
-        <FormHelperText>Seleccione una placa para filtrar</FormHelperText>
+        <FormHelperText>{t('TablaBaja-titulo2Filtro')}</FormHelperText>
       </FormControl>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Placa Activo</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Descripcion</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Destino Final</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Numero Boleta</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Usuario</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Fotografia</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Documento Aprobado</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Configuracion</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Reporte Individual</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaBaja-placa')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaBaja-descripcion')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaBaja-Destino')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaBaja-Numero')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaBaja-Usuario')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaBaja-Fotografia')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaBaja-Documento')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaBaja-Config')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaBaja-Reporte')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -358,7 +358,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
                       download
                       onClick={(e) => e.stopPropagation()}
                     >
-                      {t('Lista-TextoFacturaDoc')}
+                      {t('TablaBaja-VerDocumento')}
                     </a>
                   ) : t('Lista-ErrorFactura')}
                 </TableCell>
@@ -422,11 +422,11 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
             generateExcelForAll(); 
         }}
       >
-          {t('Lista-BotonExcel')}
+          {t('TablaBaja-BotonExcel')}
       </Button>
 
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-        <DialogTitle>{t('Lista-BotonAgregar')}</DialogTitle>
+        <DialogTitle>{t('Baja-Titulo')}</DialogTitle>
         <DialogContent>
           <RegisterAsset></RegisterAsset>
         </DialogContent>
@@ -436,14 +436,14 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
       </Dialog>
 
       <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
-        <DialogTitle>EditarLista</DialogTitle>
+        <DialogTitle>{t('EditarBaja-Titulo')}</DialogTitle>
         <DialogContent>
           <FormControl fullWidth margin="normal">
-            <InputLabel id="placa-label">Placa Activo</InputLabel>
+            <InputLabel id="placa-label">{t('TablaBaja-placa')}</InputLabel>
             <Select
               labelId="placa-label"
               id="placa"
-              label="PlacaActivo"
+              label={t('TablaBaja-placa')}
               value={newAsset.PlacaActivo}
               onChange={(e) =>  setNewAsset({ ...newAsset, PlacaActivo: +e.target.value})}
             >
@@ -455,14 +455,14 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
             </Select>
           </FormControl>
           <TextField
-            label="Descripcion"
+            label={t('TablaBaja-descripcion')}
             value={newAsset.Descripcion}
             onChange={(e) => setNewAsset({ ...newAsset, Descripcion: e.target.value })}
             fullWidth
             margin="dense"
           />
           <TextField
-            label="DestinoFinal"
+            label={t('TablaBaja-Destino')}
             value={newAsset.DestinoFinal}
             onChange={(e) => setNewAsset({ ...newAsset, DestinoFinal: e.target.value })}
             fullWidth
@@ -495,10 +495,10 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
           </Grid>
           <Grid item xs={6}>
           {newAsset.DocumentoAprobado && (
-        <img src={imageUrlMap.get(newAsset.id || 0)?.get('DocumentoAprobado')} alt="DocumentoAprobado" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+        <img src={imageUrlMap.get(newAsset.id || 0)?.get('DocumentoAprobado')} alt={t('TablaVentas-doc')} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
       )}
             <Button variant="contained" component="label" fullWidth>
-            {newAsset.DocumentoAprobado? "Agregar Documento" : "Editar Documento"}
+            {newAsset.DocumentoAprobado? t('EditarBaja-Agregar') : t('EditarBaja-Agregar')}
               <VisuallyHiddenInput
                 type="file"
                 name="ImagenDocumento"
@@ -515,7 +515,7 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
             </Button> 
             {newAsset.DocumentoAprobado && <FormHelperText>{t('EditarLista-TituloArchivo')}: {newAsset.DocumentoAprobado.name}</FormHelperText>}
             {imageUrlMap1.get(newAsset.DocumentoAprobado?.name || '') && (
-              <img src={imageUrlMap1.get(newAsset.DocumentoAprobado?.name || '')} alt="DocumentoAprobado" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+              <img src={imageUrlMap1.get(newAsset.DocumentoAprobado?.name || '')} alt={t('TablaVentas-doc')} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
             )}
           </Grid>
           <TextField
@@ -542,12 +542,12 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
       </Dialog>
 
       <Dialog open={openDetailDialog} onClose={() => setOpenDetailDialog(false)}>
-        <DialogTitle>Detalles de la Baja</DialogTitle>
+        <DialogTitle>{t('BajaDialog-titulo')}</DialogTitle>
         <DialogContent>
           <div>
-            <p><strong>Placa del activo:</strong> {selectedNewAsset?.PlacaActivo}</p>
-            <p><strong>Descripcion del activo:</strong> {selectedNewAsset?.Descripcion}</p>
-            <p><strong>Destino final del activo:</strong> {selectedNewAsset?.DestinoFinal}</p>
+            <p><strong>{t('BajaDialog-placa')}:</strong> {selectedNewAsset?.PlacaActivo}</p>
+            <p><strong>{t('BajaDialog-descripcion')}:</strong> {selectedNewAsset?.Descripcion}</p>
+            <p><strong>{t('BajaDialog-Destino')}:</strong> {selectedNewAsset?.DestinoFinal}</p>
             {imageUrlMap.get(selectedNewAsset?.id || 0)?.get('Fotografia') && (
               <p>
                 <strong>{t('DetallesLista-Fotografia')}:</strong>
@@ -560,10 +560,11 @@ function AssetRetirementList({assetRetirements, setAssetRetirements }: Props) {
             )}
             {imageUrlMap.get(selectedNewAsset?.id || 0)?.get('DocumentoAprobado') && (
               <p>
-                <strong>{t('DetallesLista-Factura')}:</strong>
+                <strong>{t('BajaDialog-documento')}: </strong>
                 <a
                   href={imageUrlMap.get(selectedNewAsset?.id || 0)?.get('DocumentoAprobado')}
                   download="DocumentoAprobado"
+                  target="_blank"
                 >
                   {t('AgregarActivo-Ver Documento')}
                 </a>

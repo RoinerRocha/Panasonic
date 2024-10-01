@@ -70,7 +70,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
        
              } catch (error) {
                console.error("Error fetching data:", error);
-               toast.error("Error al cargar datos");
+               toast.error(t('TablaVentas-Toast-Error'));
              }
            };
        
@@ -138,15 +138,15 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
 
   const handleDelete = (id: number) => {
     confirmAlert({
-      title: 'Confirmar Eliminación',
-      message: '¿Estás seguro de que deseas eliminar este activo?',
+      title: t('Eliminacion-titulo'),
+      message: t('Eliminacion-texto'),
       buttons: [
         {
-          label: 'Sí',
+          label: t('Eliminacion-botonSi'),
           onClick: async () => {
             try {
               await api.salesAssest.deleteSalesAsset(id);
-              toast.success("Activo Eliminado Correctamente");
+              toast.success(t('TablaVentas-Toast-Eliminar'));
               
               // Actualiza directamente los estados después de la eliminación
               setAssetSales(prevAssetSales => 
@@ -157,12 +157,12 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
               );
             } catch (error) {
               console.error("Error al eliminar El Activo", error);
-              toast.error("Error al eliminar El activo");
+              toast.error(t('TablaVentas-Toast-EliminarError'));
             }
           }
         },
         {
-          label: 'No',
+          label: t('Eliminacion-botonNo'),
           onClick: () => { }
         }
       ]
@@ -197,7 +197,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
         }
   
         await api.salesAssest.updateSalesAsset(selectedNewAsset.id, formData);
-        toast.success("Activo Actualizado");
+        toast.success(t('TablaVentas-Toast-Editar'));
         setOpenEditDialog(false);
         // Actualizar el estado directamente
         setAssetSales((prevAssetSales) =>
@@ -213,7 +213,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
         loadNewAsset();
       } catch (error) {
         console.error("Error al actualizar El Activo:", error);
-        toast.error("Error al intentar Actualizar Activo");
+        toast.error(t('TablaVentas-Toast-EditarError'));
       }
     }
   };
@@ -294,7 +294,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
         saveAs(blob, `AssetSales_${currentDate}.xlsx`);
     } catch (error) {
         console.error("Error generando Excel:", error);
-        toast.error("Error generando Excel");
+        toast.error(t('TablaVentas-Toast-ErrorExcel'));
     }
   };
 
@@ -305,7 +305,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
       saveAs(blob, `asset_${numBoleta}.xlsx`);
     } catch (error) {
       console.error('Error generando Excel:', error);
-      toast.error('Error generando Excel');
+      toast.error(t('TablaVentas-Toast-ErrorExcel'));
     }
   };
 
@@ -317,11 +317,11 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
           color="primary"
           onClick={() => setOpenAddDialog(true)}
         >
-          {t('Lista-BotonAgregar')}
+          {t('Ventas-titulo')}
         </Button>
       </Box>
       <FormControl fullWidth>
-        <InputLabel id="zona-label">Placa</InputLabel>
+        <InputLabel id="zona-label">{t('TablaVentas-filtroTitulo')}</InputLabel>
         <Select
           labelId="zona-label"
           id="zona"
@@ -339,23 +339,23 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
             </MenuItem>
           ))}
         </Select>
-        <FormHelperText>Seleccione una placa para filtrar</FormHelperText>
+        <FormHelperText>{t('TablaVentas-filtroTitulo2')}</FormHelperText>
       </FormControl>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>PlacaActivo</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Descripcion</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Monto de Ventas</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Numero Boleta</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Usuario</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Fotografia</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Documento Aprobado</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Documento de Cotizacion</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Comprobante de Banco</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Configuracion</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>Reporte Individual</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaVentas-placa')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaVentas-descripcion')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaVentas-monto')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaVentas-numero')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaVentas-Usuario')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaVentas-foto')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaVentas-doc')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaVentas-Cotizacion')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaVentas-Comprobante')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaVentas-ComprobanteVer')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>{t('TablaVentas-Config')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -384,7 +384,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
                     download
                     onClick={(e) => e.stopPropagation()}
                     >
-                    Ver Documento Aprobado
+                    {t('TablaVentas-docVer')}
                     </a>
                 ) : t('Lista-ErrorFactura')}
                 </TableCell>
@@ -397,7 +397,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
                       download
                       onClick={(e) => e.stopPropagation()}
                     >
-                      Ver Cotizacion
+                      {t('TablaVentas-CotizacionVer')}
                     </a>
                   ) : t('Lista-ErrorFactura')}
                 </TableCell>
@@ -410,7 +410,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
                       download
                       onClick={(e) => e.stopPropagation()}
                     >
-                      Ver Comprobante
+                      {t('TablaVentas-ComprobanteVer')}
                     </a>
                   ) : t('Lista-ErrorFactura')}
                 </TableCell>
@@ -474,11 +474,11 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
             generateExcelForAll(); 
         }}
       >
-          {t('Lista-BotonExcel')}
+          {t('TablaVentas-Boton')}
       </Button>
 
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-        <DialogTitle>{t('Lista-BotonAgregar')}</DialogTitle>
+        <DialogTitle>{t('Ventas-titulo')}</DialogTitle>
         <DialogContent>
           <RegisterAsset></RegisterAsset>
         </DialogContent>
@@ -488,10 +488,10 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
       </Dialog>
 
       <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
-        <DialogTitle>EditarLista</DialogTitle>
+        <DialogTitle>{t('EditarVentas-titulo')}</DialogTitle>
         <DialogContent>
           <FormControl fullWidth margin="normal">
-            <InputLabel id="placa-label">Placa Activo</InputLabel>
+            <InputLabel id="placa-label">{t('TablaVentas-placa')}</InputLabel>
             <Select
               labelId="placa-label"
               id="placa"
@@ -507,14 +507,14 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
             </Select>
           </FormControl>
           <TextField
-            label="Descripcion"
+            label={t('TablaVentas-descripcion')}
             value={newAsset.Descripcion}
             onChange={(e) => setNewAsset({ ...newAsset, Descripcion: e.target.value })}
             fullWidth
             margin="dense"
           />
           <TextField
-            label="MontoVentas"
+            label={t('TablaVentas-monto')}
             value={newAsset.MontoVentas}
             onChange={(e) => setNewAsset({ ...newAsset, MontoVentas: +e.target.value })}
             fullWidth
@@ -522,7 +522,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
           />
           <Grid item xs={6}>
           {newAsset.Fotografia && (
-        <img src={imageUrlMap.get(newAsset.id || 0)?.get('Fotografia')} alt="Fotografía" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+        <img src={imageUrlMap.get(newAsset.id || 0)?.get('Fotografia')} alt={t('TablaVentas-foto')} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
       )}
             <Button variant="contained" component="label" fullWidth>
             {newAsset.Fotografia? t('EditarLista-BotonFotografia') : t('EditarLista-BotonFotografia')}
@@ -542,16 +542,16 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
             </Button> 
             {newAsset.Fotografia && <FormHelperText>{t('EditarLista-TituloArchivo')}: {newAsset.Fotografia.name}</FormHelperText>}
             {imageUrlMap1.get(newAsset.Fotografia?.name || '') && (
-              <img src={imageUrlMap1.get(newAsset.Fotografia?.name || '')} alt="Fotografía" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+              <img src={imageUrlMap1.get(newAsset.Fotografia?.name || '')} alt={t('TablaVentas-foto')} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
             )}
           </Grid>
 
           <Grid item xs={6}>
           {newAsset.Comprobante && (
-        <img src={imageUrlMap.get(newAsset.id || 0)?.get('Comprobante')} alt="Comprobante" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+        <img src={imageUrlMap.get(newAsset.id || 0)?.get('Comprobante')} alt={t('TablaVentas-Comprobante')} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
       )}
             <Button variant="contained" component="label" fullWidth>
-            {newAsset.Comprobante? "Cambiar Comprobante": "Ingresar Comprobante"}
+            {newAsset.Comprobante? t('EditarVentas-Comprobante'): t('EditarVentas-Comprobante')}
               <VisuallyHiddenInput
                 type="file"
                 name="ImagenComprobante"
@@ -568,15 +568,15 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
             </Button> 
             {newAsset.Comprobante && <FormHelperText>{t('EditarLista-TituloArchivo')}: {newAsset.Comprobante.name}</FormHelperText>}
             {imageUrlMap1.get(newAsset.Comprobante?.name || '') && (
-              <img src={imageUrlMap1.get(newAsset.Comprobante?.name || '')} alt="Comprobante" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+              <img src={imageUrlMap1.get(newAsset.Comprobante?.name || '')} alt={t('TablaVentas-Comprobante')} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
             )}
           </Grid>
           <Grid item xs={6}>
           {newAsset.CotizacionVentas && (
-        <img src={imageUrlMap.get(newAsset.id || 0)?.get('CotizacionVentas')} alt="CotizacionVentas" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+        <img src={imageUrlMap.get(newAsset.id || 0)?.get('CotizacionVentas')} alt={t('TablaVentas-Cotizacion')} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
       )}
             <Button variant="contained" component="label" fullWidth>
-            {newAsset.CotizacionVentas? "Cambiar Cotizacion": "Ingresar Cotizacion"}
+            {newAsset.CotizacionVentas? t('EditarVentas-Cotizacion'): t('EditarVentas-Cotizacion')}
               <VisuallyHiddenInput
                 type="file"
                 name="ImagenCotizacion"
@@ -593,15 +593,15 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
             </Button> 
             {newAsset.CotizacionVentas && <FormHelperText>{t('EditarLista-TituloArchivo')}: {newAsset.CotizacionVentas.name}</FormHelperText>}
             {imageUrlMap1.get(newAsset.CotizacionVentas?.name || '') && (
-              <img src={imageUrlMap1.get(newAsset.CotizacionVentas?.name || '')} alt="CotizacionVentas" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+              <img src={imageUrlMap1.get(newAsset.CotizacionVentas?.name || '')} alt={t('TablaVentas-Cotizacion')} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
             )}
           </Grid>
           <Grid item xs={6}>
           {newAsset.DocumentoAprobado && (
-        <img src={imageUrlMap.get(newAsset.id || 0)?.get('DocumentoAprobado')} alt="DocumentoAprobado" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+        <img src={imageUrlMap.get(newAsset.id || 0)?.get('DocumentoAprobado')} alt={t('TablaVentas-doc')} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
       )}
             <Button variant="contained" component="label" fullWidth>
-            {newAsset.DocumentoAprobado? "Subir Documento Aprobado" : "Subir Documento"}
+            {newAsset.DocumentoAprobado? t('EditarVentas-Documento') : t('EditarVentas-Documento')}
               <VisuallyHiddenInput
                 type="file"
                 name="ImagenDocumentoAprobado"
@@ -618,7 +618,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
             </Button> 
             {newAsset.DocumentoAprobado && <FormHelperText>{t('EditarLista-TituloArchivo')}: {newAsset.DocumentoAprobado.name}</FormHelperText>}
             {imageUrlMap1.get(newAsset.DocumentoAprobado?.name || '') && (
-              <img src={imageUrlMap1.get(newAsset.DocumentoAprobado?.name || '')} alt="Fotografía" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+              <img src={imageUrlMap1.get(newAsset.DocumentoAprobado?.name || '')} alt={t('TablaVentas-doc')} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
             )}
           </Grid>
           <TextField
@@ -645,12 +645,12 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
       </Dialog>
 
       <Dialog open={openDetailDialog} onClose={() => setOpenDetailDialog(false)}>
-        <DialogTitle>Detalles de la Baja</DialogTitle>
+        <DialogTitle>{t('DetallesVentas-titulo')}</DialogTitle>
         <DialogContent>
           <div>
-            <p><strong>Placa del activo:</strong> {selectedNewAsset?.PlacaActivo}</p>
-            <p><strong>Razon de Venta:</strong> {selectedNewAsset?.Descripcion}</p>
-            <p><strong>Monto de Ventas:</strong> {selectedNewAsset?.MontoVentas}</p>
+            <p><strong>{t('TablaVentas-placa')}: </strong> {selectedNewAsset?.PlacaActivo}</p>
+            <p><strong>{t('TablaVentas-descripcion')}: </strong> {selectedNewAsset?.Descripcion}</p>
+            <p><strong>{t('TablaVentas-monto')}: </strong> {selectedNewAsset?.MontoVentas}</p>
             {imageUrlMap.get(selectedNewAsset?.id || 0)?.get('Fotografia') && (
               <p>
                 <strong>{t('DetallesLista-Fotografia')}:</strong>
@@ -661,11 +661,11 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
                 />
               </p>
             )}
-            {imageUrlMap.get(selectedNewAsset?.id || 0)?.get('OrdenCompraImagen') && (
+            {imageUrlMap.get(selectedNewAsset?.id || 0)?.get('DocumentoAprobado') && (
               <p>
-                <strong>{t('DetallesLista-Orden')}:</strong>
+                <strong>{t('DetallesVentas-DetalleDoc')}: </strong>
                 <a
-                  href={imageUrlMap.get(selectedNewAsset?.id || 0)?.get('OrdenCompraImagen')}
+                  href={imageUrlMap.get(selectedNewAsset?.id || 0)?.get('DocumentoAprobado')}
                   download="OrdenCompra"
                 >
                   {t('AgregarActivo-Ver Documento')}
@@ -674,7 +674,7 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
             )}
              {imageUrlMap.get(selectedNewAsset?.id || 0)?.get('CotizacionVentas') && (
               <p>
-                <strong>Detalles de la cotizacion:</strong>
+                <strong>{t('DetallesVentas-DetalleCoti')}: </strong>
                 <a
                   href={imageUrlMap.get(selectedNewAsset?.id || 0)?.get('CotizacionVentas')}
                   download="CotizacionVentas"
@@ -683,9 +683,9 @@ function AssetSalesList({assetSales, setAssetSales }: Props) {
                 </a>
               </p>
             )}
-            {imageUrlMap.get(selectedNewAsset?.id || 0)?.get(' Comprobante') && (
+            {imageUrlMap.get(selectedNewAsset?.id || 0)?.get('Comprobante') && (
               <p>
-                <strong>Detalles del comprobante:</strong>
+                <strong>{t('DetallesVentas-DetalleComp')}: </strong>
                 <a
                   href={imageUrlMap.get(selectedNewAsset?.id || 0)?.get('Comprobante')}
                   download="Comprobante"

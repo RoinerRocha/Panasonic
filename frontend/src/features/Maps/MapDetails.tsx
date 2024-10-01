@@ -215,9 +215,9 @@ const MapDetails = () => {
                   <TableCell>{t('Mapa-Tabla3')}</TableCell>
                  {/* <TableCell>{t('Mapa-Tabla4')}</TableCell>
                   <TableCell>{t('Mapa-Tabla5')}</TableCell>*/}
-                  <TableCell>{t('Proveerdor')}</TableCell>
-                  <TableCell>{t('Fecha Compra')}</TableCell>
-                  <TableCell>{t('N° Boleta')}</TableCell>
+                  <TableCell>{t('DetallesLista-TituloProveedor')}</TableCell>
+                  <TableCell>{t('Lista-ColumnaFecha')}</TableCell>
+                  <TableCell>{t('NumeroBoleta')}</TableCell>
                   <TableCell>{t('Tipo')}</TableCell>
                 </TableRow>
               </TableHead>
