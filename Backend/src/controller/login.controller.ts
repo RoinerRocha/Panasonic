@@ -176,6 +176,21 @@ export const updateUser = async (req: Request, res: Response) => {
   } = req.body;
 
   try {
+    // Obtener el usuario actual
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Verificar si la contraseña fue modificada
+    let updatedPassword = contrasena;
+    if (contrasena && contrasena !== user.contrasena) {
+      // Encriptar la nueva contraseña
+      updatedPassword = await bcrypt.hash(contrasena, 10);
+    }
+
+    // Actualizar el usuario
     const [updated] = await User.update(
       {
         nombre,
@@ -183,7 +198,7 @@ export const updateUser = async (req: Request, res: Response) => {
         segundo_apellido,
         nombre_usuario,
         correo_electronico,
-        contrasena,
+        contrasena: updatedPassword,
         perfil_asignado,
         imagen_firma,
       },
@@ -195,9 +210,7 @@ export const updateUser = async (req: Request, res: Response) => {
 
     if (updated) {
       const updatedUser = await User.findByPk(userId);
-      res
-        .status(200)
-        .json({ message: "Update User successful", data: updatedUser });
+      res.status(200).json({ message: "Update User successful", data: updatedUser });
     } else {
       res.status(404).json({ message: "User not found" });
     }
