@@ -32,7 +32,6 @@ export const router = createBrowserRouter([
     children: [
       { path: "", element: <HomePage /> },
       { path: "login", element: <Login /> },
-      { path: "ResetPassword", element: <ResetPassword /> },
       {
         element: <ProtectedRoute />,  // Protege estas rutas
         children: [

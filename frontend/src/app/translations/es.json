@@ -155,6 +155,7 @@
     "nomUsuario-tabla-usuario": "Nombre de usuario",
     "correo-tabla-usuario": "Correo",
     "perfil-tabla-usuario": "Perfil",
+    "contraseña":"Contraseña",
     "acciones-tabla-usuario": "Configuraciones",
     "boton-tabla-usuario": "Registrar usuarios",
     "botonEliminar-tabla-usuario": "Eliminar",

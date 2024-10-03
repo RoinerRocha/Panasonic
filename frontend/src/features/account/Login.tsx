@@ -107,30 +107,7 @@ export default function Login() {
         >
           {t('Boton-sesion')}
         </LoadingButton>
-        <Grid container>
-          <Grid item xs>
-            <Button variant="contained" color="primary" onClick={() => setOpenAddDialog(true)}>
-              {t('Boton-correo')}
-            </Button>
-          </Grid>
-        </Grid>
       </Box>
-      <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-        <DialogTitle>{t('Dialog-correo-titulo')}</DialogTitle>
-          <DialogContent>
-            <TextField
-                label={t('Label-correo-titulo')}
-                value={newEmail.email}
-                onChange={(e) => setNewEmail({ ...newEmail, email: e.target.value })}
-                fullWidth
-                margin="dense"
-            />
-          </DialogContent>
-          <DialogActions>
-              <Button onClick={() => setOpenAddDialog(false)}>{t('Label-boton-cancelar')}</Button>
-              <Button onClick={handdleAddEmail}>{t('Label-boton-enviar')}</Button>
-          </DialogActions>
-      </Dialog>
     </Container>
   );
 };

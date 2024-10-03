@@ -98,6 +98,7 @@ export default function UserList({ users, setUsers }: Props){
                     nombre_usuario: selectedUser.nombre_usuario,
                     correo_electronico: selectedUser.correo_electronico,
                     perfil_asignado: selectedUser.perfil_asignado,
+                    contrasena: selectedUser.contrasena,
                 };
                 await api.Account.updateUser(accountId, updateUser);
                 toast.success(t('toast-Usuarios-Editar'));
@@ -128,6 +129,7 @@ export default function UserList({ users, setUsers }: Props){
                             <TableCell align="center">{t('nomUsuario-tabla-usuario')}</TableCell>
                             <TableCell align="center">{t('correo-tabla-usuario')}</TableCell>
                             <TableCell align="center">{t('perfil-tabla-usuario')}</TableCell>
+                            <TableCell align="center">{t('contraseña')}</TableCell>
                             <TableCell align="center">{t('acciones-tabla-usuario')}</TableCell>
                         </TableRow>
                     </TableHead>
@@ -140,6 +142,7 @@ export default function UserList({ users, setUsers }: Props){
                                 <TableCell align="center">{users.nombre_usuario}</TableCell>
                                 <TableCell align="center">{users.correo_electronico}</TableCell>
                                 <TableCell align="center">{users.perfil_asignado}</TableCell>
+                                <TableCell align="center">{users.contrasena.replace(/./g, '●')}</TableCell>
                                 <TableCell align='center'>
                                     <Button 
                                         variant='contained' 
@@ -158,6 +161,7 @@ export default function UserList({ users, setUsers }: Props){
                                         {t('botonEliminar-tabla-usuario')}
                                     </Button>
                                 </TableCell>
+                                
                             </TableRow>
                         ))}
                     </TableBody>
@@ -221,6 +225,14 @@ export default function UserList({ users, setUsers }: Props){
                            ))}
                         </Select>
                       </FormControl>
+                    <TextField
+                        label={t('contraseña')}
+                        value={selectedUser?.contrasena || ''}
+                        onChange={(e) => setSelectedUser(selectedUser ? { ...selectedUser, contrasena: e.target.value } : null)}
+                        fullWidth
+                        margin="dense"
+                        type="password"
+                    />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpenEditDialog(false)}>{t('dialog-Cancel-tablaUsuario')}</Button>

@@ -150,6 +150,7 @@
     "nomUsuario-tabla-usuario": "Username",
     "correo-tabla-usuario": "Email",
     "perfil-tabla-usuario": "Profile",
+    "contraseña":"Password",
     "acciones-tabla-usuario": "Configuration",
     "boton-tabla-usuario": "Register users",
     "botonEliminar-tabla-usuario": "Delete",
